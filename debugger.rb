@@ -1,8 +1,4 @@
 require 'readline'
-require_relative 'debugger/frame'
-require_relative 'debugger/commands'
-require_relative 'debugger/breakpoint'
-require_relative 'debugger/display'
 
 #
 # The Rubinius reference debugger.
@@ -13,11 +9,17 @@ require_relative 'debugger/display'
 #
 
 class Debugger
-  include Debugger::Display
-
   # Used to try and show the source for the kernel. Should
   # mostly work, but it's a hack.
-  ROOT_DIR = File.expand_path(File.dirname(__FILE__) + "/..")
+  DBGR_DIR = File.expand_path(File.dirname(__FILE__))
+  ROOT_DIR = DBGR_DIR + "/.."
+
+  require "#{DBGR_DIR}/debugger/frame"
+  require "#{DBGR_DIR}/debugger/commands"
+  require "#{DBGR_DIR}/debugger/breakpoint"
+  require "#{DBGR_DIR}/debugger/display"
+  
+  include Debugger::Display
 
   # Create a new debugger object. The debugger starts up a thread
   # which is where the command line interface executes from. Other

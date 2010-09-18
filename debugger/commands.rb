@@ -45,7 +45,18 @@ class Debugger
 
     def initialize(debugger)
       @debugger = debugger
+      cmd_dirs = [ File.join(File.dirname(__FILE__), 'command') ]
+      cmd_dirs.each do |cmd_dir| 
+        load_debugger_commands(cmd_dir) if File.directory?(cmd_dir)
+      end
     end
+
+    def load_debugger_commands(cmd_dir)
+      Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
+        require rb
+      end if File.directory?(cmd_dir)
+    end
+
 
     def run_code(str)
       @debugger.current_frame.run(str)
@@ -69,6 +80,7 @@ class Debugger
 
     # ===== Commands =====
     #
+    # FIXME: this is what was...
     # These classes are in the order they should appear in the help output.
     # As such, they're grouped by similar action.
 
@@ -476,22 +488,6 @@ in each frame.
             end
           end
         end
-      end
-    end
-
-    class EvalCode < Command
-      pattern "p", "eval"
-      help "Run code in the current context"
-      ext_help <<-HELP
-Run code in the context of the current frame.
-
-The value of the expression is stored into a global variable so it
-may be used again easily. The name of the global variable is printed
-next to the inspect output of the value.
-      HELP
-
-      def run(args)
-        @debugger.eval_code(args)
       end
     end
 
