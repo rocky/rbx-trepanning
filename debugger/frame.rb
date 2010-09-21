@@ -1,4 +1,4 @@
-class Debugger
+class RBDebug
   class Frame
     def initialize(debugger, number, loc)
       @debugger = debugger

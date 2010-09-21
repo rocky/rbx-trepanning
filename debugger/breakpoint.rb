@@ -1,4 +1,4 @@
-class Debugger
+class RBDebug
   class BreakPoint
 
     def self.for_ip(exec, ip, name=:anon)
@@ -71,7 +71,7 @@ class Debugger
     end
   end
 
-  class DeferedBreakPoint
+  class DeferredBreakPoint
     def initialize(debugger, frame, klass, which, name, line=nil, list=nil)
       @debugger = debugger
       @frame = frame
@@ -111,7 +111,7 @@ class Debugger
     end
 
     def describe
-      "#{descriptor} - unknown location (defered)"
+      "#{descriptor} - unknown location (deferred)"
     end
 
     def delete!

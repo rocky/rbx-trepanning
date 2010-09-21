@@ -1,5 +1,11 @@
 require 'readline'
 
+require 'rubygems'; require 'require_relative'
+require_relative './debugger/frame'
+require_relative './debugger/command/base/cmd'
+require_relative './debugger/breakpoint'
+require_relative './debugger/display'
+  
 #
 # The Rubinius reference debugger.
 #
@@ -8,18 +14,15 @@ require 'readline'
 # an example for how to build a better debugger.
 #
 
-class Debugger
+class RBDebug
   # Used to try and show the source for the kernel. Should
   # mostly work, but it's a hack.
+  VERSION = '0.0.1'
+
   DBGR_DIR = File.expand_path(File.dirname(__FILE__))
   ROOT_DIR = DBGR_DIR + "/.."
 
-  require "#{DBGR_DIR}/debugger/frame"
-  require "#{DBGR_DIR}/debugger/commands"
-  require "#{DBGR_DIR}/debugger/breakpoint"
-  require "#{DBGR_DIR}/debugger/display"
-  
-  include Debugger::Display
+  include RBDebug::Display
 
   # Create a new debugger object. The debugger starts up a thread
   # which is where the command line interface executes from. Other
@@ -27,6 +30,8 @@ class Debugger
   # thread is the debugger thread. This is how the debugger is handed
   # control of execution.
   #
+  @processor = RBDebug::Command.new(nil) 
+
   def initialize
     @file_lines = Hash.new do |hash, path|
       if File.exists? path
@@ -51,20 +56,20 @@ class Debugger
     }
 
     @loaded_hook = proc { |file|
-      check_defered_breakpoints
+      check_deferred_breakpoints
     }
 
     @added_hook = proc { |mod, name, exec|
-      check_defered_breakpoints
+      check_deferred_breakpoints
     }
 
     # Use a few Rubinius specific hooks to trigger checking
-    # for defered breakpoints.
+    # for deferred breakpoints.
 
     Rubinius::CodeLoader.loaded_hook.add @loaded_hook
     Rubinius.add_method_hook.add @added_hook
 
-    @defered_breakpoints = []
+    @deferred_breakpoints = []
 
     @user_variables = 0
 
@@ -180,6 +185,7 @@ class Debugger
     runner = Command.commands.find { |k| k.match?(command) }
 
     if runner
+      # FIXME: don't instantiate each time.
       runner.new(self).run args
     else
       puts "Unrecognized command: #{command}"
@@ -260,15 +266,15 @@ class Debugger
     @breakpoints[i-1] = nil
   end
 
-  def add_defered_breakpoint(klass_name, which, name, line)
-    dbp = DeferedBreakPoint.new(self, @current_frame, klass_name, which, name,
-                                line, @defered_breakpoints)
+  def add_deferred_breakpoint(klass_name, which, name, line)
+    dbp = DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
+                                line, @deferred_breakpoints)
     @defered_breakpoints << dbp
     @breakpoints << dbp
   end
 
-  def check_defered_breakpoints
-    @defered_breakpoints.delete_if do |bp|
+  def check_deferred_breakpoints
+    @deferred_breakpoints.delete_if do |bp|
       bp.resolve!
     end
   end

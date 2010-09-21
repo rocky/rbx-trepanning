@@ -1,4 +1,7 @@
-class Debugger::Command::Kill < Debugger::Command
+require 'rubygems'; require 'require_relative'
+require_relative './base/cmd'
+
+class RBDebug::Command::Kill < RBDebug::Command
   pattern "kill"
   help "Send this process a POSIX signal 'KILL', i.e.'kill -9'"
   ext_help "
@@ -6,6 +9,7 @@ Kill execution of program being debugged.
 
 Equivalent of Process.kill('KILL', Process.pid). This is an
 unmaskable signal. When all else fails, e.g. in thread code, use this."
+
   def run(args)
     sig='KILL'
     begin

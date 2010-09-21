@@ -1,6 +1,9 @@
-class Debugger::Command::EvalCode < Debugger::Command
+require 'rubygems'; require 'require_relative'
+require_relative './base/cmd'
+
+class RBDebug::Command::EvalCode < RBDebug::Command
   pattern "p", "eval"
-  help "++ Run code in the current context"
+  help "Run code in the current context"
   ext_help <<-HELP
 Run code in the context of the current frame.
 
