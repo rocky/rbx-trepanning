@@ -1,4 +1,5 @@
-require File.expand_path(File.dirname(__FILE__)) + '/../../display'
+require 'rubygems'; require 'require_relative'
+require_relative '../../display'
 
 class RBDebug
   class CommandDescription
@@ -21,10 +22,6 @@ class RBDebug
 
     def self.commands
       @commands
-    end
-
-    def self.commands=(value)
-      @commands=value
     end
 
     def self.descriptor
