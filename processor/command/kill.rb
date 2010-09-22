@@ -32,12 +32,12 @@ we are in interactive mode, we'll prompt to make sure."
 #           @proc.intf.finalize
 #       end
     else
-      # if not confirm('Really kill?', false)
-      #   msg('Kill not confirmed.')
-      #   return
-      # else 
+      if not confirm('Really kill?', false)
+        msg('Kill not confirmed.')
+        return
+      else 
         sig = 'KILL'
-      # end
+      end
     end
     begin
       Process.kill(sig, Process.pid)
