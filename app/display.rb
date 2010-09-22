@@ -1,4 +1,4 @@
-class RBDebug
+class Trepan
   module Display
     def info(str)
       str.split("\n").each do |s|

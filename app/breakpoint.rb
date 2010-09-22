@@ -1,4 +1,4 @@
-class RBDebug
+class Trepan
   class BreakPoint
 
     def self.for_ip(exec, ip, name=:anon)

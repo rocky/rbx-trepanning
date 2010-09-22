@@ -9,7 +9,7 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default load_cmds).each do
+%w(default load_cmds msg).each do
   |mod_str|
   require_relative mod_str
 end
@@ -26,8 +26,9 @@ class Trepan
                                    # name removed from the beginning.
     ## attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
-    attr_reader   :dbgr            # Trepan instance (via
+    attr_accessor   :dbgr          # Trepan instance (via
                                    # Trepan::Core instance)
+                                   ## FIXME 1.9.2 has attr_reader !
     attr_accessor :debug_nest      # Number of nested debugs. Used in showing
                                    # prompt.
     attr_accessor :different_pos   # Same type as settings[:different] 

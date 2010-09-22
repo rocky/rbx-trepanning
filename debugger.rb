@@ -1,20 +1,20 @@
 require 'readline'
 
 require 'rubygems'; require 'require_relative'
-require_relative './debugger/frame'
-require_relative './debugger/command/base/cmd'
-require_relative './debugger/breakpoint'
-require_relative './debugger/display'
+require_relative './app/frame'
+require_relative './processor/main'
+require_relative './app/breakpoint'
+require_relative './app/default'        # default debugger settings
+require_relative './app/display'
+require_relative './interface/user'     # user interface (includes I/O)
   
 #
-# The Rubinius reference debugger.
+# The Rubinius Trepan debugger.
 #
 # This debugger is wired into the debugging APIs provided by Rubinius.
-# It serves as a simple, builtin debugger that others can use as
-# an example for how to build a better debugger.
 #
 
-class RBDebug
+class Trepan
   # Used to try and show the source for the kernel. Should
   # mostly work, but it's a hack.
   VERSION = '0.0.1'
@@ -22,7 +22,7 @@ class RBDebug
   DBGR_DIR = File.expand_path(File.dirname(__FILE__))
   ROOT_DIR = DBGR_DIR + "/.."
 
-  include RBDebug::Display
+  include Trepan::Display
 
   # Create a new debugger object. The debugger starts up a thread
   # which is where the command line interface executes from. Other
@@ -30,8 +30,6 @@ class RBDebug
   # thread is the debugger thread. This is how the debugger is handed
   # control of execution.
   #
-  @processor = RBDebug::Command.new(nil) 
-
   def initialize
     @file_lines = Hash.new do |hash, path|
       if File.exists? path
@@ -45,6 +43,11 @@ class RBDebug
         end
       end
     end
+
+    
+    @processor = CmdProcessor.new(self)
+    @intf     = [Trepan::UserInterface.new(@input, @output)]
+    @processor.dbgr = self
 
     @thread = nil
     @frames = []
@@ -93,6 +96,8 @@ class RBDebug
 
   attr_reader :variables, :current_frame, :breakpoints, :user_variables
   attr_reader :locations
+
+  attr_reader :intf
 
   def self.global
     @global ||= new
@@ -171,22 +176,20 @@ class RBDebug
 
   # Get a command from the user to run using readline
   #
-  def accept_commands
-    cmd = Readline.readline "debug> "
+  def accept_command
+    current_command = Readline.readline "trepan> "
 
-    if cmd.empty?
-      cmd = @last_command
-    else
-      @last_command = cmd
-    end
+    current_command = @last_command if current_command.empty?
 
-    command, args = cmd.strip.split(/\s+/, 2)
+    args = current_command.split
+    @cmd_name = args[0]
 
-    runner = Command.commands.find { |k| k.match?(command) }
-
-    if runner
-      # FIXME: don't instantiate each time.
-      runner.new(self).run args
+    if @processor.commands.member?(@cmd_name)
+      cmd = @processor.commands[@cmd_name]
+      ## if ok_for_running(cmd, run_cmd_name, args.size-1)
+      @cmd_argstr = current_command[@cmd_name.size..-1].lstrip
+      cmd.run(args) 
+      @last_command = current_command
     else
       puts "Unrecognized command: #{command}"
       return
@@ -395,7 +398,7 @@ class RBDebug
 
       while true
         begin
-          accept_commands
+          accept_command
         rescue Exception => e
           begin
             e.render "Error in debugger"

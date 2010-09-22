@@ -1,7 +1,8 @@
-class RBDebug
+# Frame code from reference debugger.
+class Trepan
   class Frame
     def initialize(debugger, number, loc)
-      @debugger = debugger
+      @proc = debugger
       @number = number
       @location = loc
     end
@@ -64,7 +65,7 @@ class RBDebug
       end
 
       str = "#{recv} at #{loc.method.active_path}:#{loc.line} (#{loc.ip})"
-      if @debugger.variables[:show_ip]
+      if @proc.variables[:show_ip]
         str << " (+#{loc.ip})"
       end
 

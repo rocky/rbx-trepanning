@@ -94,5 +94,27 @@ class Trepan
                           end
       my_const(help_constant_sym)
     end
+
+    # From reference debugger
+    def run_code(str)
+      @proc.current_frame.run(str)
+    end
+
+    def current_method
+      @proc.current_frame.method
+    end
+
+    def current_frame
+      @proc.current_frame
+    end
+
+    def variables
+      @proc.variables
+    end
+
+    def listen(step=false)
+      @proc.listen(step)
+    end
+
   end
 end

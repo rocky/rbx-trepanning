@@ -119,7 +119,7 @@ end
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbdbgx #{RBDebug::VERSION} Documentation"
+  rdoc.title    = "rbdbgx #{Trepan::VERSION} Documentation"
 
   rdoc.rdoc_files.include('debugger.rb', 'debugger/*.rb')
 end
