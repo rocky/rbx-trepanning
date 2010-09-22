@@ -160,7 +160,7 @@ class Trepan
     @debuggee_thread = thr
     @channel = chan
 
-    @current_frame = frame(0)
+    @current_frame = @processor.frame = frame(0)
 
     bp.hit! if bp
 

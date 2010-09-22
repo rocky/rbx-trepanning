@@ -1,10 +1,13 @@
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 
-class RBDebug::Command::Next < RBDebug::Command
-  pattern "n", "next"
-  help "Move to the next line or conditional branch"
-  ext_help <<-HELP
+class Trepan::Command::NextCommand < Trepan::Command
+  ALIASES      = %w(n)
+  CATEGORY     = 'running'
+  NAME         = File.basename(__FILE__, '.rb')
+  NEED_RUNNING = true
+  SHORT_HELP   =  'Move to the next line or conditional branch'
+  HELP= <<-HELP
 Attempt to continue execution and stop at the next line. If there is
 a conditional branch between the current position and the next line,
 execution is stopped within the conditional branch instead.
@@ -17,7 +20,7 @@ at the current position of the caller.
       HELP
 
   def run(args)
-    if !args or args.empty?
+    if args.size == 1
       step = 1
     else
       step = args.to_i
@@ -29,11 +32,11 @@ at the current position of the caller.
     end
     
     step_over_by(step)
-    @debugger.listen
+    @proc.dbgr.listen
   end
   
   def step_over_by(step)
-    f = current_frame
+    f = @proc.frame
     
     ip = -1
     
@@ -49,7 +52,7 @@ at the current position of the caller.
   end
   
   def step_to_parent
-    f = @debugger.frame(current_frame.number + 1)
+    f = @dbgr.frame(current_frame.number + 1)
     unless f
       info "Unable to find frame to step to next"
       return
@@ -58,7 +61,7 @@ at the current position of the caller.
     exec = f.method
     ip = f.ip
     
-    bp = RBDebug::BreakPoint.for_ip(exec, ip)
+    bp = Trepan::BreakPoint.for_ip(exec, ip)
     bp.for_step!
     bp.activate
     
@@ -71,8 +74,8 @@ at the current position of the caller.
       ip = ips
     else
       one, two = ips
-      bp1 = RBDebug::BreakPoint.for_ip(exec, one)
-      bp2 = RBDebug::BreakPoint.for_ip(exec, two)
+      bp1 = Trepan::BreakPoint.for_ip(exec, one)
+      bp2 = Trepan::BreakPoint.for_ip(exec, two)
       
       bp1.paired_with(bp2)
       bp2.paired_with(bp1)
@@ -91,7 +94,7 @@ at the current position of the caller.
       return nil
     end
     
-    bp = RBDebug::BreakPoint.for_ip(exec, ip)
+    bp = Trepan::BreakPoint.for_ip(exec, ip)
     bp.for_step!
     bp.activate
     
@@ -133,4 +136,24 @@ at the current position of the caller.
     return next_interesting(exec, fin)
   end
   
+end
+
+if __FILE__ == $0
+  require_relative '../mock'
+  name = File.basename(__FILE__, '.rb')
+  dbgr, cmd = MockDebugger::setup(name)
+  # [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
+  #   dbgr.core.step_count = 0
+  #   cmd.proc.leave_cmd_loop = false
+  #   result = cmd.run(c)
+  #   puts 'Run result: %s' % result
+  #   puts 'step_count %d, leave_cmd_loop: %s' % [dbgr.core.step_count,
+  #                                               cmd.proc.leave_cmd_loop]
+  # end
+  # [%w(n), %w(next+), %w(n-)].each do |c|
+  #   dbgr.core.step_count = 0
+  #   cmd.proc.leave_cmd_loop = false
+  #   result = cmd.run(c)
+  #   puts cmd.proc.different_pos
+  # end
 end

@@ -29,18 +29,6 @@ task :install => :gem do
   end
 end
 
-# desc "Test everything."
-# test_task = task :test => :lib do 
-#   Rake::TestTask.new(:test) do |t|
-#     t.libs << './lib'
-#     t.pattern = 'test/test-*.rb'
-#     t.verbose = true
-#   end
-# end
-
-# desc "same as test"
-# task :check => :test
-
 require 'rbconfig'
 RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
                       RbConfig::CONFIG['RUBY_INSTALL_NAME'])
@@ -60,45 +48,40 @@ task :ChangeLog do
   system('git log --pretty --numstat --summary | git2cl > ChangeLog')
 end
 
-# desc 'Test units - the smaller tests'
-# task :'test:unit' do |t|
-#   Rake::TestTask.new(:'test:unit') do |t|
-#     t.test_files = FileList['test/unit/**/test-*.rb']
-#     # t.pattern = 'test/**/*test-*.rb' # instead of above
-#     t.verbose = true
-#   end
-# end
+desc 'Test units - the smaller tests'
+Rake::TestTask.new(:'test:unit') do |t|
+  t.test_files = FileList['test/unit/**/test-*.rb']
+  # t.pattern = 'test/**/*test-*.rb' # instead of above
+  t.verbose = true
+end
 
 # desc 'Test functional - the medium-sized tests'
-# task :'test:functional' do |t|
-#   Rake::TestTask.new(:'test:functional') do |t|
-#     t.test_files = FileList['test/functional/**/test-*.rb']
-#     t.verbose = true
-#   end
+# Rake::TestTask.new(:'test:functional') do |t|
+#   t.test_files = FileList['test/functional/**/test-*.rb']
+#   t.verbose = true
 # end
 
 # desc 'Test integration - end-to-end blackbox tests'
-# task :'test:integration' do |t|
-#   Rake::TestTask.new(:'test:integration') do |t|
-#     t.test_files = FileList['test/integration/**/test-*.rb']
-#     t.verbose = true
-#   end
+# Rake::TestTask.new(:'test:integration') do |t|
+#   t.test_files = FileList['test/integration/**/test-*.rb']
+#   t.verbose = true
 # end
 
-# desc 'Test everything - unit tests for now.'
-# task :test do
-#   exceptions = %w(test:unit test:functional test:integration).collect do |task|
-#     begin
-#       Rake::Task[task].invoke
-#       nil
-#     rescue => e
-#       e
-#     end
-#   end.compact
+desc 'Test everything - unit tests for now.'
+task :test do
+  # exceptions = %w(test:unit test:functional test:integration).collect do |task|
+  exceptions = %w(test:unit).collect do |task|
+    begin
+      Rake::Task[task].invoke
+      nil
+    rescue => e
+      e
+    end
+  end.compact
   
-#   exceptions.each {|e| puts e;puts e.backtrace }
-#   raise "Test failures" unless exceptions.empty?
-# end
+  exceptions.each {|e| puts e;puts e.backtrace }
+  raise "Test failures" unless exceptions.empty?
+end
 
 desc "Run each library Ruby file in standalone mode."
 task :'check:unit' do

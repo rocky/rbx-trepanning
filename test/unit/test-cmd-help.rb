@@ -42,7 +42,7 @@ class TestCommandHelp < Test::Unit::TestCase
     end
 
     # double-check specific commands and aliases
-    %w(kill help).each do |cmd_pat|
+    %w(kill n help).each do |cmd_pat|
       check_help(false, cmd_pat)
     end
 

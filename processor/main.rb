@@ -9,7 +9,7 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default load_cmds msg validate).each do
+%w(default load_cmds frame msg validate).each do
   |mod_str|
   require_relative mod_str
 end

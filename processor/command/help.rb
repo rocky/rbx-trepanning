@@ -128,7 +128,6 @@ if __FILE__ == $0
   name = File.basename(__FILE__, '.rb')
   dbgr, cmd = MockDebugger::setup(name)
 
-  ## REINSTATE
   cmd.run %w(help help)
   puts '=' * 40
   cmd.run %w(help *)
