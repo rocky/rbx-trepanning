@@ -101,6 +101,11 @@ end
 # end
 
 desc "Run each library Ruby file in standalone mode."
+task :'check:unit' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
+end
+
+desc "Run each library Ruby file in standalone mode."
 task :'check:debugger' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} debugger)))
 end

@@ -1,5 +1,5 @@
 require 'rubygems'; require 'require_relative'
-require_relative './base/cmd'
+require_relative 'base/cmd'
 
 class RBDebug::Command::Next < RBDebug::Command
   pattern "n", "next"
