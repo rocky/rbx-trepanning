@@ -2,11 +2,9 @@ require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 
 class Trepan::Command::NextCommand < Trepan::Command
+
   ALIASES      = %w(n)
   CATEGORY     = 'running'
-  NAME         = File.basename(__FILE__, '.rb')
-  NEED_RUNNING = true
-  SHORT_HELP   =  'Move to the next line or conditional branch'
   HELP= <<-HELP
 Attempt to continue execution and stop at the next line. If there is
 a conditional branch between the current position and the next line,
@@ -18,6 +16,9 @@ attempt to skip past before stopping execution.
 If the current line is the last in a method, execution is stopped
 at the current position of the caller.
       HELP
+  NAME         = File.basename(__FILE__, '.rb')
+  NEED_RUNNING = true
+  SHORT_HELP   =  'Move to the next line or conditional branch'
 
   def run(args)
     if args.size == 1

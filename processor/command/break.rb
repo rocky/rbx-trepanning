@@ -1,10 +1,13 @@
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
-class RBDebug::Command::SetBreakPoint < RBDebug::Command
-  pattern "b", "break", "brk"
-  help "Set a breakpoint at a point in a method"
-  ext_help <<-HELP
+class Trepan::Command::SetBreakPointCommand < Trepan::Command
+
+  ALIASES      = %w(b brk)
+  CATEGORY     = 'running'
+  NAME         = File.basename(__FILE__, '.rb')
+
+  HELP         = <<-HELP
 The breakpoint must be specified using the following notation:
   Klass[.#]method:line
 
@@ -13,13 +16,15 @@ Array on line 33, use:
   Array#pop:33
 
 To breakpoint on class method start of Debugger line 4, use:
-  RBDebug.start:4
+  Trepan.start:4
       HELP
+  SHORT_HELP   = 'Set a breakpoint at a point in a method'
 
   def run(args, temp=false)
-    m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(args)
+    arg_str = args[1..-1].join(' ')
+    m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(arg_str)
     unless m
-      error "Unrecognized position: '#{args}'"
+      errmsg "Unrecognized position: '#{arg_str}'"
       return
     end
     
@@ -31,7 +36,7 @@ To breakpoint on class method start of Debugger line 4, use:
     begin
       klass = run_code(klass_name)
     rescue NameError
-      error "Unable to find class/module: #{m[1]}"
+      errmsg "Unable to find class/module: #{m[1]}"
       ask_deferred klass_name, which, name, line
       return
     end
@@ -48,7 +53,7 @@ To breakpoint on class method start of Debugger line 4, use:
       return
     end
     
-    bp = @debugger.set_breakpoint_method args.strip, method, line
+    bp = @proc.dbgr.set_breakpoint_method args.strip, method, line
     
     bp.set_temp! if temp
     
@@ -56,11 +61,11 @@ To breakpoint on class method start of Debugger line 4, use:
   end
   
   def ask_deferred(klass_name, which, name, line)
-    answer = ask "Would you like to defer this breakpoint to later? [y/n] "
-    
-    if answer.strip.downcase[0] == ?y
-      @debugger.add_deferred_breakpoint(klass_name, which, name, line)
-      info "Deferred breakpoint created."
+    if confirm('Would you like to defer this breakpoint to later?', false)
+      @proc.dbgr.add_deferred_breakpoint(klass_name, which, name, line)
+      msg 'Deferred breakpoint created.'
+    else
+      msg 'Not confirmed.'
     end
   end
 end
