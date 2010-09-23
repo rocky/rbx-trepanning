@@ -68,6 +68,7 @@ end
 # end
 
 desc 'Test everything - unit tests for now.'
+task :default => :test
 task :test do
   # exceptions = %w(test:unit test:functional test:integration).collect do |task|
   exceptions = %w(test:unit).collect do |task|

@@ -15,10 +15,10 @@ in each frame.
   SHORT_HELP   =  'Show the current call stack'
   
   def run(args)
-    args_str = args.join(' ')
-    verbose = (args_str =~ /-v/)
+    arg_str = args[1..-1].join(' ')
+    verbose = (arg_str =~ /-v/)
     
-    if m = /(\d+)/.match(args_str)
+    if m = /(\d+)/.match(arg_str)
       count = m[1].to_i
     else
       count = nil
