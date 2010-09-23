@@ -15,12 +15,12 @@ require_relative './interface/user'     # user interface (includes I/O)
 #
 
 class Trepan
-  # Used to try and show the source for the kernel. Should
-  # mostly work, but it's a hack.
   VERSION = '0.0.1'
 
-  DBGR_DIR = File.expand_path(File.dirname(__FILE__))
-  ROOT_DIR = DBGR_DIR + "/.."
+  # Used to try and show the source for the kernel. Should
+  # mostly work, but it's a hack.
+  DBGR_DIR = File.dirname(RequireRelative.abs_file)
+  ROOT_DIR = File.expand_path(File.join(DBGR_DIR, "/.."))
 
   include Trepan::Display
 
@@ -78,7 +78,7 @@ class Trepan
 
     @breakpoints = []
 
-    @history_path = File.expand_path("~/.rbx_debug")
+    @history_path = File.expand_path("~/.rbx_trepan")
 
     if File.exists?(@history_path)
       File.readlines(@history_path).each do |line|
@@ -95,14 +95,10 @@ class Trepan
   end
 
   attr_reader :variables, :current_frame, :breakpoints, :user_variables
-  attr_reader :locations
+  attr_reader :locations, :history_io
 
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
-
-  # FIXME: move more stuff of here and into Trepan::CmdProcessor
-  # These below should go into Trepan::CmdProcessor.
-  attr_reader :cmd_argstr, :cmd_name
 
   def self.global
     @global ||= new
@@ -177,37 +173,6 @@ class Trepan
       decode_one
     end
 
-  end
-
-  # Get a command from the user to run using readline
-  #
-  def accept_command
-    current_command = Readline.readline "trepan> "
-
-    current_command = @last_command if current_command.empty?
-
-    args = current_command.split
-    @cmd_name = args[0]
-    run_cmd_name = 
-      if @processor.aliases.member?(@cmd_name)
-        @processor.aliases[@cmd_name] 
-      else
-        @cmd_name
-      end
-
-    if @processor.commands.member?(run_cmd_name)
-      cmd = @processor.commands[run_cmd_name]
-      ## if ok_for_running(cmd, run_cmd_name, args.size-1)
-      @cmd_argstr = current_command[@cmd_name.size..-1].lstrip
-      cmd.run(args) 
-      @last_command = current_command
-    else
-      puts "Unrecognized command: #{command}"
-      return
-    end
-
-    # Save it to the history.
-    @history_io.puts cmd
   end
 
   def eval_code(args)
@@ -407,17 +372,8 @@ class Trepan
         break
       end
 
-      while true
-        begin
-          accept_command
-        rescue Exception => e
-          begin
-            e.render "Error in debugger"
-          rescue Exception => e2
-            puts "Error rendering backtrace in debugger!"
-          end
-        end
-      end
+      @processor.process_commands
+
     end
 
     @thread.setup_control!(@local_channel)

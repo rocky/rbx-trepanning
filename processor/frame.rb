@@ -115,12 +115,12 @@ class Trepan
     #   @threads2frames = {}
     # end
 
-    # def frame_initialize
-    #   @remap_container = {}
-    #   @remap_iseq      = {}
-    #   @hidelevels      = Hash.new(0) # Set default value to 0
-    #   @hide_level      = 0
-    # end
+    def frame_initialize
+      @remap_container = {}
+      @remap_iseq      = {}
+      @hidelevels      = Hash.new(0) # Set default value to 0
+      @hide_level      = 0
+    end
 
     # def get_frame(frame_num, absolute_pos)
     #   stack_size = @top_frame.stack_size - @hide_level

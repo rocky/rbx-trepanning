@@ -9,7 +9,7 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default load_cmds frame msg validate).each do
+%w(default load_cmds frame hook msg validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -112,10 +112,10 @@ class Trepan
       # load_cmds has to come first.
       ## %w(load_cmds breakpoint display eventbuf frame running validate
       ##   ).each do |submod|
-      %w(load_cmds).each do |submod|
+      %w(load_cmds frame validate).each do |submod|
         self.send("#{submod}_initialize")
       end
-      ## hook_initialize(commands)
+      hook_initialize(commands)
 
       # FIXME: run start file and start commands.
     end
@@ -203,43 +203,47 @@ class Trepan
           end
         end
       end
-      run_command(@current_command)
+      leave_cmdloop = run_command(@current_command)
+
+      # Save it to the history.
+      @dbgr.history_io.puts @last_command
+      return leave_cmdloop
     end
 
     # This is the main entry point.
-    def process_commands(frame)
+    def process_commands
 
-      frame_setup(frame)
+      # frame_setup(frame)
 
-      @unconditional_prehooks.run
-      if breakpoint?
-        @last_pos = [@frame.source_container, frame_line,
-                     @stack_size, @current_thread, @core.event, 
-                     @frame.pc_offset]
-      else
-        return if stepping_skip? || @stack_size <= @hide_level
-      end
+      # @unconditional_prehooks.run
+      # if breakpoint?
+      #   @last_pos = [@frame.source_container, frame_line,
+      #                @stack_size, @current_thread, @core.event, 
+      #                @frame.pc_offset]
+      # else
+      #   return if stepping_skip? || @stack_size <= @hide_level
+      # end
 
-      @prompt = compute_prompt
+      @prompt = 'trepan> ' # compute_prompt
 
       @leave_cmd_loop = false
-      print_location unless @settings[:traceprint]
-      if 'trace-var' == @core.event 
-        msg "Note: we are stopped *after* the above location."
-      end
+      # print_location unless @settings[:traceprint]
+      # if 'trace-var' == @core.event 
+      #   msg "Note: we are stopped *after* the above location."
+      # end
 
-      @eventbuf.add_mark if @settings[:tracebuffer]
+      # @eventbuf.add_mark if @settings[:tracebuffer]
 
       @cmdloop_prehooks.run
       while not @leave_cmd_loop do
         begin
           break if process_command_and_quit?()
         rescue SystemExit
-          @dbgr.stop
+          ## @dbgr.stop
           raise
         rescue Exception => exc
           errmsg("Internal debugger error: #{exc.inspect}")
-          exception_dump(exc, @settings[:debugexcept], $!.backtrace)
+          ## exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
       @cmdloop_posthooks.run
@@ -298,7 +302,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        msg 'D=> ' + debug_eval(current_command).inspect
+        msg 'D=> ' + @dbgr.eval_code(current_command).inspect
       else
         undefined_command(cmd_name)
       end
