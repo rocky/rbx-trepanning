@@ -4,7 +4,7 @@ require_relative './base/cmd'
 class Trepan::Command::SetBreakPointCommand < Trepan::Command
 
   ALIASES      = %w(b brk)
-  CATEGORY     = 'running'
+  CATEGORY     = 'breakpoints'
   NAME         = File.basename(__FILE__, '.rb')
 
   HELP         = <<-HELP
@@ -15,7 +15,7 @@ Thus, to set a breakpoint for the instance method pop in
 Array on line 33, use:
   Array#pop:33
 
-To breakpoint on class method start of Debugger line 4, use:
+To breakpoint on class method start of Trepan line 4, use:
   Trepan.start:4
       HELP
   SHORT_HELP   = 'Set a breakpoint at a point in a method'

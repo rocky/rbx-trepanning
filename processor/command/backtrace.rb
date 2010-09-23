@@ -2,7 +2,7 @@ require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
 class Trepan::Command::BacktraceCommand < Trepan::Command
-  ALIASES      = %w(bt)
+  ALIASES      = %w(bt where)
   CATEGORY     = 'stack'
   HELP = <<-HELP
 Show the call stack as a simple list.

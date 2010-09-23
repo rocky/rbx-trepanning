@@ -184,6 +184,7 @@ class Trepan
     str = "$d#{idx}"
     Rubinius::Globals[str.to_sym] = obj
     puts "#{str} = #{obj.inspect}\n"
+    obj
   end
 
   def frame(num)
@@ -232,23 +233,24 @@ class Trepan
     return bp
   end
 
-  def delete_breakpoint(i)
+  def delete_breakpoint_by_number(i)
     bp = @breakpoints[i-1]
 
     unless bp
       error "Unknown breakpoint '#{i}'"
-      return
+      return false
     end
 
     bp.delete!
 
     @breakpoints[i-1] = nil
+    return true
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)
     dbp = DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
                                 line, @deferred_breakpoints)
-    @defered_breakpoints << dbp
+    @deferred_breakpoints << dbp
     @breakpoints << dbp
   end
 

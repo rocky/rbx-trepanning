@@ -302,7 +302,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        msg 'D=> ' + @dbgr.eval_code(current_command).inspect
+        @dbgr.eval_code(current_command).inspect
       else
         undefined_command(cmd_name)
       end

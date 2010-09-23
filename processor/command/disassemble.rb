@@ -1,22 +1,25 @@
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
-class RBDebug::Command::Disassemble < RBDebug::Command
-  pattern "dis", "disassemble"
-  help "+2 Show the bytecode for the current method"
-  ext_help <<-HELP
+class Trepan::Command::DisassembleCommand < Trepan::Command
+  ALIASES      = %w(dis)
+  CATEGORY     = 'data'
+  HELP         = <<-HELP
 Disassemble bytecode for the current method. By default, the bytecode
 for the current line is disassembled only.
     
     If the argument is 'all', the entire method is shown as bytecode.
     HELP
+  NAME         = File.basename(__FILE__, '.rb')
+  NEED_STACK   = true
+  SHORT_HELP   = 'Show the bytecode for the current method'
   
   def run(args)
-    if args and args.strip == "all"
+    if args[1] == "all"
       section "Bytecode for #{@current_frame.method.name}"
-      puts current_method.decode
+      msg @proc.current_method.decode
     else
-      @debugger.show_bytecode
+      @proc.dbgr.show_bytecode
     end
   end
 end
