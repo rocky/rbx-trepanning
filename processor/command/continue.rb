@@ -5,12 +5,12 @@ class Trepan::Command::ContinueCommand < Trepan::Command
   ALIASES      = %w(c cont)
   CATEGORY     = 'running'
   NAME         = File.basename(__FILE__, '.rb')
+  HELP         = <<-HELP
   NEED_RUNNING = true
-  SHORT_HELP   =  'Continue running the target thread'
-  HELP= <<-HELP
 Continue execution until another breakpoint is hit.
       HELP
-  
+  SHORT_HELP   =  'Continue running the target thread'
+
   def run(args)
     @proc.dbgr.listen
   end

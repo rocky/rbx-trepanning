@@ -55,7 +55,7 @@ at the current position of the caller.
   end
   
   def step_to_parent
-    f = @proc.dbgr.frame(current_frame.number + 1)
+    f = @proc.dbgr.frame(@proc.frame.number + 1)
     unless f
       info "Unable to find frame to step to next"
       return
