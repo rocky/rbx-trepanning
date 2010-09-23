@@ -183,9 +183,15 @@ class Trepan
 
     args = current_command.split
     @cmd_name = args[0]
+    run_cmd_name = 
+      if @processor.aliases.member?(@cmd_name)
+        @processor.aliases[@cmd_name] 
+      else
+        @cmd_name
+      end
 
-    if @processor.commands.member?(@cmd_name)
-      cmd = @processor.commands[@cmd_name]
+    if @processor.commands.member?(run_cmd_name)
+      cmd = @processor.commands[run_cmd_name]
       ## if ok_for_running(cmd, run_cmd_name, args.size-1)
       @cmd_argstr = current_command[@cmd_name.size..-1].lstrip
       cmd.run(args) 

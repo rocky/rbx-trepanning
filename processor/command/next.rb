@@ -23,12 +23,15 @@ at the current position of the caller.
     if args.size == 1
       step = 1
     else
-      step = args.to_i
-    end
-    
-    if step <= 0
-      error "Invalid step count - #{step}"
-      return
+      step_str = args[1]
+      opts = {
+        :msg_on_error => 
+        "The 'next' command argument must eval to an integer. Got: %s" % 
+        step_str,
+        :min_value => 1
+      }
+      step = @proc.get_an_int(step_str, opts)
+      return unless step
     end
     
     step_over_by(step)
