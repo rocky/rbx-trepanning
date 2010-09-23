@@ -79,7 +79,7 @@ Type "help" followed by command name for full documentation.
           cmd_obj.class.const_get(:HELP)
         if help_text
           msg(help_text) 
-          if cmd_obj.class.constants.member?(:ALIASES) and
+          if cmd_obj.class.constants.member?('ALIASES') and
               args.size == 2
             msg "Aliases: #{cmd_obj.class.const_get(:ALIASES).join(', ')}"
           end

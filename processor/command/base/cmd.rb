@@ -71,7 +71,7 @@ class Trepan
       # we are the super class but want to set the subclass's constant.
       # defined? didn't seem to work here.
       c = self.class.constants
-      if c.member?(:HELP) and !c.member?(:SHORT_HELP)
+      if c.member?('HELP') and !c.member?('SHORT_HELP')
         short_help = self.class.const_get(:HELP).split("\n")[0].chomp('.')
         self.class.const_set(:SHORT_HELP, short_help)
       end
@@ -88,7 +88,7 @@ class Trepan
     end
 
     def short_help
-      help_constant_sym = if self.class.constants.member?(:SHORT_HELP) 
+      help_constant_sym = if self.class.constants.member?('SHORT_HELP') 
                             :SHORT_HELP 
                           else :HELP
                           end

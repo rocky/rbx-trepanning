@@ -97,7 +97,12 @@ class Trepan
   attr_reader :variables, :current_frame, :breakpoints, :user_variables
   attr_reader :locations
 
-  attr_reader :intf
+  attr_accessor :intf         # Array. The way the outside world
+                              # interfaces with us.  An array, so that
+
+  # FIXME: move more stuff of here and into Trepan::CmdProcessor
+  # These below should go into Trepan::CmdProcessor.
+  attr_reader :cmd_argstr, :cmd_name
 
   def self.global
     @global ||= new

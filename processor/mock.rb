@@ -20,6 +20,10 @@ module MockDebugger
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
 
+    # FIXME: move more stuff of here and into Trepan::CmdProcessor
+    # These below should go into Trepan::CmdProcessor.
+    attr_reader :cmd_argstr, :cmd_name
+
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
@@ -45,6 +49,8 @@ module MockDebugger
     end
 
     cmdproc = Trepan::CmdProcessor.new(nil)
+    cmdproc.dbgr = dbgr
+    
 
     # require "/home/rocky-rvm/.rvm/src/rbdbgx/debugger"
     # RBDebug.start
