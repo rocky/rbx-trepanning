@@ -9,7 +9,7 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default eval load_cmds frame hook msg running validate).each do
+%w(default breakpoint eval load_cmds frame hook msg running validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -112,7 +112,7 @@ class Trepan
       # load_cmds has to come first.
       ## %w(load_cmds breakpoint display eventbuf frame running validate
       ##   ).each do |submod|
-      %w(load_cmds frame running validate).each do |submod|
+      %w(load_cmds breakpoint frame running validate).each do |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
@@ -132,13 +132,14 @@ class Trepan
     end
 
     def compute_prompt
+      th = @dbgr.debugee_thread
       thread_str = 
-        if 1 == Thread.list.size
+        if 2 == Thread.list.size
           ''
-        elsif Thread.current == Thread.main
+        elsif th == Thread.main
           '@main'
         else
-          "@#{Thread.current.object_id}"
+          "@#{th.current.object_id}"
         end
       "%s#{settings[:prompt]}%s%s: " % 
         ['(' * @debug_nest, thread_str, ')' * @debug_nest]
@@ -224,7 +225,7 @@ class Trepan
       #   return if stepping_skip? || @stack_size <= @hide_level
       # end
 
-      @prompt = 'trepan> ' # compute_prompt
+      @prompt = "(#{@settings[:prompt]}): " # compute_prompt
 
       @leave_cmd_loop = false
       # print_location unless @settings[:traceprint]
@@ -302,7 +303,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        @dbgr.eval_code(current_command).inspect
+        debug_eval(current_command).inspect
       else
         undefined_command(cmd_name)
       end

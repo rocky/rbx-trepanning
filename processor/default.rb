@@ -24,7 +24,7 @@ class Trepan
                                    # will be truncated to this length when
                                    # printed
       :maxwidth       => (ENV['COLUMNS'] || '80').to_i,
-      :prompt         => 'rbdbgr', # core part of prompt. Additional info like
+      :prompt         => 'trepanx', # core part of prompt. Additional info like
                                    # debug nesting and 
       :save_cmdfile  => nil,       # If set, debugger command file to be
                                    # used on restart

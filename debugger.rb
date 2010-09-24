@@ -127,7 +127,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = BreakPoint.new "<start>", method, 0, 0
+    bp = BreakPoint.new "<start>", method, 0, 0, 0
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
@@ -176,8 +176,8 @@ class Trepan
 
   end
 
-  def eval_code(args)
-    obj = @current_frame.run(args)
+  def eval_code(args, filename=nil)
+    obj = @current_frame.run(args, filename)
 
     idx = @user_variables
     @user_variables += 1
@@ -224,12 +224,13 @@ class Trepan
       ip = 0
     end
 
-    bp = BreakPoint.new(descriptor, exec, ip, line)
+    id = @breakpoints.size
+    bp = BreakPoint.new(descriptor, exec, ip, line, id)
     bp.activate
 
     @breakpoints << bp
 
-    info "Set breakpoint #{@breakpoints.size}: #{bp.location}"
+    info "Set breakpoint #{id}: #{bp.location}"
 
     return bp
   end

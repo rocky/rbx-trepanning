@@ -2,19 +2,18 @@
 class Trepan
   class CmdProcessor
 
-    # def debug_eval(str, max_fake_filename=15)
-    #   begin
-    #     debug_eval_with_exception(str, max_fake_filename)
-    #   rescue SyntaxError, StandardError, ScriptError => e
-    #     exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
-    #     nil
-    #   end
-    # end
+    def debug_eval(str, max_fake_filename=15)
+      begin
+        debug_eval_with_exception(str, max_fake_filename)
+      rescue SyntaxError, StandardError, ScriptError => e
+        exception_dump(e, @settings[:stack_trace_on_error], $!.backtrace)
+        nil
+      end
+    end
 
-    # def debug_eval_with_exception(str, max_fake_filename=15)
-    #   filename, b = get_binding_and_filename(str, max_fake_filename)
-    #   eval(str, b, filename)
-    # end
+    def debug_eval_with_exception(str, max_fake_filename=15)
+      @dbgr.eval_code(str, fake_eval_filename(str))
+    end
 
     # def debug_eval_no_errmsg(str, max_fake_filename=15)
     #   begin

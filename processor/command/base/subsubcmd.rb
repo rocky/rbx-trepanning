@@ -28,7 +28,7 @@ class Trepan
     end
 
     def string_in_show
-      help_constant_sym = if self.class.constants.member?(:SHORT_HELP) 
+      help_constant_sym = if self.class.constants.member?('SHORT_HELP') 
                             :SHORT_HELP 
                           else :HELP
                           end

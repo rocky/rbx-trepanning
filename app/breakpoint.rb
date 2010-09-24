@@ -7,8 +7,9 @@ class Trepan
       BreakPoint.new(name, exec, ip, line)
     end
 
-    def initialize(descriptor, method, ip, line)
+    def initialize(descriptor, method, ip, line, id=nil)
       @descriptor = descriptor
+      @id = id
       @method = method
       @ip = ip
       @line = line

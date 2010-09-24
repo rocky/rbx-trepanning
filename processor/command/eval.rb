@@ -16,7 +16,7 @@ next to the inspect output of the value.
   NEED_STACK    = true
   SHORT_HELP    = 'Run code in the current context'
   def run(args)
-    @proc.dbgr.eval_code(@proc.dbgr.cmd_argstr)
+    @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
   end
 end
 
