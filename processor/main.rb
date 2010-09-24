@@ -9,7 +9,7 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default eval load_cmds frame hook msg validate).each do
+%w(default eval load_cmds frame hook msg running validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -112,7 +112,7 @@ class Trepan
       # load_cmds has to come first.
       ## %w(load_cmds breakpoint display eventbuf frame running validate
       ##   ).each do |submod|
-      %w(load_cmds frame validate).each do |submod|
+      %w(load_cmds frame running validate).each do |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
@@ -196,9 +196,9 @@ class Trepan
             @last_command = nil
             print_location
           else
-            msg "EOF - Leaving"
+            msg "That's all folks..."
             ## FIXME: think of something better.
-            quit('quit!')
+            quit('exit!')
             return true
           end
         end
