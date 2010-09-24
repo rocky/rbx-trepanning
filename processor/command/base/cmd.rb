@@ -97,15 +97,15 @@ class Trepan
 
     # From reference debugger
     def run_code(str)
-      @proc.current_frame.run(str)
+      @proc.frame.run(str)
     end
 
     def current_method
-      @proc.current_frame.method
+      @proc.frame.method
     end
 
     def current_frame
-      @proc.current_frame
+      @proc.frame
     end
 
     def variables

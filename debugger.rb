@@ -337,7 +337,8 @@ class Trepan
 
     section "Bytecode between #{start} and #{fin-1} for line #{line}"
 
-    partial = meth.iseq.decode_between(start, fin)
+    iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)
+    partial = iseq_decoder.decode_between(start, fin)
 
     ip = start
 
