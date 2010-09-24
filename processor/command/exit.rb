@@ -4,7 +4,7 @@ require_relative 'base/cmd'
 class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)
-    ALIASES      = %w(quit q quit! exit!)
+    ALIASES      = %w(quit q q! quit! exit!)
     HELP = 
       'exit [exitcode] - hard exit of the debugged program.  
 

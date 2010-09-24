@@ -2,7 +2,7 @@ require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
 class Trepan::Command::FrameCommand < Trepan::Command
-  CATEGORY     = 'running'
+  CATEGORY     = 'stack'
   HELP         = <<-HELP
 The argument must be a number corresponding to the frame numbers reported by
 'bt'.
