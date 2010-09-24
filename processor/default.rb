@@ -33,6 +33,12 @@ class Trepan
       :tracebuffer   => false,     # save events to a trace buffer.
       :user_cmd_dir  => File.join(Rbdbgr::HOME_DIR, 'rbdbgr', 'command'),
                                    # User command directory
+
+      # Rubinius-specific user variables
+      :show_ip         => false,
+      :show_bytecode   => false,
+      :highlight       => false
+
     } unless defined?(DEFAULT_SETTINGS)
   end
 end

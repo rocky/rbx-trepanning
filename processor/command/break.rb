@@ -48,7 +48,7 @@ To breakpoint on class method start of Trepan line 4, use:
         method = klass.method(name)
       end
     rescue NameError
-      error "Unable to find method '#{name}' in #{klass}"
+      errmsg "Unable to find method '#{name}' in #{klass}"
       ask_deferred klass_name, which, name, line
       return
     end

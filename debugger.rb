@@ -52,6 +52,7 @@ class Trepan
     @thread = nil
     @frames = []
 
+    ## FIXME: Delete these use the ones in processor/default instead.
     @variables = {
       :show_ip => false,
       :show_bytecode => false,

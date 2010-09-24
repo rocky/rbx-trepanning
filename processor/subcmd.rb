@@ -54,7 +54,7 @@ class Trepan
     # so we might not want to show that.
     def add(subcmd_cb, subcmd_name=nil)
       subcmd_name ||= subcmd_cb.name
-      @subcmds[subcmd_name] = subcmd_cb
+      @subcmds[subcmd_name.to_s] = subcmd_cb
 
       # We keep a list of subcommands to assist command completion
       @cmdlist << subcmd_name

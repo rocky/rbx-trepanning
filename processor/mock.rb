@@ -12,6 +12,7 @@ module MockDebugger
   class MockDebugger
     attr_accessor :trace_filter # Procs/Methods we ignore.
 
+    attr_accessor :frame        # Actually a "Rubinius::Location object
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
     attr_reader   :initial_dir  # String. Current directory when program
@@ -49,7 +50,8 @@ module MockDebugger
     end
 
     cmdproc = Trepan::CmdProcessor.new(nil)
-    cmdproc.dbgr = dbgr
+    cmdproc.dbgr  = dbgr
+    cmdproc.frame = Rubinius::VM.backtrace(0)[1]
     
 
     # require "/home/rocky-rvm/.rvm/src/rbdbgx/debugger"
