@@ -23,11 +23,9 @@ See also 'unalias'.
   # Run command. 
   def run(args)
     if args.size == 1
-      puts "show not finished yet :o("
-      ## @proc.commands['show'].run(%w(show alias))
+      @proc.commands['show'].run(%w(show alias))
     elsif args.size == 2
-      puts "this show not finished yet either :o("
-      ## @proc.commands['show'].run(%W(show alias #{args[1]}))
+      @proc.commands['show'].run(%W(show alias #{args[1]}))
     else
       junk, al, command = args
       old_command = @proc.aliases[al]
