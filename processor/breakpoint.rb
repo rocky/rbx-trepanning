@@ -23,6 +23,25 @@ class Trepan
       return !!@brkpt
     end
 
+    def breakpoint_find(bpnum, show_errmsg = true)
+      brkpts = @dbgr.breakpoints
+      if 0 == brkpts.size 
+        errmsg('No breakpoints set.') if show_errmsg
+        return nil
+      elsif bpnum > brkpts.size || bpnum < 1
+        errmsg('Breakpoint number %d is out of range 1..%d' %
+               [bpnum, brkpts.size]) if show_errmsg
+        return nil
+      end
+      bp = @dbgr.breakpoints[bpnum-1]
+      unless bp
+        errmsg "Unknown breakpoint '#{bpnum}'" if show_errmsg
+        return nil
+      end
+      bp
+    end
+    
+    # MRI 1.9.2 code
     # def breakpoint_find(bpnum, show_errmsg = true)
     #   if 0 == @brkpts.size 
     #     errmsg('No breakpoints set.') if show_errmsg
@@ -72,6 +91,19 @@ class Trepan
     #   @brkpts.add(iseq, offset, :temp => temp, :type => 'offset')
     # end
 
+    # Delete a breakpoint given its breakpoint number.
+    # FIXME: use do_enable 
+    def delete_breakpoint_by_number(bpnum, do_enable=true)
+      bp = breakpoint_find(bpnum)
+      return false unless bp
+      
+      bp.delete!
+      
+      @dbgr.breakpoints[bpnum-1] = nil
+      return true
+    end
+
+    # MRI 1.9.2 code
     # # Delete a breakpoint given its breakpoint number.
     # def delete_breakpoint_by_number(bpnum, do_enable=true)
     #   bp = breakpoint_find(bpnum)

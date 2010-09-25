@@ -10,10 +10,9 @@ module UnitHelper
 
   def common_setup
     @dbg      = Trepan.new(:nx => true)
-    ## @core     = Trepan::Core.new(@dbg)
-     @core     = nil
-    ## @cmdproc  = @core.processor = Trepan::CmdProcessor.new(@core)
-    @cmdproc  = Trepan::CmdProcessor.new(@core)
+    @cmdproc  = Trepan::CmdProcessor.new(@dbg)
+    @cmdproc.frame = Rubinius::VM.backtrace(0)[1]
+    @cmdproc.dbgr  = @dbg
     @cmds     = @cmdproc.commands
 
     def @cmdproc.msg(message)

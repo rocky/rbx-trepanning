@@ -54,7 +54,6 @@ class Trepan
 
     ## FIXME: Delete these use the ones in processor/default instead.
     @variables = {
-      :show_ip => false,
       :show_bytecode => false,
       :highlight => false
     }
@@ -100,6 +99,8 @@ class Trepan
 
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
+                              # interfaces with us.  An array, so that
+                              # interfaces can be stacked.
 
   def self.global
     @global ||= new
@@ -225,28 +226,14 @@ class Trepan
     end
 
     id = @breakpoints.size
-    bp = BreakPoint.new(descriptor, exec, ip, line, id)
+    bp = BreakPoint.new(descriptor, exec, ip, line, id+1)
     bp.activate
 
     @breakpoints << bp
 
-    info "Set breakpoint #{id}: #{bp.location}"
+    info "Set breakpoint #{id+1}: #{bp.location}"
 
     return bp
-  end
-
-  def delete_breakpoint_by_number(i)
-    bp = @breakpoints[i-1]
-
-    unless bp
-      error "Unknown breakpoint '#{i}'"
-      return false
-    end
-
-    bp.delete!
-
-    @breakpoints[i-1] = nil
-    return true
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)

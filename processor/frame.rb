@@ -211,7 +211,7 @@ if __FILE__ == $0
       puts msg
     end
     def print_location
-      puts "#{@frame.source_container} #{frame.source_location[0]}"
+      puts "#{frame.line} #{frame.line}"
     end
   end
 

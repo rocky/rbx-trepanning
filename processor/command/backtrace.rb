@@ -28,8 +28,9 @@ in each frame.
     
     @proc.dbgr.each_frame(@proc.frame) do |frame|
       return if count and frame.number >= count
-      
-      msg "%4d %s" % [frame.number, frame.describe]
+
+      msg "%4d %s" % [frame.number, 
+                      frame.describe(:show_ip => verbose)]
       
       if verbose
         frame.local_variables.each do |local|

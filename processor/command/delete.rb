@@ -22,7 +22,7 @@ Specify the breakpoint by number, use 'info break' to see the numbers
       return
     end
     
-    if @proc.dbgr.delete_breakpoint_by_number(i)
+    if @proc.delete_breakpoint_by_number(i)
       msg('Deleted breakpoint %d.' % i)
     end
   end

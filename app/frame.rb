@@ -36,7 +36,7 @@ class Trepan
       method.local_names
     end
 
-    def describe
+    def describe(opts = {})
       if method.required_args > 0
         locals = []
         0.upto(method.required_args-1) do |arg|
@@ -64,9 +64,9 @@ class Trepan
         end
       end
 
-      str = "#{recv} at #{loc.method.active_path}:#{loc.line} (#{loc.ip})"
-      if @proc.variables[:show_ip]
-        str << " (+#{loc.ip})"
+      str = "#{recv} at #{loc.method.active_path}:#{loc.line}"
+      if opts[:show_ip]
+        str << " (@#{loc.ip})"
       end
 
       str

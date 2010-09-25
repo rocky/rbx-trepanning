@@ -52,8 +52,8 @@ To breakpoint on class method start of Trepan line 4, use:
       ask_deferred klass_name, which, name, line
       return
     end
-    
-    bp = @proc.dbgr.set_breakpoint_method args.strip, method, line
+
+    bp = @proc.dbgr.set_breakpoint_method arg_str.strip, method, line
     
     bp.set_temp! if temp
     

@@ -23,7 +23,7 @@ class Trepan
     attr_reader :method, :ip, :line, :paired_bp, :descriptor
 
     def location
-      "#{@method.active_path}:#{@line} (+#{ip})"
+      "#{@method.active_path}:#{@line} (@#{ip})"
     end
 
     def describe

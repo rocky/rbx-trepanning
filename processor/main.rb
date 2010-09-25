@@ -195,7 +195,7 @@ class Trepan
           if @dbgr.intf.size > 1
             @dbgr.intf.pop 
             @last_command = nil
-            print_location
+            ## print_location
           else
             msg "That's all folks..."
             ## FIXME: think of something better.
