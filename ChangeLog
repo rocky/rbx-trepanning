@@ -1,0 +1,258 @@
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* doc/.gitignore, doc/debugger.html: Start revised documentation.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* app/default.rb, debugger.rb, processor/command/restart.rb,
+	processor/command/show_subcmd/args.rb, processor/mock.rb: Add
+	"restart" command. YAY! Means we also have "show args".
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* app/run.rb, debugger.rb, processor/command/break.rb,
+	processor/eval.rb, processor/main.rb, test/unit/test-app-run.rb: 
+	Bang on eval(). I think I've got it this time. Start run/restart.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* app/frame.rb, test/unit/test-proc-help.rb,
+	test/unit/test-proc-hook.rb, test/unit/test-subcmd-help.rb: 
+	Stuffthat didn't seem to get committed last time.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/cmd.rb, processor/eval.rb,
+	processor/main.rb: Add more tests back in. Attempt to disembowl eval
+	code. I think some bugs were fixed.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/frame.rb, debugger.rb,
+	processor/breakpoint.rb, processor/command/backtrace.rb,
+	processor/command/base/cmd.rb, processor/command/break.rb,
+	processor/command/delete.rb, processor/command/source.rb,
+	processor/frame.rb, processor/main.rb, test/unit/cmd-helper.rb,
+	test/unit/test-unit-exit.rb: debugger.rb : remove show_ip option.
+	Goes in processor. 	      bang on breakpoint code. move some to
+	processor/breakpoint.rb processor/breakpoint.rb: more error checking
+	info  app/frame.rb: describe() pass in options - add show IP
+	parameter.               remove duplicate ip location
+	app/breakpoint.rb: change IP location indicator from + to @. Is this
+	right? base/cmd.rb: run_code() was wrong.  Other misc bugs fixed.
+
+2010-09-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/alias.rb: Reinstate showing aliases code in
+	"alias" command
+
+2010-09-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb: Update help for exit
+
+2010-09-24  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb, processor/command/frame.rb: frame.rb:
+	was in wrong category exit.rb: add q!
+
+2010-09-24  rocky <rockyb@rubyforge.org>
+
+	* LICENSE, app/breakpoint.rb, app/frame.rb, debugger.rb,
+	processor/breakpoint.rb, processor/command/base/subsubcmd.rb,
+	processor/command/eval.rb,
+	processor/command/info_subcmd/program.rb, processor/command/ps.rb,
+	processor/command/set_subcmd/max.rb,
+	processor/command/set_subcmd/max_subcmd/.gitignore,
+	processor/command/set_subcmd/max_subcmd/stack.rb,
+	processor/command/set_subcmd/max_subcmd/string.rb,
+	processor/command/set_subcmd/max_subcmd/width.rb,
+	processor/command/show_subcmd/max.rb,
+	processor/command/show_subcmd/max_subcmd/.gitignore,
+	processor/command/show_subcmd/max_subcmd/stack.rb,
+	processor/command/show_subcmd/max_subcmd/string.rb,
+	processor/command/show_subcmd/max_subcmd/width.rb,
+	processor/default.rb, processor/eval.rb, processor/main.rb: Add max
+	set/show subcommands "info program" processor eval now sets filename
+	and we now store breakpoint ids. prompt is more inline with other
+	debuggers :-(
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger/.gitignore, debugger/Makefile,
+	debugger/command/.gitignore, debugger/command/base/.gitignore,
+	debugger/command/base/cmd.rb, debugger/command/set.rb,
+	debugger/old/.gitignore, debugger/old/command.rb,
+	debugger/old/debug_client.rb, debugger/old/debug_server.rb,
+	debugger/old/debugger.rb, debugger/old/interface.rb,
+	debugger/old/output.rb, debugger/old/standard_commands.rb,
+	debugger/old/vm_commands.rb, processor/command/base/subsubcmd.rb,
+	processor/command/base/subsubmgr.rb, processor/command/exit.rb,
+	processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/auto_subcmd/.gitignore,
+	processor/command/set_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto.rb,
+	processor/command/show_subcmd/auto_subcmd/.gitignore,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/main.rb, processor/running.rb: Add subsub commands. In
+	particular: set/show autoeval.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger.rb, debugger/command/info.rb, debugger/command/show.rb,
+	processor/command/break.rb, processor/command/info.rb,
+	processor/command/info_subcmd/.gitignore,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/info_subcmd/method.rb,
+	processor/command/info_subcmd/variables.rb,
+	processor/command/set.rb, processor/command/set_subcmd/.gitignore,
+	processor/command/set_subcmd/different.rb,
+	processor/command/show_subcmd/different.rb, processor/default.rb,
+	processor/mock.rb, processor/subcmd.rb: Finish up last of commands
+	to be converted from reference debugger. Add some of routines from
+	trepan for 1.9.2.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subcmd.rb,
+	processor/command/base/submgr.rb, processor/command/show.rb,
+	processor/command/show_subcmd/.gitignore,
+	processor/command/show_subcmd/alias.rb, processor/help.rb,
+	processor/subcmd.rb: Add first subcommand: show. Take "alias" from
+	trepan as the first subcommand.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger.rb, debugger/command/nexti.rb,
+	processor/command/base/cmd.rb, processor/command/disassemble.rb,
+	processor/command/nexti.rb, processor/eval.rb, processor/main.rb: 
+	Move over "nexti" command. Figure out "disassemble" problem.
+	main.rb: add traceback on internal error.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger.rb, debugger/command/delete.rb,
+	debugger/command/disassemble.rb, debugger/command/frame.rb,
+	debugger/command/tb.rb, processor/command/backtrace.rb,
+	processor/command/break.rb, processor/command/delete.rb,
+	processor/command/disassemble.rb, processor/command/frame.rb,
+	processor/command/tbreak.rb, processor/main.rb: Move over delete,
+	frame, tbreak, backtrace, break and diassemble.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/backtrace.rb: Small changes.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger/command/break.rb, debugger/command/help.rb,
+	debugger/command/step.rb, processor/command/break.rb,
+	processor/command/next.rb, processor/command/step.rb: Add 'step'.
+	Start 'break'.
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger/command/backtrace.rb, processor/command/backtrace.rb,
+	processor/command/continue.rb, processor/command/next.rb: Add
+	backtrace
+
+2010-09-23  rocky <rockyb@rubyforge.org>
+
+	* debugger.rb, processor/frame.rb, processor/hook.rb,
+	processor/main.rb: Move process-command code from debugger.rb into
+	into processor/main.rb Add hook code from 1.9.2 trepan. Not used yet
+	though.
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* debugger.rb, debugger/command/eval.rb,
+	processor/command/base/cmd.rb, processor/command/eval.rb,
+	processor/command/help.rb, processor/command/next.rb,
+	processor/mock.rb: Add command eval. Short help working In 1.8
+	class.constants are strings while in 1.9 class.constants are
+	symbols.
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* Makefile, debugger.rb, debugger/command/continue.rb,
+	debugger/command/kill.rb, processor/command/alias.rb,
+	processor/command/continue.rb, processor/command/next.rb,
+	processor/command/unalias.rb, test/unit/test-cmd-alias.rb: Add
+	'continue', 'alias', and  'unalias' commands.
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, debugger.rb, debugger/command/next.rb,
+	processor/command/help.rb, processor/command/next.rb,
+	processor/frame.rb, processor/main.rb, test/unit/test-cmd-help.rb: 
+	First stepping command, "next" now does something.
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-proc-main.rb, test/unit/test-proc-validate.rb: Unit
+	tests for processor/main.rb and processor/validate.rb
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* processor/command/kill.rb, processor/main.rb,
+	processor/validate.rb: Add validation routines. Some parts are
+	commented out for now.
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/breakpoint.rb, app/display.rb, app/frame.rb,
+	app/util.rb, debugger.rb, debugger/breakpoint.rb,
+	debugger/display.rb, debugger/frame.rb,
+	processor/command/base/cmd.rb, processor/command/kill.rb,
+	processor/load_cmds.rb, processor/main.rb, processor/msg.rb,
+	test/unit/test-app-util.rb, test/unit/test-intf-user.rb: Our first
+	commands -- 'help' and 'kill' under the reorganization!
+
+2010-09-22  rocky <rockyb@rubyforge.org>
+
+	* .gitignore, Rakefile, app/.gitignore, app/default.rb,
+	app/mock.rb, debugger/command/next.rb, interface/.gitignore,
+	interface/base_intf.rb, interface/script.rb, interface/user.rb,
+	io/.gitignore, io/base_io.rb, io/input.rb, io/string_array.rb,
+	processor/.gitignore, processor/command/.gitignore,
+	processor/command/base/.gitignore, processor/command/base/cmd.rb,
+	processor/command/help.rb, processor/command/kill.rb,
+	processor/default.rb, processor/load_cmds.rb, processor/main.rb,
+	processor/mock.rb, test/unit/.gitignore, test/unit/cmd-helper.rb,
+	test/unit/test-cmd-help.rb, test/unit/test-cmd-kill.rb,
+	test/unit/test-io-input.rb, test/unit/test-proc-load_cmds.rb: Get
+	command loading boilerplate. Help is there now. Interface added. And
+	even some of the unit tests!
+
+2010-09-21  rocky <rockyb@rubyforge.org>
+
+	* debugger/command/base/cmd.rb: Small cleanup before big
+	reorganization
+
+2010-09-21  rocky <rockyb@rubyforge.org>
+
+	* Makefile, Rakefile, debugger.rb, debugger/.gitignore,
+	debugger/Makefile, debugger/breakpoint.rb,
+	debugger/command/backtrace.rb, debugger/command/base/.gitignore,
+	debugger/command/base/cmd.rb, debugger/command/break.rb,
+	debugger/command/continue.rb, debugger/command/delete.rb,
+	debugger/command/disassemble.rb, debugger/command/eval.rb,
+	debugger/command/frame.rb, debugger/command/help.rb,
+	debugger/command/info.rb, debugger/command/kill.rb,
+	debugger/command/next.rb, debugger/command/nexti.rb,
+	debugger/command/set.rb, debugger/command/show.rb,
+	debugger/command/step.rb, debugger/command/tb.rb,
+	debugger/commands.rb, debugger/display.rb, debugger/frame.rb: Put
+	all commands in the 'command' directory. Add temporary hack to keep
+	Command.command singleton array from growing on running each
+	debugger command.
+
+2010-09-18  rvm <rocky-rvm@static-71-183-236-17.nycmny.fios.verizon.net>
+
+	* .gitignore, debugger.rb, debugger/command/.gitignore,
+	debugger/command/eval.rb, debugger/command/kill.rb,
+	debugger/commands.rb: Move commands to a 'command' directory.
+
+2010-09-17  rvm <rocky-rvm@static-71-183-236-17.nycmny.fios.verizon.net>
+
+	* Initial debugger import from rubinius.
+

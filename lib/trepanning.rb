@@ -1,12 +1,12 @@
 require 'readline'
 
 require 'rubygems'; require 'require_relative'
-require_relative './app/frame'
-require_relative './processor/main'
-require_relative './app/breakpoint'
-require_relative './app/default'        # default debugger settings
-require_relative './app/display'
-require_relative './interface/user'     # user interface (includes I/O)
+require_relative '../app/frame'
+require_relative '../processor/main'
+require_relative '../app/breakpoint'
+require_relative '../app/default'        # default debugger settings
+require_relative '../app/display'
+require_relative '../interface/user'     # user interface (includes I/O)
   
 #
 # The Rubinius Trepan debugger.
@@ -15,7 +15,7 @@ require_relative './interface/user'     # user interface (includes I/O)
 #
 
 class Trepan
-  VERSION = '0.0.1'
+  VERSION = '0.0.1.git'
 
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that

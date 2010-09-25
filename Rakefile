@@ -6,7 +6,7 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 
 ROOT_DIR = File.dirname(__FILE__)
-require File.join(ROOT_DIR, 'debugger')
+require File.join %W(#{ROOT_DIR} lib trepanning)
 
 def gemspec
   @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
@@ -99,13 +99,26 @@ task :'check:commands' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} debugger command)))
 end
 
+desc "Generate the gemspec"
+task :generate do
+  puts gemspec.to_ruby
+end
+
+desc "Validate the gemspec"
+task :gemspec do
+  gemspec.validate
+end
+
 # ---------  RDoc Documentation ------
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbdbgx #{Trepan::VERSION} Documentation"
+  rdoc.title    = "rbx-trepaning #{Trepan::VERSION} Documentation"
 
-  rdoc.rdoc_files.include('debugger.rb', 'debugger/*.rb')
+  rdoc.rdoc_files.include(%w(lib/trepanning.rb processor/*.rb
+                             processor/command/*.rb
+                             app/*.rb intf/*.rb io/*.rb 
+                            ))
 end
 
 desc "Same as rdoc"

@@ -42,7 +42,7 @@ module MockDebugger
   # Common Mock debugger setup 
   def setup(name, show_constants=true)
     if ARGV.size > 0 && ARGV[0] == 'debug'
-      require_relative 'rbdbgr'
+      require_relative '../lib/trepanning'
       dbgr = Debugger.new
       dbgr.debugger
     else
@@ -52,10 +52,6 @@ module MockDebugger
     cmdproc = Trepan::CmdProcessor.new(dbgr)
     cmdproc.frame = Rubinius::VM.backtrace(0)[1]
     
-
-    # require "/home/rocky-rvm/.rvm/src/rbdbgx/debugger"
-    # RBDebug.start
-
     cmdproc.load_cmds_initialize
     cmds = cmdproc.commands
     cmd  = cmds[name]

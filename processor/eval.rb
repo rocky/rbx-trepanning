@@ -84,7 +84,7 @@ if __FILE__ == $0
   cmdp.instance_variable_set('@frame', frame)
   cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
   def cmdp.errmsg(mess) ; puts mess end
-  # require_relative '../debugger'
+  # require_relative '../lib/trepanning'
   # Trepan.start
   puts cmdp.debug_eval('x = "#{x}"')
   puts '=' * 40
