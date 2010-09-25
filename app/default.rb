@@ -14,6 +14,8 @@ module Rbdbgr
     :delete_restore  => true,  # Delete restore profile after reading? 
     :initial_dir     => nil,   # Current directory run when "restart" is given
     :nx              => false, # Don't run user startup file (e.g. .rbdbgrc)
+    :offset          => 0,     # skipping back +offset+ frames. This lets you start
+                               # the debugger straight into callers method.
     :restart_argv    => [],    # Command run when "restart" is given
     :restore_profile => nil    # Profile used to set/restore debugger state
   } unless defined?(DEFAULT_SETTINGS)

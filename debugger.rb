@@ -17,6 +17,16 @@ require_relative './interface/user'     # user interface (includes I/O)
 class Trepan
   VERSION = '0.0.1'
 
+  attr_accessor :intf         # Array. The way the outside world
+                              # interfaces with us.  An array, so that
+                              # interfaces with us.  An array, so that
+                              # interfaces can be stacked.
+  attr_reader   :initial_dir  # String. Current directory when program
+                              # started. Used in restart program.
+  attr_accessor :restart_argv # How to restart us, empty or nil. 
+                              # Note restart_argv[0] is typically $0.
+  attr_reader   :settings     # Hash[:symbol] of things you can configure
+
   # Used to try and show the source for the kernel. Should
   # mostly work, but it's a hack.
   DBGR_DIR = File.dirname(RequireRelative.abs_file)
@@ -30,7 +40,18 @@ class Trepan
   # thread is the debugger thread. This is how the debugger is handed
   # control of execution.
   #
-  def initialize
+  def initialize(settings={})
+    @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
+
+    @restart_argv = 
+      if @settings[:set_restart]
+        [File.expand_path($0)] + ARGV
+      elsif @settings[:restart_argv]
+        @settings[:restart_argv]
+      else 
+        nil
+      end
+
     @file_lines = Hash.new do |hash, path|
       if File.exists? path
         hash[path] = File.readlines(path)
@@ -52,7 +73,7 @@ class Trepan
     @thread = nil
     @frames = []
 
-    ## FIXME: Delete these use the ones in processor/default instead.
+    ## FIXME: Delete these and use the ones in processor/default instead.
     @variables = {
       :show_bytecode => false,
       :highlight => false
@@ -76,7 +97,7 @@ class Trepan
 
     @breakpoints = []
 
-    @history_path = File.expand_path("~/.rbx_trepan")
+    @history_path = File.expand_path("~/.trepanx")
 
     if File.exists?(@history_path)
       File.readlines(@history_path).each do |line|
@@ -92,37 +113,33 @@ class Trepan
     @root_dir = ROOT_DIR
   end
 
-  attr_reader :variables, :current_frame, :breakpoints, :user_variables
+  attr_reader :variables, :current_frame, :breakpoints
   attr_reader :locations, :history_io
 
-  attr_accessor :intf         # Array. The way the outside world
-                              # interfaces with us.  An array, so that
-                              # interfaces with us.  An array, so that
-                              # interfaces can be stacked.
-
-  def self.global
-    @global ||= new
+  def self.global(settings={})
+    @global ||= new(settings)
   end
 
-  def self.start
-    global.start(1)
+  def self.start(settings={})
+    global(settings).start(:offset => 1)
   end
 
   # This is simplest API point. This starts up the debugger in the caller
   # of this method to begin debugging.
   #
-  def self.here
-    global.start(1)
+  def self.here(settings={})
+    global(settings).start(:offset => 1)
   end
 
   # Startup the debugger, skipping back +offset+ frames. This lets you start
   # the debugger straight into callers method.
   #
-  def start(offset=0)
+  def start(settings = {})
+    @settings = @settings.merge(settings)
     spinup_thread
 
     # Feed info to the debugger thread!
-    locs = Rubinius::VM.backtrace(offset + 1, true)
+    locs = Rubinius::VM.backtrace(@settings[:offset] + 1, true)
 
     method = Rubinius::CompiledMethod.of_sender
 
