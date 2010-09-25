@@ -34,7 +34,7 @@ To breakpoint on class method start of Trepan line 4, use:
     line =  m[4] ? m[4].to_i : nil
     
     begin
-      klass = run_code(klass_name)
+      klass = debug_eval(klass_name, @settings[:maxstring])
     rescue NameError
       errmsg "Unable to find class/module: #{m[1]}"
       ask_deferred klass_name, which, name, line

@@ -91,6 +91,8 @@ class Trepan
       @last_pos        = [nil, nil, nil, nil, nil, nil]
       @next_level      = 32000
       @next_thread     = nil
+      @user_variables = 0
+      
 
       start_cmds       = settings.delete(:start_cmds)
       start_file       = settings.delete(:start_file)
@@ -303,7 +305,7 @@ class Trepan
       # Eval anything that's not a command or has been
       # requested to be eval'd
       if settings[:autoeval] || eval_command
-        debug_eval(current_command).inspect
+        eval_code(current_command, @settings[:maxstring])
       else
         undefined_command(cmd_name)
       end

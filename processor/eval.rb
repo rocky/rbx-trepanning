@@ -12,8 +12,7 @@ class Trepan
     end
 
     def debug_eval_with_exception(str, max_fake_filename=15)
-      filename, b = get_binding_and_filename(str, max_fake_filename)
-      eval(str, b, filename)
+      @frame.run(str, fake_eval_filename(str, max_fake_filename))
     end
 
     def debug_eval_no_errmsg(str, max_fake_filename=15)
@@ -22,6 +21,18 @@ class Trepan
       rescue SyntaxError, StandardError, ScriptError => e
         nil
       end
+    end
+
+    def eval_code(str, max_fake_filename)
+      obj = debug_eval(str, max_fake_filename)
+      
+      idx = @user_variables
+      @user_variables += 1
+      
+      str = "$d#{idx}"
+      Rubinius::Globals[str.to_sym] = obj
+      msg "#{str} = #{obj.inspect}"
+      obj
     end
 
     def exception_dump(e, stack_trace, backtrace)
@@ -44,23 +55,6 @@ class Trepan
       "(eval #{fake_filename})"
     end
     
-    def get_binding_and_filename(str, maxlen)
-      b = 
-        begin
-          # if str == 'x = "#{x}"'
-          #   require_relative '../debugger'
-          #   Trepan.start
-          # end
-          @frame.binding
-        # rescue Exception => exc
-        rescue
-          p exc
-          binding
-        end
-      filename = fake_eval_filename(str, maxlen)
-      return [filename, b]
-    end
-
   end
 end
 

@@ -74,8 +74,6 @@ class Trepan
 
     @deferred_breakpoints = []
 
-    @user_variables = 0
-
     @breakpoints = []
 
     @history_path = File.expand_path("~/.rbx_trepan")
@@ -175,18 +173,6 @@ class Trepan
       decode_one
     end
 
-  end
-
-  def eval_code(args, filename=nil)
-    obj = @current_frame.run(args, filename)
-
-    idx = @user_variables
-    @user_variables += 1
-
-    str = "$d#{idx}"
-    Rubinius::Globals[str.to_sym] = obj
-    puts "#{str} = #{obj.inspect}\n"
-    obj
   end
 
   def frame(num)
