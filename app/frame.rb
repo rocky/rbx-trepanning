@@ -2,7 +2,7 @@
 class Trepan
   class Frame
     def initialize(debugger, number, loc)
-      @proc = debugger
+      @debugger = debugger
       @number = number
       @location = loc
     end
