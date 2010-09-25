@@ -95,9 +95,9 @@ class Trepan
       my_const(help_constant_sym)
     end
 
-    # Sort of from reference debugger
+    # From reference debugger
     def run_code(str)
-      @proc.frame.instance_eval(str)
+      @proc.dbgr.current_frame.run(str)
     end
 
     def current_method

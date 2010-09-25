@@ -12,19 +12,19 @@ class Trepan
     end
 
     def debug_eval_with_exception(str, max_fake_filename=15)
-      @dbgr.eval_code(str, fake_eval_filename(str))
+      filename, b = get_binding_and_filename(str, max_fake_filename)
+      eval(str, b, filename)
     end
 
-    # def debug_eval_no_errmsg(str, max_fake_filename=15)
-    #   begin
-    #     debug_eval_with_exception(str, max_fake_filename)
-    #   rescue SyntaxError, StandardError, ScriptError => e
-    #     nil
-    #   end
-    # end
+    def debug_eval_no_errmsg(str, max_fake_filename=15)
+      begin
+        debug_eval_with_exception(str, max_fake_filename)
+      rescue SyntaxError, StandardError, ScriptError => e
+        nil
+      end
+    end
 
     def exception_dump(e, stack_trace, backtrace)
-      puts '111'
       str = "#{e.class} Exception:\n\t#{e.message}"
       if stack_trace
         str += "\n" + backtrace.map{|l| "\t#{l}"}.join("\n") rescue nil
@@ -44,16 +44,22 @@ class Trepan
       "(eval #{fake_filename})"
     end
     
-    # def get_binding_and_filename(str, maxlen)
-    #   b = 
-    #     begin
-    #       @frame.binding
-    #     rescue
-    #       binding
-    #     end
-    #   filename = fake_eval_filename(str, maxlen)
-    #   return [filename, b]
-    # end
+    def get_binding_and_filename(str, maxlen)
+      b = 
+        begin
+          # if str == 'x = "#{x}"'
+          #   require_relative '../debugger'
+          #   Trepan.start
+          # end
+          @frame.binding
+        # rescue Exception => exc
+        rescue
+          p exc
+          binding
+        end
+      filename = fake_eval_filename(str, maxlen)
+      return [filename, b]
+    end
 
   end
 end
@@ -66,6 +72,9 @@ if __FILE__ == $0
   def cmdp.errmsg(msg)
     puts "** #{msg}"
   end
+  def cmdp.msg(msg)
+    puts "#{msg}"
+  end
   begin 
     1/0
   rescue Exception => exc
@@ -73,15 +82,22 @@ if __FILE__ == $0
     puts '=' * 40
   end
 
-  # x = 1
-  # require 'thread_frame'
-  # cmdp.instance_variable_set('@frame', RubyVM::ThreadFrame.current)
-  # cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
-  # def cmdp.errmsg(mess) ; puts mess end
-  # puts cmdp.debug_eval('x = "#{x}"')
-  # puts cmdp.debug_eval('x+')
-  # puts cmdp.debug_eval_no_errmsg('y+')
-  # puts cmdp.debug_eval('x+')
-  # puts cmdp.debug_eval('y = 1; x+', 4)
+  x = 10
+
+  require 'rubygems'; require 'require_relative'
+  require_relative '../app/frame'
+  frame = Trepan::Frame.new(self, 1, Rubinius::VM.backtrace(0)[0])
+  cmdp.instance_variable_set('@frame', frame)
+  cmdp.instance_variable_set('@settings', {:stack_trace_on_error => true})
+  def cmdp.errmsg(mess) ; puts mess end
+  # require_relative '../debugger'
+  # Trepan.start
+  puts cmdp.debug_eval('x = "#{x}"')
+  puts '=' * 40
+  puts cmdp.debug_eval('x+')
+  puts cmdp.debug_eval_no_errmsg('y+')
+  puts '=' * 40
+  puts cmdp.debug_eval('x+')
+  puts cmdp.debug_eval('y = 1; x+', 4)
 end
 

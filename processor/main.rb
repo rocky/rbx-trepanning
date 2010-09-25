@@ -83,9 +83,9 @@ class Trepan
     end
 
     def initialize(core, settings={})
-      @core            = core
+      ## @core            = core
+      @dbgr            =  core
       @debug_nest      = 1
-      ## @dbgr            = core.dbgr
       @hidelevels      = {}
       @last_command    = nil
       @last_pos        = [nil, nil, nil, nil, nil, nil]
