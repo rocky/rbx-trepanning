@@ -20,7 +20,8 @@ class Trepan::Command::RestartCommand < Trepan::Command
   # This method runs the command
   def run(args) # :nodoc
 
-    argv = @proc.dbgr.restart_argv
+    dbgr = @proc.dbgr
+    argv = dbgr.restart_argv
     if argv and argv.size > 0
       unless File.executable?(argv[0])
         msg(["File #{argv[0]} not executable.",
@@ -35,7 +36,7 @@ class Trepan::Command::RestartCommand < Trepan::Command
         @proc.run_cmd(%w(save))
         argv.unshift
         # FIXME: Run atexit finalize routines?
-        Dir.chdir(@proc.dbgr.initial_dir) if @proc.dbgr.initial_dir
+        Dir.chdir(dbgr.initial_dir) if dbgr.initial_dir
         exec(*argv)
       end
     else
