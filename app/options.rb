@@ -26,12 +26,12 @@
 #      Show invocation help and exit.
 
 require 'optparse'
-module Rbdbgr
+module Trepanning
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
 
-  Rbdbgr::VERSION = '0.0.1.git' unless defined?(Rbdbgr::VERSION)
-  Rbdbgr::PROGRAM = 'trepan' unless defined?(Rbdbgr::PROGRAM)
+  Trepanning::VERSION = '0.0.1.git' unless defined?(Trepanning::VERSION)
+  Trepanning::PROGRAM = 'trepan' unless defined?(Trepanning::PROGRAM)
 
   def show_version
     "#{PROGRAM} version #{VERSION}"
@@ -104,7 +104,7 @@ EOB
 end
 
 if __FILE__ == $0
-  include Rbdbgr
+  include Trepanning
   opts = {}
   options ={}
   [%w(--help), %w(--version)].each do |o|
@@ -119,5 +119,5 @@ if __FILE__ == $0
   puts '=' * 10
   puts options
   puts '=' * 10
-  puts Rbdbgr::DEFAULT_CMDLINE_SETTINGS
+  puts Trepanning::DEFAULT_CMDLINE_SETTINGS
 end

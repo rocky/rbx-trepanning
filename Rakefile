@@ -119,7 +119,7 @@ end
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbx-trepaning #{Rbdbgr::VERSION} Documentation"
+  rdoc.title    = "rbx-trepaning #{Trepanning::VERSION} Documentation"
 
   rdoc.rdoc_files.include(%w(lib/trepanning.rb processor/*.rb
                              processor/command/*.rb

@@ -41,7 +41,7 @@ class Trepan
   # control of execution.
   #
   def initialize(settings={})
-    @settings = Rbdbgr::DEFAULT_SETTINGS.merge(settings)
+    @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
 
     @restart_argv = 
       if @settings[:set_restart]
