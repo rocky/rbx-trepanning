@@ -114,7 +114,7 @@ class Trepan
   end
 
   attr_reader :variables, :current_frame, :breakpoints
-  attr_reader :locations, :history_io
+  attr_reader :locations, :history_io, :debugee_thread
 
   def self.global(settings={})
     @global ||= new(settings)

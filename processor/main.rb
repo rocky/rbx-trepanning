@@ -108,7 +108,7 @@ class Trepan
       ## LineCache::remap_file('<internal:prelude>', prelude_file)
 
       ## Start with empty thread and frame info.
-      ## frame_teardown 
+      frame_teardown 
 
       # Run initialization routines for each of the "submodule"s.
       # load_cmds has to come first.
@@ -216,7 +216,7 @@ class Trepan
     # This is the main entry point.
     def process_commands
 
-      # frame_setup(frame)
+      frame_setup(frame)
 
       # @unconditional_prehooks.run
       # if breakpoint?

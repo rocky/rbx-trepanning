@@ -25,6 +25,7 @@ class Trepan
                                    # Gives us a way to map non-file
                                    # container objects to a file
                                    # container for display.
+    attr_accessor :stack_size
     # attr_accessor :remap_iseq      # Hash[iseq] -> file container
 
     # attr_accessor :top_frame       # top frame of current thread. Since
@@ -34,19 +35,24 @@ class Trepan
     # attr_reader   :threads2frames  # Hash[thread_id] -> top_frame
     
 
-    # def adjust_frame(frame_num, absolute_pos)
-    #   frame, frame_num = get_frame(frame_num, absolute_pos)
-    #   if frame 
-    #     @frame = frame
-    #     @frame_index = frame_num
-    #     frame_eval_remap if 'EVAL' == @frame.type
-    #     print_location
-    #     @line_no = frame_line() - 1
-    #     @frame
-    #   else
-    #     nil
-    #   end
-    # end
+    def adjust_frame(frame_num, absolute_pos)
+      frame, frame_num = get_frame(frame_num, absolute_pos)
+      if frame 
+        @frame = @dbgr.set_frame(frame_num)
+        @frame_index = frame_num
+        ## frame_eval_remap if 'EVAL' == @frame.type
+
+        ## FIXME: reinstate from location
+        ## print_location
+        msg frame.describe
+        @dbgr.show_code  # from reference debugger - remove
+        
+        ## @line_no = frame_line() - 1
+        @frame
+      else
+        nil
+      end
+    end
 
     # def frame_container(frame, canonicalize=true)
     #   container = 
@@ -89,31 +95,31 @@ class Trepan
     #   end
     # end
 
-    # # Initializes the thread and frame variables: @frame, @top_frame, 
-    # # @frame_index, @current_thread, and @threads2frames
-    # def frame_setup(frame_thread)
-    #   @frame_index        = 0
-    #   @frame = @top_frame = frame_thread
-    #   @current_thread     = @frame.thread
-    #   @stack_size         = @frame.stack_size
+    # Initializes the thread and frame variables: @frame, @top_frame, 
+    # @frame_index, @current_thread, and @threads2frames
+    def frame_setup(frame_thread)
+      @frame_index        = 0
+      @frame = @top_frame = @dbgr.current_frame
+      @current_thread     = @dbgr.debugee_thread
+      @stack_size         = @dbgr.locations.size - @hide_level
 
-    #   @threads2frames   ||= {} 
-    #   @threads2frames[@current_thread] = @top_frame
-    #   @hide_level         = 
-    #     if @settings[:debugstack]
-    #       0
-    #     else
-    #       @hidelevels[@current_thread]
-    #     end
+      @threads2frames   ||= {} 
+      @threads2frames[@current_thread] = @top_frame
+      @hide_level         = 
+        if @settings[:debugstack]
+          0
+        else
+          @hidelevels[@current_thread]
+        end
       
-    #   frame_eval_remap if 'EVAL' == @frame.type
-    # end
+      ## frame_eval_remap if 'EVAL' == @frame.type
+    end
 
-    # # Remove access to thread and frame variables
-    # def frame_teardown
-    #   @top_frame = @frame = @frame_index = @current_thread = nil 
-    #   @threads2frames = {}
-    # end
+    # Remove access to thread and frame variables
+    def frame_teardown
+      @top_frame = @frame = @frame_index = @current_thread = nil 
+      @threads2frames = {}
+    end
 
     def frame_initialize
       @remap_container = {}
@@ -122,31 +128,23 @@ class Trepan
       @hide_level      = 0
     end
 
-    # def get_frame(frame_num, absolute_pos)
-    #   stack_size = @top_frame.stack_size - @hide_level
+    def get_frame(frame_num, absolute_pos)
+      if absolute_pos
+        frame_num += @stack_size if frame_num < 0
+      else
+        frame_num += @frame_index
+      end
 
-    #   if absolute_pos
-    #     frame_num += stack_size if frame_num < 0
-    #   else
-    #     frame_num += @frame_index
-    #   end
+      if frame_num < 0
+        errmsg('Adjusting would put us beyond the newest frame.')
+        return [nil, nil]
+      elsif frame_num >= @stack_size
+        errmsg('Adjusting would put us beyond the oldest frame.')
+        return [nil, nil]
+      end
 
-    #   if frame_num < 0
-    #     errmsg('Adjusting would put us beyond the newest frame.')
-    #     return [nil, nil]
-    #   elsif frame_num >= stack_size
-    #     errmsg('Adjusting would put us beyond the oldest frame.')
-    #     return [nil, nil]
-    #   end
-
-    #   frame = @top_frame.prev(frame_num)
-    #   while 'IFUNC' == frame.type && frame.prev
-    #     frame = frame.prev
-    #     frame_num += 1
-    #   end
-
-    #   [frame, frame_num]
-    # end
+      [frame, frame_num]
+    end
 
     # def get_nonsync_frame(tf)
     #   if (tf.stack_size > 10)
