@@ -1,10 +1,10 @@
 This code builds off of code from the Rubinius reference debugger. At
 the time it was created, Brian Ford and Evan Phoenix were the primary
 forces behind that. See the AUTHORS file in the Rubinius distribution
-for a complete list of Rubinius contributors.
+for a complete list of Rubinius authors.
 
 Ideas and in some cases command structure or exact text from help,
-command, or errors messages have come from gdb and
-ruby-debug. ruby-debug is the brain-child of Kent Sibilev.  Other
-ideas from other debuggers are used here, inparticular the debugger
-that comes distributed with Python, pdb.
+command name, command structure, and errors messages have come from
+gdb and ruby-debug. ruby-debug is the brain-child of Kent Sibilev.
+Other ideas from other debuggers are used here, inparticular the
+debugger that comes distributed with Python, pdb.
