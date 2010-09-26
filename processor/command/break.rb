@@ -22,12 +22,25 @@ To breakpoint on class method start of Trepan line 4, use:
 
   def run(args, temp=false)
     arg_str = args[1..-1].join(' ')
-    m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(arg_str)
-    unless m
-      errmsg "Unrecognized position: '#{arg_str}'"
-      return
+
+    if arg_str.strip == 'main.__script__'
+      # Special hack for program start. Below regexp is two complicated
+      # to muck it up further. 
+      #
+      #    Some people, when confronted with a problem, think ``I
+      #    know, I'll use regular expressions.'' Now they have two
+      #    problems
+      #  Attributed to jwz
+      m = ['main.__script__', 'main', '.', '__script__', nil]
+    else
+      m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(arg_str)
+      unless m
+        errmsg "Unrecognized position: '#{arg_str}'"
+        return
+      end
+      
     end
-    
+
     klass_name = m[1]
     which = m[2]
     name  = m[3]
@@ -36,7 +49,7 @@ To breakpoint on class method start of Trepan line 4, use:
     begin
       klass = debug_eval(klass_name, @settings[:maxstring])
     rescue NameError
-      errmsg "Unable to find class/module: #{m[1]}"
+      errmsg "Unable to find class/module: #{klass_name}"
       ask_deferred klass_name, which, name, line
       return
     end

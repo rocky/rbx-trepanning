@@ -1,12 +1,18 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
+# Are we rubinius? We'll test by checking the specific function we need.
+raise RuntimeError, 'This package is for rubinius only!' unless
+  Object.constants.include?('Rubinius') && 
+  Rubinius.constants.include?('VM') && 
+  Rubinius::VM.respond_to?(:backtrace)
+
 require 'rubygems'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
 ROOT_DIR = File.dirname(__FILE__)
-require File.join %W(#{ROOT_DIR} lib trepanning)
+require File.join %W(#{ROOT_DIR} app options)
 
 def gemspec
   @gemspec ||= eval(File.read('.gemspec'), binding, '.gemspec')
@@ -113,7 +119,7 @@ end
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbx-trepaning #{Trepan::VERSION} Documentation"
+  rdoc.title    = "rbx-trepaning #{Rbdbgr::VERSION} Documentation"
 
   rdoc.rdoc_files.include(%w(lib/trepanning.rb processor/*.rb
                              processor/command/*.rb
@@ -131,4 +137,3 @@ end
 task :clobber_rdoc do
   FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
 end
-

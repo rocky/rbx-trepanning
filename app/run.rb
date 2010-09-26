@@ -31,19 +31,17 @@ module Rbdbgr
     # http://www.ruby-forum.com/topic/187083
     $progname = program_to_debug
     alias $0 $progname
-    dollar_0_tracker = lambda {|val| $program_name = val} 
-    trace_var(:$0, dollar_0_tracker)
+    ## dollar_0_tracker = lambda {|val| $program_name = val} 
+    ## trace_var(:$0, dollar_0_tracker)
 
-    dbgr.debugger(:hide_stack=>true) do
-      dbgr.core.processor.hidelevels[Thread.current] = 
-        RubyVM::ThreadFrame.current.stack_size + 1
-      Kernel::load program_to_debug
-    end
+    ## FIXME: we gets lots of crap before we get to the real stuff.
+    Trepan.start(:set_restart => true) 
+    Kernel::load program_to_debug
 
     # The dance we have to undo to restore $0 and undo the mess created
     # above.
     $0 = old_dollar_0
-    untrace_var(:$0, dollar_0_tracker)
+    ## untrace_var(:$0, dollar_0_tracker)
   end
 
   # Return an ARRAY which makes explicit what array is needed to pass
