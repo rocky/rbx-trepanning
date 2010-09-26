@@ -6,5 +6,5 @@ for a complete list of Rubinius authors.
 Ideas and in some cases command structure or exact text from help,
 command name, command structure, and errors messages have come from
 gdb and ruby-debug. ruby-debug is the brain-child of Kent Sibilev.
-Other ideas from other debuggers are used here, inparticular the
+Other ideas from other debuggers are used here; in particular, the
 debugger that comes distributed with Python, pdb.
