@@ -37,9 +37,9 @@ EOF
   spec.add_dependency('columnize')
   ## spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'
-  ## spec.bindir       = 'bin'
+  spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
-  ## spec.executables = ['trepan']
+  spec.executables = ['trepan']
   spec.files        = FILES.to_a  
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rbx-trepanning'

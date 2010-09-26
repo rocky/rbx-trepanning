@@ -23,7 +23,7 @@ module Rbdbgr
   # Default settings for Debugger run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
     :cmdfiles => [],  # Initialization command files to run
-    :nx       => false, # Don't run user startup file (e.g. .rbdbgrc)
+    :nx       => false, # Don't run user startup file (e.g. .trepanxrc)
     :output   => nil,
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
@@ -38,10 +38,10 @@ module Rbdbgr
       # Of course MS Windows has to be different
       HOME_DIR     =  (ENV['HOME'] || 
                        ENV['HOMEDRIVE'].to_s + ENV['HOMEPATH'].to_s).to_s
-      'rbdbgr.ini'
+      'trepanx.ini'
     else
       HOME_DIR = ENV['HOME'].to_s
-      '.rbdbgrc'
+      '.trepanxrc'
     end unless defined?(CMD_INITFILE_BASE)
   CMD_INITFILE = File.join(HOME_DIR, CMD_INITFILE_BASE) unless
     defined?(CMD_INITFILE)
