@@ -1,0 +1,23 @@
+A debugger for Rubinius 1.1
+
+Right now this debugger is beta code. To install you'll need to install
+columnize (from gemcutter.org) and rbx-linecache, the rubinius branch 
+
+bc. 
+   svn co http://rocky-hacks.rubyforge.org/svn/linecache/branches/rubinius rbx-linecache
+
+There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for Ruby debuggers.
+
+If trepan is installed, here is the preferred way to run:
+
+bc.  require 'trepanning' 
+ Trepan.debug # Don't stop here...
+ work # but stop here.
+
+or if you haven't mucked around with $0 and ARGV, you might try:
+
+bc.  Trepan.debug(:set_restart=>true)
+
+which informs the debugger on how to restart the program (via the restart command) using the values of ARGV and $0 at the time Trepan.debug was called.
+
+There is extensive on-line help. Run "help" inside the debugger.

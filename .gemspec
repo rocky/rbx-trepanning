@@ -7,7 +7,7 @@ require File.dirname(__FILE__) + "/lib/trepanning" unless
   Object.const_defined?(:'Trepan')
 
 FILES = FileList[
-  # 'README.textile',
+  'README.textile',
   'ChangeLog',
   'LICENSE',
   'NEWS',
