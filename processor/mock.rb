@@ -20,6 +20,7 @@ module MockDebugger
     attr_accessor :restart_argv # How to restart us, empty or nil. 
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
+    attr_accessor :processor
 
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
@@ -51,6 +52,7 @@ module MockDebugger
 
     cmdproc = Trepan::CmdProcessor.new(dbgr)
     cmdproc.frame = Rubinius::VM.backtrace(0)[1]
+    dbgr.processor = cmdproc
     
     cmdproc.load_cmds_initialize
     cmds = cmdproc.commands

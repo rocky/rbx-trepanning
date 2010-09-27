@@ -13,6 +13,7 @@ Continue execution until another breakpoint is hit.
 
   def run(args)
     @proc.dbgr.listen
+    @proc.cmdloop_prehooks.run
   end
 end
 

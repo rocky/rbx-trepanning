@@ -47,7 +47,7 @@ class Trepan
         msg frame.describe
         @dbgr.show_code  # from reference debugger - remove
         
-        ## @line_no = frame_line() - 1
+        @line_no = frame.line
         @frame
       else
         nil
@@ -85,21 +85,12 @@ class Trepan
     #   return true
     # end
 
-    # def frame_line
-    #   if @core.event == 'vm-insn' && @frame.iseq
-    #     pc_offset = @frame.pc_offset
-    #     return 0 unless pc_offset
-    #     @frame.iseq.offset2lines(pc_offset)[0]
-    #   else
-    #     (@frame.source_location && @frame.source_location[0]) || 0
-    #   end
-    # end
-
     # Initializes the thread and frame variables: @frame, @top_frame, 
     # @frame_index, @current_thread, and @threads2frames
     def frame_setup(frame_thread)
       @frame_index        = 0
       @frame = @top_frame = @dbgr.current_frame
+      @line_no            = @frame.line
       @current_thread     = @dbgr.debugee_thread
       @stack_size         = @dbgr.locations.size - @hide_level
 

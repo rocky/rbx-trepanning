@@ -20,6 +20,7 @@ execption is stopped in the called method.
     
     # We remove the max position breakpoint no matter what
     max.remove! if max
+    @proc.cmdloop_prehooks.run
     
   end
 end

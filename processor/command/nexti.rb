@@ -46,6 +46,7 @@ Does not step into send instructions.
     end
     
     @proc.dbgr.listen
+    @proc.cmdloop_prehooks.run
   end
   
   def is_a_goto(exec, ip)

@@ -3,7 +3,9 @@
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
 
-require 'rubygems'; require 'require_relative'
+require 'rubygems'
+require 'require_relative'
+require 'linecache'
 ## require_relative '../app/condition'
 ## require_relative '../app/file'
 ## require_relative '../app/thread'
@@ -278,41 +280,28 @@ class Trepan
         lineno    = Integer(arg)
       rescue
       else
-        container = frame_container(@frame, false)
-        filename  = container[1] unless old_mod
-        return nil, [container[0], canonic_file(filename)], lineno
+        filename  = @frame.file
+        return nil, canonic_file(filename), lineno
       end
 
       # Next see if argument is a file name 
       if LineCache::cached?(arg)
-        return nil, [container && container[0], canonic_file(arg)], 1 
-      else
-        matches = find_scripts(arg)
-        if matches.size > 1
-          if show_errmsg
-            errmsg "#{arg} is matches several files:"
-            errmsg Columnize::columnize(matches.sort, 
-                                        @settings[:width], ' ' * 4, 
-                                        true, true, ' ' * 2).chomp
-          end
-          return nil, nil, nil
-        elsif matches.size == 1
-          LineCache::cache(matches[0])
-          return nil, ['file', matches[0]], 1
-        end
+        return nil, canonic_file(arg), 1 
+      elsif File.readable?(arg)
+        return nil, canonic_file(arg), 1 
       end
 
-      # How about a method name with an instruction sequence?
-      iseq = object_iseq(arg)
-      if iseq && iseq.source_container[0] == 'file'
-        filename = iseq.source_container[1]
-        line_no = iseq.offsetlines.values.flatten.min
-        return arg, ['file', canonic_file(filename)], line_no
-      end
+      # # How about a method name with an instruction sequence?
+      # iseq = object_iseq(arg)
+      # if iseq && iseq.source_container[0] == 'file'
+      #   filename = iseq.source_container[1]
+      #   line_no = iseq.offsetlines.values.flatten.min
+      #   return arg, ['file', canonic_file(filename)], line_no
+      # end
 
       if show_errmsg
         unless (allow_offset && arg.size > 0 && arg[0].downcase == 'o')
-          errmsg("#{arg} is not a line number, read-in filename or method " +
+          errmsg("#{arg} is not a line number, filename or method " +
                  "we can get location information about")
         end
       end

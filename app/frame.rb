@@ -20,22 +20,6 @@ class Trepan
                      @location.static_scope)
     end
 
-    def method
-      @location.method
-    end
-
-    def line
-      @location.line
-    end
-
-    def ip
-      @location.ip
-    end
-
-    def local_variables
-      method.local_names
-    end
-
     def describe(opts = {})
       if method.required_args > 0
         locals = []
@@ -71,5 +55,26 @@ class Trepan
 
       str
     end
+
+    def file
+      @location.file
+    end
+
+    def ip
+      @location.ip
+    end
+
+    def line
+      @location.line
+    end
+
+    def local_variables
+      method.local_names
+    end
+
+    def method
+      @location.method
+    end
+
   end
 end

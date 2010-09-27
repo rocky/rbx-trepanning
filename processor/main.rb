@@ -215,7 +215,7 @@ class Trepan
 
       frame_setup(frame)
 
-      # @unconditional_prehooks.run
+      @unconditional_prehooks.run
       # if breakpoint?
       #   @last_pos = [@frame.source_container, frame_line,
       #                @stack_size, @current_thread, @core.event, 
