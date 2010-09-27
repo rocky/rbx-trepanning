@@ -11,7 +11,7 @@ bc.
     $ cd rbx-lineache
     $ rake install # add "sudo" if needed
 
-There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for Ruby debuggers.
+There is a "google group mailing list":http://groups.google.com/group/ruby-debugger for Ruby debuggers.
 
 If rbx-trepanning is installed, here is the preferred way to run:
 
