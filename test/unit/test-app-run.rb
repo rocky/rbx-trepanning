@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-require 'rubygems'; require 'require_relative'
 require 'test/unit'
+require 'rubygems'; require 'require_relative'
 require_relative '../../app/run'
 
 class TestAppRun < Test::Unit::TestCase

@@ -325,18 +325,19 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  # require_relative '../lib/trepanning'
-  # dbg =  Trepan.new(:nx => true)
-  # dbg.core.processor.msg('I am main')
-  # cmdproc = dbg.core.processor
-  # cmdproc.errmsg('Whoa!')
-  # cmds = cmdproc.commands
-  # p cmdproc.aliases
-  # cmd_name, cmd_obj = cmds.first
-  # puts cmd_obj.class.const_get(:HELP)
-  # puts cmd_obj.class.const_get(:SHORT_HELP)
+  require_relative '../lib/trepanning'
+  dbg =  Trepan.new(:nx => true)
+  cmdproc = dbg.instance_variable_get('@processor')
+  cmdproc.msg('I am main')
+  cmdproc.errmsg('Whoa!')
+  cmds = cmdproc.commands
+  p cmdproc.aliases
+  p cmdproc.commands.keys.sort
+  cmd_name, cmd_obj = cmds.first
+  puts cmd_obj.class.const_get(:HELP)
+  puts cmd_obj.class.const_get(:SHORT_HELP)
 
-  # puts cmdproc.compute_prompt
+  ## puts cmdproc.compute_prompt
   # Thread.new{ puts cmdproc.compute_prompt }.join
 
   # x = Thread.new{ Thread.pass; x = 1 }
@@ -347,18 +348,18 @@ if __FILE__ == $0
 
 
   # if ARGV.size > 0
-  #   dbg.core.processor.msg('Enter "q" to quit')
-  #   dbg.proc_process_commands
+  #   cmdproc.msg('Enter "q" to quit')
+  #   cmdproc.process_commands
   # else
   #   $input = []
-  #   class << dbg.core.processor
+  #   class << cmdproc
   #     def read_command
   #       $input.shift
   #     end
   #   end
   #   $input = ['1+2']
-  #   dbg.core.processor.process_command_and_quit?
+  #   cmdproc.process_command_and_quit?
   #   $input = ['!s = 5']  # ! means eval line 
-  #   dbg.core.processor.process_command_and_quit?
+  #   cmdproc.process_command_and_quit?
   # end
 end

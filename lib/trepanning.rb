@@ -43,6 +43,18 @@ class Trepan
   def initialize(settings={})
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
 
+    @processor = CmdProcessor.new(self)
+    @intf     = [Trepan::UserInterface.new(@input, @output)]
+    @settings[:cmdfiles].each do |cmdfile|
+      add_command_file(cmdfile)
+    end if @settings.member?(:cmdfiles)
+    ## @core     = Core.new(self, @settings[:core_opts])
+    if @settings[:initial_dir]
+      Dir.chdir(@settings[:initial_dir])
+    else
+      @settings[:initial_dir] = Dir.pwd
+    end
+    @initial_dir  = @settings[:initial_dir]
     @restart_argv = 
       if @settings[:set_restart]
         [File.expand_path($0)] + ARGV
@@ -51,9 +63,7 @@ class Trepan
       else 
         nil
       end
-    
-    @processor = CmdProcessor.new(self)
-    @intf     = [Trepan::UserInterface.new(@input, @output)]
+
     @processor.dbgr = self
 
     @thread = nil
@@ -96,6 +106,11 @@ class Trepan
     @history_io.sync = true
 
     @root_dir = ROOT_DIR
+
+    # Run user debugger command startup files.
+    add_startup_files unless @settings[:nx]
+    add_command_file(@settings[:restore_profile]) if 
+      @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
   end
 
   attr_reader :variables, :current_frame, :breakpoints
@@ -138,6 +153,31 @@ class Trepan
 
     Thread.current.set_debugger_thread @thread
     self
+  end
+
+  def add_command_file(cmdfile, stderr=$stderr)
+    unless File.readable?(cmdfile)
+      if File.exists?(cmdfile)
+        stderr.puts "Command file '#{cmdfile}' is not readable."
+        return
+      else
+        stderr.puts "Command file '#{cmdfile}' does not exist."
+        stderr.puts caller
+        return
+      end
+    end
+    @intf << Trepan::ScriptInterface.new(cmdfile, @output)
+  end
+
+  def add_startup_files()
+    seen = {}
+    cwd_initfile = File.join('.', Trepanning::CMD_INITFILE_BASE)
+    [cwd_initfile, Trepanning::CMD_INITFILE].each do |initfile|
+      full_initfile_path = File.expand_path(initfile)
+      next if seen[full_initfile_path]
+      add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
+      seen[full_initfile_path] = true
+    end
   end
 
   # Stop and wait for a debuggee thread to send us info about
