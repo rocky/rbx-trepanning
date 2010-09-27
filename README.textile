@@ -5,6 +5,7 @@ columnize (from gemcutter.org) and rbx-linecache, the rubinius branch
 
 bc. 
     $ gem install columnize
+    $ gem install rbx-require-relative
     ...
     $ svn co http://rocky-hacks.rubyforge.org/svn/linecache/branches/rubinius rbx-linecache
     $ cd rbx-lineache
