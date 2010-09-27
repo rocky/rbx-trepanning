@@ -41,7 +41,7 @@ class Trepan
           if try_filename && 
               line = LineCache::getline(try_filename, line_number, 
                                         @reload_on_change)
-            LineCache::remap_file(try_filename, filename)
+            LineCache::remap_file(filename, try_filename)
           end
         end
       end

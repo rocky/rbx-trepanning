@@ -1,3 +1,121 @@
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* README.textile: README tyhpo
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Add rbx-require-relative to README
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Readme typo
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Readme typo
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Small readme tweak
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, README.textile: Add README
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-bin-trepan.rb: Add unit test for bin/trepan
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/main.rb,
+	test/unit/test-app-options.rb, test/unit/test-app-run.rb: Run
+	debugger user profile and set initial directory. Add options test.
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/max_subcmd/list.rb,
+	processor/command/show_subcmd/max_subcmd/list.rb: Add "set/show max
+	list"
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb,
+	processor/command/set_subcmd/max_subcmd/stack.rb,
+	processor/default.rb: Add "set/show max list"
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* app/frame.rb, processor/command/continue.rb,
+	processor/command/list.rb, processor/command/nexti.rb,
+	processor/command/set_subcmd/auto_subcmd/list.rb,
+	processor/command/show_subcmd/auto_subcmd/list.rb,
+	processor/command/step.rb, processor/frame.rb, processor/main.rb,
+	processor/mock.rb, processor/validate.rb: Add "list" and set/show
+	autolist commands. Somewhat buggy.
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, lib/trepanning.rb, processor/command/directory.rb,
+	processor/command/kill.rb, processor/default.rb,
+	processor/location.rb, processor/main.rb: Add gdb-like 'directory'
+	command so we can trace into rubinius source.
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, lib/trepanning.rb: Need require-relative
+	dependency.
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/restart.rb: Sync with rb-trepanning
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/default.rb, app/options.rb, app/run.rb, bin/trepan,
+	lib/trepanning.rb, processor/command/restart.rb,
+	processor/default.rb, processor/mock.rb, processor/validate.rb,
+	test/unit/test-app-run.rb: Rbdbgr->Trepanning
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* THANKS: Text hacking
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* THANKS: Text hacking
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* processor/command/down.rb, processor/command/up.rb: Add "up" and
+	"down" commands - this time, for sure!
+
+2010-09-26  rocky <rockyb@rubyforge.org>
+
+	* doc/debugger.html, lib/trepanning.rb, processor/command/frame.rb,
+	processor/frame.rb, processor/main.rb: Add "up" and "down" commands.
+	Renstatate more of trepan's CmdProcessor frame routines.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, app/default.rb, app/options.rb: Add executable. Pick up
+	right command init file.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, AUTHORS, Rakefile, THANKS, app/options.rb, app/run.rb,
+	bin/.gitignore, bin/trepan, processor/command/break.rb: Add code to
+	invoke from outset. Complete with debugger options. Needs
+	improvement to skip over the crap before main.__script__ starts.
+	Numerous other small changes.
+
+2010-09-25  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, .gitignore, AUTHORS, ChangeLog, NEWS, Rakefile,
+	debugger.rb, lib/.gitignore, lib/trepanning.rb, processor/eval.rb,
+	processor/mock.rb: Administrivia: do things to make a gem.
+	debugger.rb -> lib/trepanning.rb So you now: require 'trepanning'
+
 2010-09-25  rocky <rockyb@rubyforge.org>
 
 	* doc/.gitignore, doc/debugger.html: Start revised documentation.
