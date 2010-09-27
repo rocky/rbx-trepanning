@@ -137,3 +137,6 @@ end
 task :clobber_rdoc do
   FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
 end
+
+desc "Remove built files"
+task :clean => [:clobber_package, :clobber_rdoc]

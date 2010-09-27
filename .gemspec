@@ -25,6 +25,8 @@ FILES = FileList[
 
 
 Gem::Specification.new do |spec|
+  spec.add_dependency('columnize')
+  spec.add_dependency('rbx-require-relative')
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
@@ -34,7 +36,6 @@ Some of the core debugger concepts have been rethought. As a result, some of thi
 
 This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
 EOF
-  spec.add_dependency('columnize')
   ## spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'

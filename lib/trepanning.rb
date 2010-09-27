@@ -64,7 +64,6 @@ class Trepan
         end
       end
     end
-
     
     @processor = CmdProcessor.new(self)
     @intf     = [Trepan::UserInterface.new(@input, @output)]
