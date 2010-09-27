@@ -53,7 +53,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup(name)
   %w(fooo 1 -1 HUP -9).each do |arg| 
     puts "#{name} #{arg}"
-  #   cmd.run([name, arg])
+    cmd.run([name, arg])
     puts '=' * 40
   end
 end

@@ -27,6 +27,7 @@ FILES = FileList[
 Gem::Specification.new do |spec|
   spec.add_dependency('columnize')
   spec.add_dependency('rbx-require-relative')
+  spec.add_dependency('rbx-linecache')
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF

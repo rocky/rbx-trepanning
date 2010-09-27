@@ -51,19 +51,6 @@ class Trepan
       else 
         nil
       end
-
-    @file_lines = Hash.new do |hash, path|
-      if File.exists? path
-        hash[path] = File.readlines(path)
-      else
-        ab_path = File.join(@root_dir, path)
-        if File.exists? ab_path
-          hash[path] = File.readlines(ab_path)
-        else
-          hash[path] = []
-        end
-      end
-    end
     
     @processor = CmdProcessor.new(self)
     @intf     = [Trepan::UserInterface.new(@input, @output)]
@@ -71,7 +58,6 @@ class Trepan
 
     @thread = nil
     @frames = []
-
     ## FIXME: Delete these and use the ones in processor/default instead.
     @variables = {
       :show_bytecode => false,
@@ -277,8 +263,8 @@ class Trepan
 
   def show_code(line=@current_frame.line)
     path = @current_frame.method.active_path
-
-    if str = @file_lines[path][line - 1]
+    str = @processor.line_at(path, line)
+    unless str.nil?
       if @variables[:highlight]
         fin = @current_frame.method.first_ip_on_line(line + 1)
         name = send_between(@current_frame.method, @current_frame.ip, fin)

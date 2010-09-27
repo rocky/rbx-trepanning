@@ -2,14 +2,13 @@
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
-## require 'linecache'
 require 'set'
 require 'pathname'  # For cleanpath
 
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default breakpoint eval load_cmds frame hook msg running validate).each do
+%w(default breakpoint eval load_cmds location frame hook msg running validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -104,8 +103,6 @@ class Trepan
       # a global default profile which gets read.
       prelude_file = File.expand_path(File.join(File.dirname(__FILE__), 
                                                 %w(.. data prelude.rb)))
-      ## LineCache::cache(prelude_file)
-      ## LineCache::remap_file('<internal:prelude>', prelude_file)
 
       ## Start with empty thread and frame info.
       frame_teardown 
