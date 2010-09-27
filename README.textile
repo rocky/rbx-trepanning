@@ -7,7 +7,7 @@ bc.
     $ gem install columnize
     ...
     $ svn co http://rocky-hacks.rubyforge.org/svn/linecache/branches/rubinius rbx-linecache
-    $ cd rubiniux-lineache
+    $ cd rbx-lineache
     $ rake install # add "sudo" if needed
 
 There is a "google group mailing list:http://groups.google.com/group/ruby-debugger" for Ruby debuggers.
