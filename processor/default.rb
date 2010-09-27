@@ -20,7 +20,7 @@ class Trepan
       :directory     =>            # last-resort path-search for files
                     '$cdir:$cwd',  # that are not fully qualified.
 
-      :listsize      => 10,        # Number of lines in list 
+      :maxlist       => 10,        # Number of source lines in list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
                                    # will be truncated to this length when
