@@ -1,5 +1,6 @@
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
+require_relative '../../app/breakpoint'
 
 class Trepan::Command::NextCommand < Trepan::Command
 
@@ -65,7 +66,7 @@ at the current position of the caller.
     exec = f.method
     ip = f.ip
     
-    bp = Trepan::BreakPoint.for_ip(exec, ip)
+    bp = Trepaning::BreakPoint.for_ip(exec, ip)
     bp.for_step!
     bp.activate
     
@@ -78,8 +79,8 @@ at the current position of the caller.
       ip = ips
     else
       one, two = ips
-      bp1 = Trepan::BreakPoint.for_ip(exec, one)
-      bp2 = Trepan::BreakPoint.for_ip(exec, two)
+      bp1 = Trepanning::BreakPoint.for_ip(exec, one)
+      bp2 = Trepanning::BreakPoint.for_ip(exec, two)
       
       bp1.paired_with(bp2)
       bp2.paired_with(bp1)
@@ -98,7 +99,7 @@ at the current position of the caller.
       return nil
     end
     
-    bp = Trepan::BreakPoint.for_ip(exec, ip)
+    bp = Trepanning::BreakPoint.for_ip(exec, ip)
     bp.for_step!
     bp.activate
     

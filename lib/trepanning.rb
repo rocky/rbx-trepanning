@@ -5,6 +5,7 @@ require_relative '../app/frame'
 require_relative '../processor/main'
 require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
+require_relative '../app/breakpoint'
 require_relative '../app/display'
 require_relative '../interface/user'     # user interface (includes I/O)
   
@@ -143,7 +144,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = BreakPoint.new "<start>", method, 0, 0, 0
+    bp = Trepanning::BreakPoint.new "<start>", method, 0, 0, 0
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
@@ -254,7 +255,7 @@ class Trepan
     end
 
     id = @breakpoints.size
-    bp = BreakPoint.new(descriptor, exec, ip, line, id+1)
+    bp = Treapanning::BreakPoint.new(descriptor, exec, ip, line, id+1)
     bp.activate
 
     @breakpoints << bp
@@ -265,8 +266,8 @@ class Trepan
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)
-    dbp = DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
-                                line, @deferred_breakpoints)
+    dbp = Trepanning::DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
+                                             line, @deferred_breakpoints)
     @deferred_breakpoints << dbp
     @breakpoints << dbp
   end
