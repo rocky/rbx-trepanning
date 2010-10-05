@@ -33,28 +33,20 @@ module Trepanning
       @paired_bp = nil
 
       opts = BRKPT_DEFAULT_SETTINGS.merge(opts)
-      BRKPT_DEFAULT_SETTINGS.keys.each do |key|
+      opts.keys.each do |key|
         self.instance_variable_set('@'+key.to_s, opts[key])
       end
 
       @hits = 0
-      unless @id
-        @id = @@next_id 
-        @@next_id += 1
-      end
+      # unless @id
+      #   @id = @@next_id 
+      #   @@next_id += 1
+      # end
 
       @set = false
     end
 
     attr_reader :method, :ip, :line, :paired_bp, :descriptor
-
-    def location
-      "#{@method.active_path}:#{@line} (@#{ip})"
-    end
-
-    def describe
-      "#{descriptor} - #{location}"
-    end
 
     def for_step!
       @temp = true
@@ -78,13 +70,6 @@ module Trepanning
       @method.set_breakpoint @ip, self
     end
 
-    def remove!
-      return unless @set
-
-      @set = false
-      @method.clear_breakpoint(@ip)
-    end
-
     def hit!
       return unless @temp
 
@@ -93,8 +78,26 @@ module Trepanning
       @paired_bp.remove! if @paired_bp
     end
 
+    # def condition?(bind)
+    #   if eval(@condition, bind)
+    #     if @ignore > 0
+    #       @ignore -= 1
+    #       return false
+    #     else
+    #       @hits += 1
+    #       return true
+    #     end
+    #   else
+    #     return false
+    #   end
+    # end
+
     def delete!
       remove!
+    end
+
+    def describe
+      "#{descriptor} - #{location}"
     end
 
     def disable
@@ -119,6 +122,21 @@ module Trepanning
     # 'b': disabled breakpoint
     def icon_char
       temp? ? 't' : (enabled? ? 'B' : 'b')
+    end
+
+    def location
+      "#{@method.active_path}:#{@line} (@#{ip})"
+    end
+
+    def remove!
+      return unless @set
+
+      @set = false
+      @method.clear_breakpoint(@ip)
+    end
+
+    def temp?
+      @temp
     end
 
   end
@@ -171,5 +189,13 @@ module Trepanning
         @list.delete self
       end
     end
+  end
+end
+
+if __FILE__ == $0
+  method = Rubinius::CompiledMethod.of_sender
+  bp = Trepanning::BreakPoint.new '<start>', method, 1, 2, 0
+  %w(describe location icon_char hits temp? enabled? condition).each do |field|
+    puts "#{field}: #{bp.send(field.to_sym)}"
   end
 end

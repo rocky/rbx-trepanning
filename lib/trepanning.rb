@@ -144,7 +144,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = Trepanning::BreakPoint.new "<start>", method, 0, 0, 0
+    bp = Trepanning::BreakPoint.new '<start>', method, 0, 0, 0
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
