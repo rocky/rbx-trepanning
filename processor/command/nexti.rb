@@ -40,7 +40,7 @@ Does not step into send instructions.
     else
       line = exec.line_from_ip(next_ip)
       
-      bp = Trepanning::BreakPoint.for_ip(exec, next_ip)
+      bp = Trepanning::BreakPoint.for_ip(exec, next_ip, :event => :Instruction)
       bp.for_step!
       bp.activate
     end

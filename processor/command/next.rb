@@ -66,7 +66,7 @@ at the current position of the caller.
     exec = f.method
     ip = f.ip
     
-    bp = Trepanning::BreakPoint.for_ip(exec, ip)
+    bp = Trepanning::BreakPoint.for_ip(exec, ip, {:event => :Return})
     bp.for_step!
     bp.activate
     
@@ -79,8 +79,8 @@ at the current position of the caller.
       ip = ips
     else
       one, two = ips
-      bp1 = Trepanning::BreakPoint.for_ip(exec, one)
-      bp2 = Trepanning::BreakPoint.for_ip(exec, two)
+      bp1 = Trepanning::BreakPoint.for_ip(exec, one, {:event => :Statement})
+      bp2 = Trepanning::BreakPoint.for_ip(exec, two, {:event => :Statement})
       
       bp1.paired_with(bp2)
       bp2.paired_with(bp1)
@@ -99,7 +99,7 @@ at the current position of the caller.
       return nil
     end
     
-    bp = Trepanning::BreakPoint.for_ip(exec, ip)
+    bp = Trepanning::BreakPoint.for_ip(exec, ip, {:event => :Statement})
     bp.for_step!
     bp.activate
     

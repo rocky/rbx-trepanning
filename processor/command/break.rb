@@ -66,7 +66,8 @@ To breakpoint on class method start of Trepan line 4, use:
       return
     end
 
-    bp = @proc.dbgr.set_breakpoint_method(arg_str.strip, method, line)
+    bp = @proc.dbgr.set_breakpoint_method(arg_str.strip, method, line,
+                                          {:event => :Breakpoint})
     
     bp.set_temp! if temp
     

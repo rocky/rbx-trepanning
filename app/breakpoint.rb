@@ -3,6 +3,8 @@ module Trepanning
 
     attr_accessor :condition # If non-nil, this is a String to be eval'd
                              # which must be true to enter the debugger
+    attr_reader   :event     # Symbol. Optional type of event associated with
+                             # breakpoint.
     attr_accessor :hits      # Fixnum. The number of timea a breakpoint
                              # has been hit (with a true condition). Do
                              # we want to (also) record hits independent
@@ -15,16 +17,18 @@ module Trepanning
       :condition => 'true',
       :enabled   => 'true',
       :temp      =>  false,
+      :event     =>  :Unknown,
     } unless defined?(BRKPT_DEFAULT_SETTINGS)
-    
-    def self.for_ip(exec, ip, name=:anon)
+
+    def self.for_ip(exec, ip, opts={})
+      name = opts[:name] || :anon
       line = exec.line_from_ip(ip)
 
-      BreakPoint.new(name, exec, ip, line)
+      BreakPoint.new(name, exec, ip, line, nil, opts)
     end
 
-    def initialize(descriptor, method, ip, line, id=nil, opts = {})
-      @descriptor = descriptor
+    def initialize(name, method, ip, line, id=nil, opts = {})
+      @descriptor = name
       @id = id
       @method = method
       @ip = ip

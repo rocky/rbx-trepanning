@@ -142,7 +142,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = Trepanning::BreakPoint.new '<start>', method, 0, 0, 0
+    bp = Trepanning::BreakPoint.new('<start>', method, 0, 0, 0, {:event => :Start})
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
@@ -198,16 +198,21 @@ class Trepan
     @frames = []
 
     @locations = locs
-    @breakpoint = bp
+    @processor.instance_variable_set('@brkpt', bp)
     @debuggee_thread = thr
     @channel = chan
 
     @current_frame = @processor.frame = frame(0)
 
-    bp.hit! if bp
-
+    event = 
+      if bp
+        bp.hit! 
+        bp.event.to_s || 'Breakpoint'
+      else
+        '??'
+      end
     puts
-    info "Breakpoint: #{@current_frame.describe}"
+    info "#{event}: #{@current_frame.describe}"
     show_code
 
     if @variables[:show_bytecode]

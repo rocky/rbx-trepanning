@@ -31,9 +31,14 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
     # end
 
     if @proc.brkpt
-      msg('It is stopped at %sbreakpoint %d.' %
-          [@proc.brkpt.temp? ? 'temporary ' : '',
-           @proc.brkpt.id])
+      if @proc.brkpt.event == :Breakpoint
+        msg('It stopped at %sbreakpoint %d.' %
+            [@proc.brkpt.temp? ? 'temporary ' : '',
+             @proc.brkpt.id])
+      else
+        article = (@proc.brkpt.event == :Instruction) ? 'an' : 'a'
+        msg("It stopped at #{article} #{@proc.brkpt.event.to_s} event.")
+      end
     end
   end
 
