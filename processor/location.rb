@@ -49,30 +49,17 @@ class Trepan
       return line.lstrip.chomp
     end
 
-    # def loc_and_text(loc, frame, line_no, source_container)
-    #   if source_container[0] != 'file'
-    #     via = loc
-    #     while source_container[0] != 'file' && frame.prev do
-    #       frame            = frame.prev
-    #       source_container = frame_container(frame, false)
-    #     end
-    #     if source_container[0] == 'file'
-    #       line_no  = frame.source_location[0]
-    #       filename  = source_container[1]
-    #       loc      += " via #{canonic_file(filename)}:#{line_no}"
-    #       text      = line_at(filename, line_no)
-    #     end
-    #   else
-    #     container = source_container[1]
-    #     map_file, map_line = LineCache::map_file_line(container, line_no)
-    #     if [container, line_no] != [map_file, map_line]
-    #       loc += " remapped #{canonic_file(map_file)}:#{map_line}"
-    #     end
+    def loc_and_text(loc)
+      filename = @frame.location.method.active_path
+      line_no  = @frame.location.line
+      map_file, map_line = LineCache::map_file_line(filename, line_no)
+      if [filename, line_no] != [map_file, map_line]
+        loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+      end
         
-    #     text  = line_at(container, line_no)
-    #   end
-    #   [loc, line_no, text]
-    # end
+      text  = line_at(filename, line_no)
+      [loc, line_no, text]
+    end
 
     def print_location
       # if %w(c-call call).member?(@event)
@@ -93,14 +80,13 @@ class Trepan
                   else
                     (EVENT2ICON[@event] || @event)
                   end
-      ## @line_no  = frame_line
 
-      # loc = source_location_info(source_container, @line_no, @frame)
-      # loc, @line_no, text = loc_and_text(loc, @frame, @line_no, 
-      #                                    source_container)
+      @line_no  = @frame.location.line
 
-      ## msg "#{ev} (#{loc})"
-      msg "#{ev} (#{@frame.describe})"
+      loc = source_location_info
+      loc, @line_no, text = loc_and_text(loc)
+
+      msg "#{ev} (#{loc})"
 
       # if %w(return c-return).member?(@core.event)
       #   retval = Trepan::Frame.value_returned(@frame, @core.event)
@@ -113,18 +99,18 @@ class Trepan
       end
     end
 
-    # def source_location_info(source_container, line_no, frame)
-    #   filename  = source_container[1]
-    #   canonic_filename = 
-    #     if (0 == filename.index('(eval')) && frame.prev &&
-    #         (eval_str = Trepan::Frame.eval_string(frame.prev))
-    #       'eval ' + safe_repr(eval_str, 15)
-    #     else
-    #       canonic_file(filename)
-    #     end
-    #   loc = "#{canonic_filename}:#{line_no}"
-    #   return loc
-    # end # source_location_info
+    def source_location_info
+      filename  = @frame.location.method.active_path
+      canonic_filename = 
+        # if (0 == filename.index('(eval')) && frame.prev &&
+        #     (eval_str = Trepan::Frame.eval_string(frame.prev))
+        #   'eval ' + safe_repr(eval_str, 15)
+        # else
+          canonic_file(filename)
+        # end
+      loc = "#{canonic_filename}:#{@frame.location.line}"
+      return loc
+    end 
 
   end
 end

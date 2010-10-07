@@ -212,8 +212,6 @@ class Trepan
         '??'
       end
     @processor.instance_variable_set('@event', event)
-    ## puts
-    ## info "#{event}: #{@current_frame.describe}"
     @processor.print_location
     show_code
 
@@ -280,15 +278,15 @@ class Trepan
     path = @current_frame.method.active_path
     str = @processor.line_at(path, line)
     unless str.nil?
-      if @variables[:highlight]
-        fin = @current_frame.method.first_ip_on_line(line + 1)
-        name = send_between(@current_frame.method, @current_frame.ip, fin)
+      # if @variables[:highlight]
+      #   fin = @current_frame.method.first_ip_on_line(line + 1)
+      #   name = send_between(@current_frame.method, @current_frame.ip, fin)
 
-        if name
-          str = str.gsub name.to_s, "\033[0;4m#{name}\033[0m"
-        end
-      end
-      info "#{line}: #{str}"
+      #   if name
+      #     str = str.gsub name.to_s, "\033[0;4m#{name}\033[0m"
+      #   end
+      # end
+      # info "#{line}: #{str}"
     else
       show_bytecode(line)
     end
