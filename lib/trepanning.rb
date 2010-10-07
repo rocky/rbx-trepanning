@@ -6,7 +6,7 @@ require_relative '../processor/main'
 require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'
-require_relative '../app/display'
+require_relative '../app/display'        # FIXME: remove
 require_relative '../interface/user'     # user interface (includes I/O)
   
 #
@@ -33,7 +33,7 @@ class Trepan
   DBGR_DIR = File.dirname(RequireRelative.abs_file)
   ROOT_DIR = File.expand_path(File.join(DBGR_DIR, "/.."))
 
-  include Trepan::Display
+  include Trepan::Display  # FIXME: remove
 
   # Create a new debugger object. The debugger starts up a thread
   # which is where the command line interface executes from. Other
@@ -142,7 +142,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = Trepanning::BreakPoint.new('<start>', method, 0, 0, 0, {:event => :Start})
+    bp = Trepanning::BreakPoint.new('<start>', method, 0, 0, 0, {:event => 'start'})
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
@@ -207,12 +207,14 @@ class Trepan
     event = 
       if bp
         bp.hit! 
-        bp.event.to_s || 'Breakpoint'
+        bp.event || 'brkpt'
       else
         '??'
       end
-    puts
-    info "#{event}: #{@current_frame.describe}"
+    @processor.instance_variable_set('@event', event)
+    ## puts
+    ## info "#{event}: #{@current_frame.describe}"
+    @processor.print_location
     show_code
 
     if @variables[:show_bytecode]

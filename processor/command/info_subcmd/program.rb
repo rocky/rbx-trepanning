@@ -36,8 +36,7 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
             [@proc.brkpt.temp? ? 'temporary ' : '',
              @proc.brkpt.id])
       else
-        article = (@proc.brkpt.event == :Instruction) ? 'an' : 'a'
-        msg("It stopped at #{article} #{@proc.brkpt.event.to_s} event.")
+        msg("It stopped at a #{@proc.event} event.")
       end
     end
   end

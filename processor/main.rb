@@ -34,6 +34,7 @@ class Trepan
                                    # this is the temporary value for the
                                    # next stop while settings is the default
                                    # value to use.
+    attr_accessor :event           # Stop event
     attr_accessor :leave_cmd_loop  # Commands set this to signal to leave
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
@@ -70,6 +71,7 @@ class Trepan
         'line'           => '--',
         'raise'          => '!!',
         'return'         => '<-',
+        'start'          => '>>',
         'switch'         => 'sw',
         'trace-var'      => '$V',
         'unknown'        => '?!',

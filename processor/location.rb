@@ -74,42 +74,44 @@ class Trepan
     #   [loc, line_no, text]
     # end
 
-    # def print_location
-    #   if %w(c-call call).member?(@core.event)
-    #     # FIXME: Fix Ruby so we don't need this workaround? 
-    #     # See also where.rb
-    #     opts = {}
-    #     opts[:class] = @core.hook_arg if 
-    #       'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index 
-    #     msg format_stack_call(@frame, opts) 
-    #   elsif 'raise' == @core.event
-    #     msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-    #   end
+    def print_location
+      # if %w(c-call call).member?(@event)
+      #   # FIXME: Fix Ruby so we don't need this workaround? 
+      #   # See also where.rb
+      #   opts = {}
+      #   opts[:class] = @core.hook_arg if 
+      #     'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index 
+      #   msg format_stack_call(@frame, opts) 
+      # elsif 'raise' == @core.event
+      #   msg @core.hook_arg.inspect if @core.hook_arg # Exception object
+      # end
 
-    #   text      = nil
-    #   source_container = frame_container(@frame, false)
-    #   ev        = if @core.event.nil? || 0 != @frame_index
-    #                 '  ' 
-    #               else
-    #                 (EVENT2ICON[@core.event] || @core.event)
-    #               end
-    #   @line_no  = frame_line
+      text      = nil
+      # source_container = frame_container(@frame, false)
+      ev        = if @event.nil? || 0 != @frame_index
+                    '  ' 
+                  else
+                    (EVENT2ICON[@event] || @event)
+                  end
+      ## @line_no  = frame_line
 
-    #   loc = source_location_info(source_container, @line_no, @frame)
-    #   loc, @line_no, text = loc_and_text(loc, @frame, @line_no, 
-    #                                      source_container)
-    #   msg "#{ev} (#{loc})"
+      # loc = source_location_info(source_container, @line_no, @frame)
+      # loc, @line_no, text = loc_and_text(loc, @frame, @line_no, 
+      #                                    source_container)
 
-    #   if %w(return c-return).member?(@core.event)
-    #     retval = Trepan::Frame.value_returned(@frame, @core.event)
-    #     msg 'R=> %s' % retval.inspect 
-    #   end
+      ## msg "#{ev} (#{loc})"
+      msg "#{ev} (#{@frame.describe})"
+
+      # if %w(return c-return).member?(@core.event)
+      #   retval = Trepan::Frame.value_returned(@frame, @core.event)
+      #   msg 'R=> %s' % retval.inspect 
+      # end
       
-    #   if text && !text.strip.empty?
-    #     msg text
-    #     @line_no -= 1
-    #   end
-    # end
+      if text && !text.strip.empty?
+        msg text
+        @line_no -= 1
+      end
+    end
 
     # def source_location_info(source_container, line_no, frame)
     #   filename  = source_container[1]
