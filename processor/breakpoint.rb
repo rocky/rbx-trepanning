@@ -1,5 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-## require_relative '../app/core'
+require 'rubygems'; require 'require_relative'
+require_relative '../app/brkptmgr'
 class Trepan
 
   class CmdProcessor
@@ -14,8 +15,8 @@ class Trepan
                                    # If no breakpoint stop this is nil.
 
     def breakpoint_initialize
-      # @brkpts          = BreakpointMgr.new
-      # @brkpt           = nil
+      @brkpts          = BreakpointMgr.new
+      @brkpt           = nil
     end
 
     def breakpoint?
@@ -41,6 +42,32 @@ class Trepan
       bp
     end
     
+    def set_breakpoint_method(descriptor, method, line=nil)
+      exec = method.executable
+      
+      unless exec.kind_of?(Rubinius::CompiledMethod)
+        errmsg "Unsupported method type: #{exec.class}"
+        return
+      end
+
+      if line
+        ip = exec.first_ip_on_line(line)
+        
+        if ip == -1
+          errmsg "Unknown line '#{line}' in method '#{method.name}'"
+          return nil
+        end
+      else
+        line = exec.first_line
+        ip = 0
+      end
+
+      bp = @brkpts.add(descriptor, exec, ip, line)
+      bp.activate
+      msg "Set breakpoint #{id+1}: #{bp.location}"
+      return bp
+    end
+
     # MRI 1.9.2 code
     # def breakpoint_find(bpnum, show_errmsg = true)
     #   if 0 == @brkpts.size 
@@ -128,4 +155,9 @@ class Trepan
     #   return true
     # end
   end
+end
+
+if __FILE__ == $0
+  cmdproc = Trepan::CmdProcessor.new
+  cmdproc.breakpoint_initialize
 end

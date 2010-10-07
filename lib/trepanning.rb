@@ -91,8 +91,6 @@ class Trepan
 
     @deferred_breakpoints = []
 
-    @breakpoints = []
-
     @history_path = File.expand_path("~/.trepanx")
 
     if File.exists?(@history_path)
@@ -234,42 +232,11 @@ class Trepan
     end
   end
 
-  def set_breakpoint_method(descriptor, method, line=nil)
-    exec = method.executable
-
-    unless exec.kind_of?(Rubinius::CompiledMethod)
-      error "Unsupported method type: #{exec.class}"
-      return
-    end
-
-    if line
-      ip = exec.first_ip_on_line(line)
-
-      if ip == -1
-        error "Unknown line '#{line}' in method '#{method.name}'"
-        return
-      end
-    else
-      line = exec.first_line
-      ip = 0
-    end
-
-    id = @breakpoints.size
-    bp = Treapanning::BreakPoint.new(descriptor, exec, ip, line, id+1)
-    bp.activate
-
-    @breakpoints << bp
-
-    info "Set breakpoint #{id+1}: #{bp.location}"
-
-    return bp
-  end
-
   def add_deferred_breakpoint(klass_name, which, name, line)
     dbp = Trepanning::DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
                                              line, @deferred_breakpoints)
     @deferred_breakpoints << dbp
-    @breakpoints << dbp
+    @processor.brkpts << dbp
   end
 
   def check_deferred_breakpoints

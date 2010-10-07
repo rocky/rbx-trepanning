@@ -125,17 +125,16 @@ if __FILE__ == $0
   p brkpts[2]
   bp_status(brkpts, 3)
 
-  # # Two of the same breakpoints but delete 1 and see that the
-  # # other still stays
-  # offset = frame.pc_offset
-  # b2 = Trepanning::BreakPoint.new(iseq, offset)
-  # brkpts << b2
-  # bp_status(brkpts, 4)
-  # b3 = Trepanning::BreakPoint.new(iseq, offset)
-  # brkpts << b3
-  # bp_status(brkpts, 5)
-  # brkpts.delete_by_brkpt(b2)
-  # bp_status(brkpts, 6)
-  # brkpts.delete_by_brkpt(b3)
-  # bp_status(brkpts, 7)
+  # Two of the same breakpoints but delete 1 and see that the
+  # other still stays
+  b2 = Trepanning::BreakPoint.new("<dup brkpt>", method, 0, 0, 0)
+  brkpts << b2
+  bp_status(brkpts, 4)
+  b3 = Trepanning::BreakPoint.new("<dup brkpt>", method, 0, 0, 0)
+  brkpts << b3
+  bp_status(brkpts, 5)
+  brkpts.delete_by_brkpt(b2)
+  bp_status(brkpts, 6)
+  brkpts.delete_by_brkpt(b3)
+  bp_status(brkpts, 7)
 end

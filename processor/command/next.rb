@@ -66,7 +66,7 @@ at the current position of the caller.
     exec = f.method
     ip = f.ip
     
-    bp = Trepaning::BreakPoint.for_ip(exec, ip)
+    bp = Trepanning::BreakPoint.for_ip(exec, ip)
     bp.for_step!
     bp.activate
     
