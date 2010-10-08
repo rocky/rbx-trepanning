@@ -2,6 +2,21 @@ require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
+    HELP         = <<EOH
+info breakpoints [num1 ...] [verbose]
+
+Show status of user-settable breakpoints. If no breakpoint numbers are
+given, the show all breakpoints. Otherwise only those breakpoints
+listed are shown and the order given. If VERBOSE is given, more
+information provided about each breakpoint.
+
+The "Disp" column contains one of "keep", "del", the disposition of
+the breakpoint after it gets hit.
+
+The "enb" column indicates whether the breakpoint is enabled.
+
+The "Where" column indicates where the breakpoint is located.
+EOH
   MIN_ABBREV   = 'br'.size
   NAME         = File.basename(__FILE__, '.rb')
   PREFIX       = %w(info breakpoints)
@@ -51,8 +66,8 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup('info')
   subcommand = Trepan::Subcommand::InfoBreakpoints.new(cmd)
 
-  # puts '-' * 20
-  # subcommand.run(%w(info break))
+  puts '-' * 20
+  subcommand.run(%w(info break))
   puts '-' * 20
   subcommand.summary_help(name)
   puts
