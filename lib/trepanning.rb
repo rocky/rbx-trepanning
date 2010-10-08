@@ -203,8 +203,7 @@ class Trepan
     @processor.instance_variable_set('@brkpt', bp)
     @debuggee_thread = thr
     @channel = chan
-
-    @current_frame = @processor.frame = frame(0)
+    set_frame(0)
 
     event = 
       if bp
@@ -228,7 +227,7 @@ class Trepan
   end
 
   def set_frame(num)
-    @current_frame = frame(num)
+    @current_frame = @processor.frame = frame(num)
   end
 
   def each_frame(start=0)
@@ -315,42 +314,6 @@ class Trepan
       end
 
       display "ip #{ip} = #{op.opcode} #{ins.join(', ')}"
-    end
-  end
-
-  def show_bytecode(line=@current_frame.line)
-    meth = @current_frame.method
-    start = meth.first_ip_on_line(line)
-    fin = meth.first_ip_on_line(line+1)
-
-    if fin == -1
-      fin = meth.iseq.size
-    end
-
-    section "Bytecode between #{start} and #{fin-1} for line #{line}"
-
-    iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)
-    partial = iseq_decoder.decode_between(start, fin)
-
-    ip = start
-
-    partial.each do |ins|
-      op = ins.shift
-
-      ins.each_index do |i|
-        case op.args[i]
-        when :literal
-          ins[i] = meth.literals[ins[i]].inspect
-        when :local
-          if meth.local_names
-            ins[i] = meth.local_names[ins[i]]
-          end
-        end
-      end
-
-      info " %4d: #{op.opcode} #{ins.join(', ')}" % ip
-
-      ip += (ins.size + 1)
     end
   end
 

@@ -19,7 +19,7 @@ for the current line is disassembled only.
       section = "Bytecode for #{@proc.frame.method.name}"
       msg current_method.decode
     else
-      @proc.dbgr.show_bytecode
+      @proc.show_bytecode
     end
   end
 end

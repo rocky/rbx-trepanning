@@ -38,7 +38,7 @@ class Trepan
     def adjust_frame(frame_num, absolute_pos)
       frame, frame_num = get_frame(frame_num, absolute_pos)
       if frame 
-        @frame = @dbgr.set_frame(frame_num)
+        @frame = @dbgr.frame(frame_num)
         @frame_index = frame_num
         ## frame_eval_remap if 'EVAL' == @frame.type
 
