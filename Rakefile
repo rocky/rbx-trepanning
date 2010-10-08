@@ -90,19 +90,19 @@ task :test do
   raise "Test failures" unless exceptions.empty?
 end
 
-desc "Run each library Ruby file in standalone mode."
+desc "Run each unit test in standalone mode."
 task :'check:unit' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
 end
 
-desc "Run each library Ruby file in standalone mode."
-task :'check:debugger' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} debugger)))
+desc "Run each Ruby app file in standalone mode."
+task :'check:app' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} app)))
 end
 
 desc "Run each command in standalone mode."
 task :'check:commands' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} debugger command)))
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor command)))
 end
 
 desc "Generate the gemspec"

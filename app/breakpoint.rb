@@ -169,17 +169,17 @@ module Trepanning
 
       begin
         if @which == "#"
-          method = klass.instance_method(@name)
+          meth = klass.instance_method(@name)
         else
-          method = klass.method(@name)
+          meth = klass.method(@name)
         end
       rescue NameError
         return false
       end
 
-      @debugger.info "Resolved breakpoint for #{@klass_name}#{@which}#{@name}"
+      @debugger.processor "Resolved breakpoint for #{@klass_name}#{@which}#{@name}"
 
-      @debugger.set_breakpoint_method descriptor, method, @line
+      @debugger.processor.set_breakpoint_method descriptor, meth, @line
 
       return true
     end

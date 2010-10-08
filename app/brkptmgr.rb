@@ -29,7 +29,7 @@ class BreakpointMgr
   def delete(index)
     bp = detect(index)
     if bp
-      bp.remove!
+      delete_by_brkpt(bp)
       return bp
     else
       return nil
@@ -39,7 +39,7 @@ class BreakpointMgr
   def delete_by_brkpt(delete_bp)
     @list = @list.reject{|candidate| candidate == delete_bp}
     @set  = Set.new(@list.map{|bp| set_key(bp)})
-    delete_bp.unset unless @set.member?(set_key(delete_bp))
+    delete_bp.remove! unless @set.member?(set_key(delete_bp))
     return delete_bp
   end
 
@@ -66,9 +66,9 @@ class BreakpointMgr
   #   result
   # end
 
-  def find(method, ip)
+  def find(meth, ip)
     @list.detect do |bp| 
-      if bp.enabled? && bp.iseq.equal?(iseq) && bp.offset == offset
+      if bp.enabled? && bp.ip == ip
         begin
           return bp ## if bp.condition?(bind)
         rescue
@@ -91,7 +91,7 @@ class BreakpointMgr
   end
 
   def reset
-    @list.each{|bp| bp.unset}
+    @list.each{|bp| bp.remove!}
     @list = []
     @set  = Set.new
   end
@@ -106,18 +106,16 @@ if __FILE__ == $0
     puts "--- #{i} ---"
   end
 
-  ## frame = RubyVM::ThreadFrame.current 
-  ## iseq = frame.iseq
-  method = Rubinius::CompiledMethod.of_sender
+  meth = Rubinius::CompiledMethod.of_sender
 
   brkpts = BreakpointMgr.new
-  brkpts.add("<start>", method, 0, 0, 1)
+  brkpts.add("<start>", meth, 0, 0, 1)
   p brkpts[2]
   bp_status(brkpts, 1)
   # offset = frame.pc_offset
-  b2 = Trepanning::BreakPoint.new("<2nd one>", method, 0, 5, 2)
+  b2 = Trepanning::BreakPoint.new("<2nd one>", meth, 0, 5, 2)
   brkpts << b2
-  # p brkpts.find(b2.method, b2.ip)
+  p brkpts.find(b2.meth, b2.ip)
   p brkpts[2]
   puts '--- 2 ---'
   ## p brkpts.line_breaks(iseq.source_container)
@@ -127,10 +125,10 @@ if __FILE__ == $0
 
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
-  b2 = Trepanning::BreakPoint.new("<dup brkpt>", method, 0, 0, 0)
+  b2 = Trepanning::BreakPoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Trepanning::BreakPoint.new("<dup brkpt>", method, 0, 0, 0)
+  b3 = Trepanning::BreakPoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)

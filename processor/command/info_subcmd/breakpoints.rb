@@ -11,14 +11,34 @@ class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
     # FIXME: Originally was 
     #   section "Breakpoints"
     # Add section? 
-    msg 'Breakpoints'
-    if @proc.dbgr.breakpoints.empty?
-      msg 'No breakpoints.'
-    end
-    
-    @proc.dbgr.breakpoints.each_with_index do |bp, i|
-      if bp
-        msg "%3d: %s" % [i+1, bp.describe]
+
+    show_all = 
+      if args.size > 2
+        opts = {
+        :msg_on_error => 
+        "An '#{PREFIX.join(' ')}' argument must eval to a breakpoint between 1..#{@proc.brkpts.max}.",
+        :min_value => 1,
+        :max_value => @proc.brkpts.max
+      }
+        bp_nums = @proc.get_int_list(args[2..-1])
+        false
+      else
+        true
+      end
+
+    bpmgr = @proc.brkpts
+    if bpmgr.empty? && @proc.dbgr.deferred_breakpoints.empty?
+      msg('No breakpoints.')
+    else
+      # There's at least one
+      bpmgr.list.each do |bp|
+        msg "%3d: %s" % [bp.id, bp.describe]
+      end
+      msg('Deferred breakpoints...')
+      @proc.dbgr.deferred_breakpoints.each_with_index do |bp, i|
+        if bp
+          msg "%3d: %s" % [i+1, bp.describe]
+        end
       end
     end
   end

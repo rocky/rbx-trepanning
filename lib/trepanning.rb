@@ -27,6 +27,8 @@ class Trepan
   attr_accessor :restart_argv # How to restart us, empty or nil. 
                               # Note restart_argv[0] is typically $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
+  attr_reader   :deferred_breakpoints
+  attr_reader   :processor
 
   # Used to try and show the source for the kernel. Should
   # mostly work, but it's a hack.
@@ -241,7 +243,7 @@ class Trepan
     dbp = Trepanning::DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
                                              line, @deferred_breakpoints)
     @deferred_breakpoints << dbp
-    @processor.brkpts << dbp
+    # @processor.brkpts << dbp
   end
 
   def check_deferred_breakpoints
