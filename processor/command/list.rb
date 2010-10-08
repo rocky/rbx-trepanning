@@ -185,8 +185,8 @@ list -            # List lines previous to those just shown
         line.chomp!
         s = '%3d' % lineno
         s = s + ' ' if s.size < 4 
-        # s += (frame && lineno == @proc.frame_line &&
-        #       container == frame.source_container) ? '->' : a_pad
+        s += (@proc.frame && lineno == @proc.frame.location.line) ? '->' : '  '
+        # && container == frame.source_container) 
         msg(s + "\t" + line)
         @proc.line_no = lineno
       end
