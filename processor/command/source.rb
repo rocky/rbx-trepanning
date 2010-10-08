@@ -57,8 +57,8 @@ unless option -c is given.
     # Push a new debugger interface.
     intf = @proc.dbgr.intf
     script_intf = Trepan::ScriptInterface.new(expanded_file,
-                                                intf[-1].output,
-                                                opts)
+                                              intf[-1].output,
+                                              opts)
     intf << script_intf
     return false
   end
