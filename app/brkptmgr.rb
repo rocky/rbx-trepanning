@@ -44,7 +44,7 @@ class BreakpointMgr
   end
 
   def add(*args)
-    brkpt = Trepanning::BreakPoint.new(*args)
+    brkpt = Trepanning::Breakpoint.new(*args)
     @list << brkpt
     @set.add(set_key(brkpt))
     return brkpt
@@ -113,7 +113,7 @@ if __FILE__ == $0
   p brkpts[2]
   bp_status(brkpts, 1)
   # offset = frame.pc_offset
-  b2 = Trepanning::BreakPoint.new("<2nd one>", meth, 0, 5, 2)
+  b2 = Trepanning::Breakpoint.new("<2nd one>", meth, 0, 5, 2)
   brkpts << b2
   p brkpts.find(b2.meth, b2.ip)
   p brkpts[2]
@@ -125,10 +125,10 @@ if __FILE__ == $0
 
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
-  b2 = Trepanning::BreakPoint.new("<dup brkpt>", meth, 0, 0, 0)
+  b2 = Trepanning::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Trepanning::BreakPoint.new("<dup brkpt>", meth, 0, 0, 0)
+  b3 = Trepanning::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)

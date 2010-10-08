@@ -1,7 +1,7 @@
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
-class Trepan::Command::SetBreakPointCommand < Trepan::Command
+class Trepan::Command::SetBreakpointCommand < Trepan::Command
 
   ALIASES      = %w(b brk)
   CATEGORY     = 'breakpoints'

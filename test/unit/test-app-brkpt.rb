@@ -7,7 +7,7 @@ class TestAppBrkpt < Test::Unit::TestCase
 
   def test_basic
     method = Rubinius::CompiledMethod.of_sender
-    b1 = Trepanning::BreakPoint.new '<start>', method, 1, 2, 0
+    b1 = Trepanning::Breakpoint.new('<start>', method, 1, 2, 0)
     assert_equal(false, b1.temp?)
     assert_equal(0, b1.hits)
     assert_equal('B', b1.icon_char)
@@ -23,7 +23,8 @@ class TestAppBrkpt < Test::Unit::TestCase
     #   Trepanning::Breakpoint.new(0, 5)
     # end
     # require_relative '../../lib/trepanning.rb'
-    # b2 = Trepanning::Breakpoint.new(iseq, 0, :temp => true)
-    # assert_equal('t', b2.icon_char)
+    b2 = Trepanning::Breakpoint.new('temp brkpt', method, 2, 3, 0, 
+                                    :temp => true)
+    assert_equal('t', b2.icon_char)
   end
 end

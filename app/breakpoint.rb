@@ -1,5 +1,5 @@
 module Trepanning
-  class BreakPoint
+  class Breakpoint
 
     attr_accessor :condition # If non-nil, this is a String to be eval'd
                              # which must be true to enter the debugger
@@ -24,7 +24,7 @@ module Trepanning
       name = opts[:name] || :anon
       line = exec.line_from_ip(ip)
 
-      BreakPoint.new(name, exec, ip, line, nil, opts)
+      Breakpoint.new(name, exec, ip, line, nil, opts)
     end
 
     def initialize(name, method, ip, line, id=nil, opts = {})
@@ -145,7 +145,7 @@ module Trepanning
 
   end
 
-  class DeferredBreakPoint
+  class DeferredBreakpoint
     def initialize(debugger, frame, klass, which, name, line=nil, list=nil)
       @debugger = debugger
       @frame = frame
@@ -198,7 +198,7 @@ end
 
 if __FILE__ == $0
   method = Rubinius::CompiledMethod.of_sender
-  bp = Trepanning::BreakPoint.new '<start>', method, 1, 2, 0
+  bp = Trepanning::Breakpoint.new '<start>', method, 1, 2, 0
   %w(describe location icon_char hits temp? enabled? condition).each do |field|
     puts "#{field}: #{bp.send(field.to_sym)}"
   end

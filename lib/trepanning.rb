@@ -144,7 +144,7 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = Trepanning::BreakPoint.new('<start>', method, 0, 0, 0, {:event => 'start'})
+    bp = Trepanning::Breakpoint.new('<start>', method, 0, 0, 0, {:event => 'start'})
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]
@@ -240,7 +240,7 @@ class Trepan
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)
-    dbp = Trepanning::DeferredBreakPoint.new(self, @current_frame, klass_name, which, name,
+    dbp = Trepanning::DeferredBreakpoint.new(self, @current_frame, klass_name, which, name,
                                              line, @deferred_breakpoints)
     @deferred_breakpoints << dbp
     # @processor.brkpts << dbp

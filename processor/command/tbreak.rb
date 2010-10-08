@@ -2,8 +2,8 @@ require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 require_relative 'break'
 
-class Trepan::Command::SetTempBreakPointCommand < 
-    Trepan::Command::SetBreakPointCommand
+class Trepan::Command::SetTempBreakpointCommand < 
+    Trepan::Command::SetBreakpointCommand
   ALIASES      = %w(tb tbrk)
   CATEGORY     = 'breakpoints'
   NAME         = File.basename(__FILE__, '.rb')
