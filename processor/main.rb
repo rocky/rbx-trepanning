@@ -197,7 +197,7 @@ class Trepan
           if @dbgr.intf.size > 1
             @dbgr.intf.pop 
             @last_command = nil
-            ## print_location
+            print_location
           else
             msg "That's all folks..."
             ## FIXME: think of something better.
@@ -230,7 +230,7 @@ class Trepan
       @prompt = "(#{@settings[:prompt]}): " # compute_prompt
 
       @leave_cmd_loop = false
-      # print_location unless @settings[:traceprint]
+      print_location unless @settings[:traceprint]
       # if 'trace-var' == @core.event 
       #   msg "Note: we are stopped *after* the above location."
       # end

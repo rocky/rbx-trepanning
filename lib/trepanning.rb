@@ -182,7 +182,7 @@ class Trepan
   end
 
   # Stop and wait for a debuggee thread to send us info about
-  # stoping at a breakpoint.
+  # stopping at a breakpoint.
   #
   def listen(step_into=false)
     if @channel

@@ -41,12 +41,7 @@ class Trepan
         @frame = @dbgr.frame(frame_num)
         @frame_index = frame_num
         ## frame_eval_remap if 'EVAL' == @frame.type
-
-        ## FIXME: reinstate from location
-        ## print_location
-        msg frame.describe
-        @dbgr.show_code  # from reference debugger - remove
-        
+        print_location
         @line_no = frame.line
         @frame
       else
