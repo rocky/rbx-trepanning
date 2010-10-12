@@ -213,8 +213,6 @@ class Trepan
         '??'
       end
     @processor.instance_variable_set('@event', event)
-    @processor.print_location
-    show_code
 
     if @variables[:show_bytecode]
       decode_one

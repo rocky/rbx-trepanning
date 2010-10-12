@@ -62,9 +62,10 @@ class Trepan
         ip = 0
       end
 
-      bp = @brkpts.add(descriptor, exec, ip, line)
+      bp = @brkpts.add(descriptor, exec, ip, line, 
+                       @brkpts.max, {:event => 'brkpt'})
       bp.activate
-      msg "Set breakpoint #{id+1}: #{bp.location}"
+      msg "Set breakpoint #{bp.id}: #{bp.location}"
       return bp
     end
 

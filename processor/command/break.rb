@@ -47,7 +47,7 @@ To breakpoint on class method start of Trepan line 4, use:
     line =  m[4] ? m[4].to_i : nil
     
     begin
-      klass = debug_eval(klass_name, @settings[:maxstring])
+      klass = @proc.debug_eval(klass_name, settings[:maxstring])
     rescue NameError
       errmsg "Unable to find class/module: #{klass_name}"
       ask_deferred klass_name, which, name, line
@@ -66,8 +66,7 @@ To breakpoint on class method start of Trepan line 4, use:
       return
     end
 
-    bp = @proc.dbgr.set_breakpoint_method(arg_str.strip, method, line,
-                                          {:event => :Breakpoint})
+    bp = @proc.set_breakpoint_method(arg_str.strip, method, line)
     
     bp.set_temp! if temp
     

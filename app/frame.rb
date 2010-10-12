@@ -10,7 +10,7 @@ class Trepan
     attr_reader :number, :location
 
     def run(code, filename=nil)
-      eval(code, binding, filename)
+      eval(code, self.binding, filename)
     end
 
     def binding

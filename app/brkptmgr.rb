@@ -78,7 +78,7 @@ class BreakpointMgr
   end
 
   def max
-    @list.map{|bp| bp.id}.max
+    @list.map{|bp| bp.id}.max || 1
   end
 
   # Key used in @set to list unique instruction-sequence offsets.
