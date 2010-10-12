@@ -225,7 +225,7 @@ class Trepan
   end
 
   def set_frame(num)
-    @current_frame = @processor.frame = frame(num)
+    @current_frame = frame(num)
   end
 
   def each_frame(start=0)

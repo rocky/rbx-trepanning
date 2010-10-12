@@ -219,7 +219,7 @@ class Trepan
 
     def before_cmdloop
 
-      frame_setup(frame)
+      frame_setup
 
       @unconditional_prehooks.run
       # if breakpoint?

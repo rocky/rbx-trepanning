@@ -82,12 +82,12 @@ class Trepan
 
     # Initializes the thread and frame variables: @frame, @top_frame, 
     # @frame_index, @current_thread, and @threads2frames
-    def frame_setup(frame_thread)
+    def frame_setup
       @frame_index        = 0
       @frame = @top_frame = @dbgr.current_frame
-      @line_no            = @frame.line
       @current_thread     = @dbgr.debugee_thread
-      @stack_size         = @dbgr.locations.size - @hide_level
+      @stack_size         = @dbgr.locations.size
+      @line_no            = @frame.line
 
       @threads2frames   ||= {} 
       @threads2frames[@current_thread] = @top_frame
@@ -201,7 +201,7 @@ if __FILE__ == $0
 
   proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
   # proc.frame_setup(RubyVM::ThreadFrame.current)
-  # proc.hidelevels = {}
+  proc.hidelevels = {}
   # puts "stack size: #{proc.top_frame.stack_size}"
   # 0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
   # puts '*' * 10
