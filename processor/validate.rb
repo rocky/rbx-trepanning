@@ -326,8 +326,8 @@ if __FILE__ == $0
     require_relative 'main' # Have to include before defining CmdProcessor!
                             # FIXME
 
-    proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-    proc.frame_setup(RubyVM::ThreadFrame.current)
+    dbgr, proc = MockDebugger::setup('foo')
+    # proc.frame_setup(RubyVM::ThreadFrame.current)
     onoff = %w(1 0 on off)
     onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
     %w(1 1E bad 1+1 -5).each do |val| 

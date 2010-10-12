@@ -27,11 +27,7 @@ class Trepan
                                    # container for display.
     attr_accessor :stack_size
     # attr_accessor :remap_iseq      # Hash[iseq] -> file container
-
-    # attr_accessor :top_frame       # top frame of current thread. Since
-    #                                # right now the ThreadFrame method has "prev" 
-    #                                # but no way to move in the other direction.
-    #                                # So we store the top frame. 
+    attr_accessor :top_frame       # top frame of current thread. Since
     # attr_reader   :threads2frames  # Hash[thread_id] -> top_frame
     
 
@@ -187,7 +183,7 @@ end
 if __FILE__ == $0
   # Demo it.
   # require 'thread_frame'
-  require_relative '../app/mock'
+  require_relative './mock'
   require_relative 'main'   # Have to include before defining CmdProcessor!
                             # FIXME
   class Trepan::CmdProcessor
@@ -195,21 +191,21 @@ if __FILE__ == $0
       puts msg
     end
     def print_location
-      puts "#{frame.line} #{frame.line}"
+      puts "#{frame.file} #{frame.line}"
     end
   end
 
-  proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-  # proc.frame_setup(RubyVM::ThreadFrame.current)
-  proc.hidelevels = {}
-  # puts "stack size: #{proc.top_frame.stack_size}"
-  # 0.upto(proc.top_frame.stack_size) { |i| proc.adjust_frame(i, true) }
-  # puts '*' * 10
-  # proc.adjust_frame(-1, true)
-  # proc.adjust_frame(0, true)
-  # puts '*' * 10
-  # proc.top_frame.stack_size.times { proc.adjust_frame(1, false) }
-  # proc.adjust_frame(proc.top_frame.stack_size-1, true)
-  # proc.top_frame.stack_size.times { proc.adjust_frame(-1, false) }
+  dbgr = MockDebugger::MockDebugger.new
+  proc = Trepan::CmdProcessor.new(dbgr)
+  proc.frame_initialize
+  proc.frame_setup
+  0.upto(dbgr.locations.size) { |i| proc.adjust_frame(i, true) }
+  puts '*' * 10
+  proc.adjust_frame(-1, true)
+  proc.adjust_frame(0, true)
+  puts '*' * 10
+  dbgr.locations.size.times { proc.adjust_frame(1, false) }
+  proc.adjust_frame(dbgr.locations.size-1, true)
+  dbgr.locations.size.times { proc.adjust_frame(-1, false) }
     
 end

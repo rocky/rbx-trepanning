@@ -6,6 +6,7 @@ require_relative 'main'
 
 # require_relative '../app/core'
 require_relative '../app/default'
+require_relative '../app/frame'
 require_relative '../interface/user'  # user interface (includes I/O)
 
 module MockDebugger
@@ -24,12 +25,18 @@ module MockDebugger
 
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
-    attr_reader :cmd_argstr, :cmd_name
+    attr_reader :cmd_argstr, :cmd_name, :locations, :current_frame, 
+                :debugee_thread
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Trepanning::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new]
+      @locations            = Rubinius::VM.backtrace(1, true)
+      @current_frame        = @locations[0]
+      @debugee_thread       = Thread.current
+      @frames               = []
+
       ## @core                 = Trepan::Core.new(self)
       ## @trace_filter         = []
 
@@ -38,6 +45,9 @@ module MockDebugger
 
     end
 
+    def frame(num)
+      @frames[num] ||= Trepan::Frame.new(self, num, @locations[num])
+    end
   end
 
   # Common Mock debugger setup 
