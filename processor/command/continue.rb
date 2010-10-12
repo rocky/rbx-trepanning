@@ -12,8 +12,7 @@ Continue execution until another breakpoint is hit.
   SHORT_HELP   =  'Continue running the target thread'
 
   def run(args)
-    @proc.dbgr.listen
-    @proc.cmdloop_prehooks.run
+    @proc.return_to_program
   end
 end
 

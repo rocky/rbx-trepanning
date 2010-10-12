@@ -16,11 +16,12 @@ execption is stopped in the called method.
   def run(args)
     max = step_over_by(1)
     
+    @proc.after_cmdloop
     @proc.dbgr.listen(true)
     
     # We remove the max position breakpoint no matter what
     max.remove! if max
-    @proc.cmdloop_prehooks.run
+    @proc.before_cmdloop
     
   end
 end

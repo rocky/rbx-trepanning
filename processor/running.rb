@@ -21,6 +21,7 @@ class Trepan
     # # Does whatever needs to be done to set to continue program
     # # execution.
     # # FIXME: turn line_number into a condition.
+
     # def continue
     #   @next_level      = 32000 # I'm guessing the stack size can't
     #                            # ever reach this
@@ -61,6 +62,13 @@ class Trepan
     #     opts.keys.member?(:stop_events)
     #   @to_method       = opts[:to_method]
     # end
+
+    # Return to program
+    def return_to_program
+      after_cmdloop
+      dbgr.listen
+      before_cmdloop
+    end
 
     def quit(cmd='exit')
       @next_level      = 32000 # I'm guessing the stack size can't

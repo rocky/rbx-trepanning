@@ -213,8 +213,11 @@ class Trepan
       return leave_cmdloop
     end
 
-    # This is the main entry point.
-    def process_commands
+    def after_cmdloop
+      @cmdloop_posthooks.run
+    end
+
+    def before_cmdloop
 
       frame_setup(frame)
 
@@ -231,13 +234,19 @@ class Trepan
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
-      # if 'trace-var' == @core.event 
+      # if 'trace-var' == @event 
       #   msg "Note: we are stopped *after* the above location."
       # end
 
       # @eventbuf.add_mark if @settings[:tracebuffer]
 
       @cmdloop_prehooks.run
+    end
+
+
+    # This is the main entry point.
+    def process_commands
+      before_cmdloop
       while not @leave_cmd_loop do
         begin
           break if process_command_and_quit?()
@@ -249,7 +258,7 @@ class Trepan
           exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
-      @cmdloop_posthooks.run
+      after_cmdloop
     end
 
     # Run current_command, a String. @last_command is set after the

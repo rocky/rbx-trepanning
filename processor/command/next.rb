@@ -37,7 +37,9 @@ at the current position of the caller.
     end
     
     step_over_by(step)
+    @proc.after_cmdloop
     @proc.dbgr.listen
+    @proc.before_cmdloop
   end
   
   def step_over_by(step)

@@ -44,9 +44,7 @@ Does not step into send instructions.
       bp.for_step!
       bp.activate
     end
-    
-    @proc.dbgr.listen
-    @proc.cmdloop_prehooks.run
+    @proc.return_to_program
   end
   
   def is_a_goto(exec, ip)
