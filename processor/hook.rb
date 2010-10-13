@@ -71,7 +71,7 @@ class Trepan
                           Proc.new{|*args| 
                             if settings[:debugdbgr]
                               $trepan_cmdproc  = self
-                              $trepan_frame    = frame
+                              $trepan_frame    = @frame
                             else
                               $trepan_cmdproc  = nil
                               $trepan_frame    = nil
