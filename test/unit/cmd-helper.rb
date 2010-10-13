@@ -1,17 +1,17 @@
 require 'rubygems'; require 'require_relative'
 # require_relative '../../app/core'
-require_relative '../../app/mock'
+require_relative '../../processor/mock'
 require_relative '../../processor/main' # Have to include before frame!
                                         # FIXME
-# require_relative '../../processor/frame'
+require_relative '../../processor/frame'
 
 
 module UnitHelper
 
   def common_setup
-    @dbg      = Trepan.new(:nx => true)
+    @dbg      = MockDebugger::MockDebugger.new(:nx => true)
     @cmdproc  = Trepan::CmdProcessor.new(@dbg)
-    @cmdproc.frame = Rubinius::VM.backtrace(0)[1]
+    @cmdproc.frame_initialize
     @cmdproc.dbgr  = @dbg
     @cmds     = @cmdproc.commands
 

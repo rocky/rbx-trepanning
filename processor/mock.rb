@@ -33,7 +33,7 @@ module MockDebugger
       @settings             = Trepanning::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new]
       @locations            = Rubinius::VM.backtrace(1, true)
-      @current_frame        = @locations[0]
+      @current_frame        = Trepan::Frame.new(self, 0, @locations[0])
       @debugee_thread       = Thread.current
       @frames               = []
 
