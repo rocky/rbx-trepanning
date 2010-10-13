@@ -4,24 +4,19 @@ require 'rubygems'; require 'require_relative'
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
-class Trepan::SubSubcommand::ShowMax < Trepan::SubSubcommandMgr
+class Trepan::SubSubcommand::ShowDebug < Trepan::SubSubcommandMgr
   unless defined?(HELP)
-    HELP   = 'Show "maximum length" settings'
+    HELP   = 'Show internal debugger settings.'
     NAME   = File.basename(__FILE__, '.rb')
     PREFIX = %W(show #{NAME})
-  end
-
-  def run(args)
-    super
   end
 end
 
 if __FILE__ == $0
   require_relative '../../mock'
-  dbgr = MockDebugger::MockDebugger.new
-  cmds = dbgr.core.processor.commands
+  dbgr, cmd = MockDebugger::setup('show')
   show_cmd = cmds['show']
-  # command = Trepan::SubSubcommand::ShowMax.new(dbgr.core.processor, 
+  # command = Trepan::SubSubcommand::ShowDebug.new(dbgr.core.processor, 
   #                                                show_cmd)
   # name = File.basename(__FILE__, '.rb')
   # cmd_args = ['show', name]
