@@ -61,7 +61,7 @@ module MockDebugger
     end
 
     cmdproc = Trepan::CmdProcessor.new(dbgr)
-    cmdproc.frame = Rubinius::VM.backtrace(0)[1]
+    cmdproc.frame = dbgr.frame(0)
     dbgr.processor = cmdproc
     
     cmdproc.load_cmds_initialize

@@ -1,0 +1,55 @@
+# -*- Ruby -*-
+# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# We use this as the default startup file for irb inside trepan
+# Down the line we will have a way for folks to add/override this
+# with their own file.
+IRB.conf[:PROMPT_MODE] = :SIMPLE
+IRB.conf[:PROMPT][:SIMPLE] = 
+    {:PROMPT_C=>"trepan ?> ",
+     :PROMPT_I=>"trepan >> ",
+     :PROMPT_N=>"trepan >> ",
+     :PROMPT_S=>nil,
+     :RETURN=>"=> %s\n"}
+
+# Using dbgr to issue a debugger statement inside irb:
+#  dbgr %w(info program)
+#  dbgr 'info program'  # also works
+# But...
+#  dbgr info program    # wrong!
+# 
+puts "You are in a trepan session. You should have access to program scope."
+puts "'dbgr', 'step', 'ne', 'q', 'cont' commands have been added."
+
+if defined?($trepan) && $trepan
+   puts 'You should have access to debugger state via global variable $trepan'
+end
+if defined?($trepan_frame) && $trepan_frame
+   puts 'You should have access to the program frame via global variable $trepan_frame'
+end
+if defined?($trepan_cmdproc) && $trepan_cmdproc
+   puts 'You should have access to the command processor via global variable $trepan_cmdproc'
+end
+
+# Monkeypatch to save the current IRB statement to be run and make the instruction sequence
+# "filename" unique. Possibly not needed.
+class IRB::Context
+  def evaluate(line, line_no)
+    $trepan_irb_statements = line
+    @line_no = line_no
+    @eval_counter ||= 0
+    container = 
+      if irb_path =~ /\((.+)\)/
+        # Note we originally had a colon below. This causes IRB to think
+        # tracebacks are IRB bugs since the regexp matching it uses here
+        # is now messed up. (irb:5): in ... vs (irb): in ...
+        "(#{$1}[#{@eval_counter}])" 
+      else
+        irb_path
+      end
+    set_last_value(@workspace.evaluate(self, line, container, line_no))
+#    @workspace.evaluate("_ = IRB.conf[:MAIN_CONTEXT]._")
+#    @_ = @workspace.evaluate(line, irb_path, line_no)
+    @eval_counter += 1
+  end
+end
+
