@@ -17,11 +17,12 @@ in each frame.
   def run(args)
     arg_str = args[1..-1].join(' ')
     verbose = (arg_str =~ /-v/)
-    
-    if m = /(\d+)/.match(arg_str)
-      count = m[1].to_i
-    else
-      count = nil
+
+    count = 
+      if m = /(\d+)/.match(arg_str)
+        m[1].to_i
+      else
+        proc.stack_size
     end
     
     msg "Backtrace:"

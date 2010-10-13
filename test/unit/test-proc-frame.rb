@@ -36,7 +36,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     @proc.frame_setup
 
     # Test absolute positioning. Should all be okay
-    0.upto(@dbgr.locations.size-1) do |i| 
+    0.upto(@proc.stack_size-1) do |i| 
       @proc.adjust_frame(i, true) 
       assert_equal(0, $errors.size)
       assert_equal(i+1, $msgs.size)
@@ -47,7 +47,7 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
     @proc.adjust_frame(-1, true)
     assert_equal(0, $errors.size)
     assert_equal(frame_index, @proc.frame_index)
-    @proc.adjust_frame(-@dbgr.locations.size-1, true)
+    @proc.adjust_frame(-@proc.stack_size-1, true)
     assert_equal(1, $errors.size, $errors)
     assert_equal(frame_index, @proc.frame_index)
 

@@ -3,9 +3,11 @@ require 'tempfile'
 # require 'linecache'
 require 'rubygems'; require 'require_relative'
 require_relative '../app/frame'
+require_relative '../app/util'
 class Trepan
   class CmdProcessor
 
+    include Util
     attr_reader   :current_thread
     attr_accessor :frame           # ThreadFrame, current frame
     attr_accessor :frame_index     # frame index in a "where" command
@@ -82,7 +84,6 @@ class Trepan
       @frame_index        = 0
       @frame = @top_frame = @dbgr.current_frame
       @current_thread     = @dbgr.debugee_thread
-      @stack_size         = @dbgr.locations.size
       @line_no            = @frame.line
 
       @threads2frames   ||= {} 
@@ -91,8 +92,11 @@ class Trepan
         if @settings[:debugstack]
           0
         else
-          @hidelevels[@current_thread]
+          @hidelevels[@current_thread] ||=  
+            find_main_script(@dbgr.locations) || @dbgr.locations.size
         end
+      
+      @stack_size = @dbgr.locations.size - @hide_level
       
       ## frame_eval_remap if 'EVAL' == @frame.type
     end
@@ -106,7 +110,7 @@ class Trepan
     def frame_initialize
       @remap_container = {}
       @remap_iseq      = {}
-      @hidelevels      = Hash.new(0) # Set default value to 0
+      @hidelevels      = Hash.new(nil) 
       @hide_level      = 0
     end
 
@@ -199,13 +203,13 @@ if __FILE__ == $0
   proc = Trepan::CmdProcessor.new(dbgr)
   proc.frame_initialize
   proc.frame_setup
-  0.upto(dbgr.locations.size) { |i| proc.adjust_frame(i, true) }
+  0.upto(proc.stack_size) { |i| proc.adjust_frame(i, true) }
   puts '*' * 10
   proc.adjust_frame(-1, true)
   proc.adjust_frame(0, true)
   puts '*' * 10
-  dbgr.locations.size.times { proc.adjust_frame(1, false) }
-  proc.adjust_frame(dbgr.locations.size-1, true)
-  dbgr.locations.size.times { proc.adjust_frame(-1, false) }
+  proc.stack_size.times { proc.adjust_frame(1, false) }
+  proc.adjust_frame(proc.stack_size-1, true)
+  proc.stack_size.times { proc.adjust_frame(-1, false) }
     
 end
