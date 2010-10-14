@@ -222,13 +222,11 @@ class Trepan
       frame_setup
 
       @unconditional_prehooks.run
-      # if breakpoint?
-      #   @last_pos = [@frame.source_container, frame_line,
-      #                @stack_size, @current_thread, @core.event, 
-      #                @frame.pc_offset]
-      # else
-      #   return if stepping_skip? || @stack_size <= @hide_level
-      # end
+      if breakpoint?
+        @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
+      else
+       # return if stepping_skip? || @stack_size <= @hide_level
+      end
 
       @prompt = "(#{@settings[:prompt]}): " # compute_prompt
 

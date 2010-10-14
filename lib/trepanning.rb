@@ -18,6 +18,8 @@ require_relative '../interface/user'     # user interface (includes I/O)
 class Trepan
   VERSION = '0.0.1.git'
 
+  attr_accessor :breakpoint   # Breakpoint. The current breakpoint we are
+                              # stopped at or nil if none.
   attr_accessor :intf         # Array. The way the outside world
                               # interfaces with us.  An array, so that
                               # interfaces with us.  An array, so that
@@ -44,6 +46,7 @@ class Trepan
   # control of execution.
   #
   def initialize(settings={})
+    @breakpoint = nil
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
 
     @processor = CmdProcessor.new(self)
@@ -185,6 +188,7 @@ class Trepan
   # stopping at a breakpoint.
   #
   def listen(step_into=false)
+    @breakpoint = nil
     if @channel
       if step_into
         @channel << :step
@@ -194,21 +198,20 @@ class Trepan
     end
 
     # Wait for someone to stop
-    bp, thr, chan, locs = @local_channel.receive
+    @breakpoint, thr, chan, locs = @local_channel.receive
 
     # Uncache all frames since we stopped at a new place
     @frames = []
 
     @locations = locs
-    @processor.instance_variable_set('@brkpt', bp)
     @debuggee_thread = thr
     @channel = chan
     set_frame(0)
 
     event = 
-      if bp
-        bp.hit! 
-        bp.event || 'brkpt'
+      if @breakpoint
+        @breakpoint.hit! 
+        @breakpoint.event || 'brkpt'
       else
         '??'
       end

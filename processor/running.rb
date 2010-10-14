@@ -16,6 +16,7 @@ class Trepan
                                    # a bitmask and it is intended to
                                    # be more temporarily changed via
                                    # "step>" or "step!" commands.
+    attr_accessor :step_count
     attr_accessor :to_method
                                   
     # # Does whatever needs to be done to set to continue program
@@ -26,7 +27,7 @@ class Trepan
     #   @next_level      = 32000 # I'm guessing the stack size can't
     #                            # ever reach this
     #   @next_thread     = nil
-    #   @core.step_count = -1    # No more event stepping
+    #   @step_count      = -1    # No more event stepping
     #   @leave_cmd_loop  = true  # Break out of the processor command loop.
     # end
 
@@ -54,7 +55,7 @@ class Trepan
     # # execution.
     # def step(step_count=1, opts={}, condition=nil)
     #   continue
-    #   @core.step_count = step_count
+    #   @step_count = step_count
     #   @different_pos   = opts[:different_pos] if 
     #     opts.keys.member?(:different_pos)
     #   @stop_condition  = condition
@@ -74,7 +75,7 @@ class Trepan
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
       @next_thread     = nil
-      # @core.step_count = -1    # No more event stepping
+      @step_count      = -1    # No more event stepping
       @leave_cmd_loop  = true  # Break out of the processor command loop.
       @settings[:autoirb] = false
       @cmdloop_prehooks.delete_by_name('autoirb')
@@ -113,11 +114,11 @@ class Trepan
 
     def stepping_skip?
 
-      return true if @core.step_count < 0
+      return true if @step_count < 0
 
       if @settings[:'debugskip']
         msg "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
-        msg "step_count  : #{@core.step_count}" 
+        msg "step_count  : #{@step_count}" 
         msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
         msg "next_thread : #{@next_thread},   thread: #{Thread.current}" 
       end

@@ -21,7 +21,7 @@ class Trepan
 
     def breakpoint?
       @brkpt = @dbgr.breakpoint
-      return !!@brkpt
+      return !!@brkpt && @brkpt.event == 'brkpt'
     end
 
     def breakpoint_find(bpnum, show_errmsg = true)
