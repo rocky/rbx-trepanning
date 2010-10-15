@@ -225,7 +225,7 @@ class Trepan
       if breakpoint?
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
-       # return if stepping_skip? || @stack_size <= @hide_level
+        return if stepping_skip? # || @stack_size <= @hide_level
       end
 
       @prompt = "(#{@settings[:prompt]}): " # compute_prompt
