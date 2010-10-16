@@ -147,8 +147,7 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   # [%w(n 5), %w(next 1+2), %w(n foo)].each do |c|
   #   dbgr.core.step_count = 0
   #   cmd.proc.leave_cmd_loop = false

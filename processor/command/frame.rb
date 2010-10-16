@@ -77,14 +77,13 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   # def sep ; puts '=' * 40 end
-  # %w(0 1 -2).each {|count| cmd.run([name, count]); sep }
-  # def foo(cmd, name)
+  # %w(0 1 -2).each {|count| cmd.run([cmd.name, count]); sep }
+  # def foo(cmd, cmd.name)
   #   cmd.proc.frame_setup(RubyVM::ThreadFrame::current)
-  #   %w(0 -1).each {|count| cmd.run([name, count]); sep }
+  #   %w(0 -1).each {|count| cmd.run([cmd.name, count]); sep }
   # end
-  # foo(cmd, name)
+  # foo(cmd, cmd.name)
 end

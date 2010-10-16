@@ -49,12 +49,11 @@ if __FILE__ == $0
   exit if ARGV[0] == 'exit'
 
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   dbgr.restart_argv = []
-  cmd.run([name])
+  cmd.run([cmd.name])
   dbgr.restart_argv = [File.expand_path($0), 'exit']
   # require_relative '../../debugger'
   # Trepan.start
-  cmd.run([name])
+  cmd.run([cmd.name])
 end

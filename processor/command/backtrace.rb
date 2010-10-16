@@ -4,13 +4,13 @@ require_relative './base/cmd'
 class Trepan::Command::BacktraceCommand < Trepan::Command
   ALIASES      = %w(bt where)
   CATEGORY     = 'stack'
+  NAME         = File.basename(__FILE__, '.rb')
   HELP = <<-HELP
 Show the call stack as a simple list.
 
 Passing "-v" will also show the values of all locals variables
 in each frame.
       HELP
-  NAME         = File.basename(__FILE__, '.rb')
   NEED_STACK   = true
   SHORT_HELP   =  'Show the current call stack'
   

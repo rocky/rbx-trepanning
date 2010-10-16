@@ -206,12 +206,11 @@ if __FILE__ == $0
     require_relative '../location'
     require_relative '../mock'
     require_relative '../frame'
-    name = File.basename(__FILE__, '.rb')
-    dbgr, cmd = MockDebugger::setup(name)
+    dbgr, cmd = MockDebugger::setup
     cmd.proc.send('frame_initialize')
     LineCache::cache(__FILE__)
-    cmd.run(['list'])
-    cmd.run(['list', __FILE__ + ':10'])
+    cmd.run([cmd.name])
+    cmd.run([cmd.name, __FILE__ + ':10'])
 
     def run_cmd(cmd, args)
       seps = '--' * 10
@@ -221,12 +220,12 @@ if __FILE__ == $0
       
 
     load 'tmpdir.rb'
-    run_cmd(cmd, %w(list tmpdir.rb 10))
-    run_cmd(cmd, %w(list tmpdir.rb))
+    run_cmd(cmd, %W(#{cmd.name} tmpdir.rb 10))
+    run_cmd(cmd, %W(#{cmd.name} tmpdir.rb))
 
     # cmd.proc.frame = sys._getframe()
     # cmd.proc.setup()
-    # cmd.run(['list'])
+    # cmd.run([cmd.name])
 
     run_cmd(cmd, %w(list .))
     run_cmd(cmd, %w(list 30))
@@ -240,25 +239,25 @@ if __FILE__ == $0
     p = Proc.new do 
       |x,y| x + y
     end
-    run_cmd(cmd, %w(list p))
+    run_cmd(cmd, %W(#{cmd.name} p))
 
     # Function from a file found via an instruction sequence
-    run_cmd(cmd, %w(list Columnize.columnize))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize))
 
     # Use Class/method name. 15 isn't in the function - should this be okay?
-    run_cmd(cmd, %w(list Columnize.columnize 15))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 15))
 
     # Start line and count, since 3 < 30
-    run_cmd(cmd, %w(list Columnize.columnize 30 3))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
 
     # Start line finish line 
-    run_cmd(cmd, %w(list Columnize.columnize 40 50))
+    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
 
     # puts '--' * 10
-    # cmd.run(['list', os.path.abspath(__file__)+':3', '4'])
+    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
     # puts '--' * 10
-    # cmd.run(['list', os.path.abspath(__file__)+':3', '12-10'])
-    # cmd.run(['list', 'os.path:5'])
+    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
+    # cmd.run([cmd.name, 'os.path:5'])
 
     # require 'thread_frame'
     # tf = RubyVM::ThreadFrame.current
@@ -266,7 +265,7 @@ if __FILE__ == $0
     # brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
     # brkpt_cmd.run(['break'])
     # line = __LINE__
-    # run_cmd(cmd, ['list', __LINE__.to_s])
+    # run_cmd(cmd, [cmd.name, __LINE__.to_s])
 
     # disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
     # disable_cmd.run(['disable', '1'])

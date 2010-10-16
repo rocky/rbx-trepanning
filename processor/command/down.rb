@@ -34,22 +34,21 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
 
   # def sep ; puts '=' * 40 end
-  # cmd.run [name]
+  # cmd.run [cmd.name]
   # %w(-1 0 1 -2).each do |count| 
-  #   puts "#{name} #{count}"
-  #   cmd.run([name, count])
+  #   puts "#{cmd.name} #{count}"
+  #   cmd.run([cmd.name, count])
   #   sep 
   # end
-  # def foo(cmd, name)
-  #   puts "#{name}"
-  #   cmd.run([name])
+  # def foo(cmd, cmd.name)
+  #   puts "#{cmd.name}"
+  #   cmd.run([cmd.name])
   #   sep
-  #   puts "#{name} -1"
-  #   cmd.run([name, '-1'])
+  #   puts "#{cmd.name} -1"
+  #   cmd.run([cmd.name, '-1'])
   # end
-  # foo(cmd, name)
+  # foo(cmd, cmd.name)
 end

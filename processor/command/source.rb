@@ -9,7 +9,9 @@ require_relative '../../interface/script'
 
 class Trepan::Command::SourceCommand < Trepan::Command
   unless defined?(HELP)
-    HELP = "source [-v][-Y|-N][-c] FILE
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [-v][-Y|-N][-c] FILE
 
 Read debugger commands from a file named FILE.  Optional -v switch
 (before the filename) causes each command in FILE to be echoed as it
@@ -21,11 +23,10 @@ via a source command the debugger is started.
 
 An error in any command terminates execution of the command file
 unless option -c is given.
-    "
+    HELP
     CATEGORY     = 'support'
     MIN_ARGS     = 1  # Need at least this many
     MAX_ARGS     = nil
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP   = 'Read and run debugger commands from a file'
   end
 
@@ -67,11 +68,10 @@ end
 # Demo it
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   puts "#{ARGV.size}"
   if ARGV.size > 0 
     puts "running... #{name} #{ARGV}"
-    cmd.run([name, *ARGV])
+    cmd.run([cmd.name, *ARGV])
   end
 end

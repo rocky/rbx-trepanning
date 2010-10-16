@@ -39,10 +39,9 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run([name])
-  cmd.run([name, 'autolist'])
-  cmd.run([name, 'autoeval', 'off'])
-  cmd.run([name, 'basename'])
+  dbgr, cmd = MockDebugger::setup
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, 'autolist'])
+  cmd.run([cmd.name, 'autoeval', 'off'])
+  cmd.run([cmd.name, 'basename'])
 end

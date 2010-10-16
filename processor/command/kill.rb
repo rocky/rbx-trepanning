@@ -49,11 +49,10 @@ end
 
 if __FILE__ == $0
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
+  dbgr, cmd = MockDebugger::setup
   %w(fooo 1 -1 HUP -9).each do |arg| 
-    puts "#{name} #{arg}"
-    cmd.run([name, arg])
+    puts "#{cmd.name} #{arg}"
+    cmd.run([cmd.name, arg])
     puts '=' * 40
   end
 end

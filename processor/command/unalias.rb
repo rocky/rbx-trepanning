@@ -37,9 +37,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup(name)
-  cmd.run %w(unalias n)
-  cmd.run %w(unalias n)
-  cmd.run %w(unalias foo bar c)
+  dbgr, cmd = MockDebugger::setup
+  cmd.run %w(cmd.name n)
+  cmd.run %w(cmd.name n)
+  cmd.run %w(cmd.name foo bar c)
 end
