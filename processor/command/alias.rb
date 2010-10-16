@@ -5,13 +5,14 @@ require_relative 'base/cmd'
 class Trepan::Command::AliasCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"alias ALIAS COMMAND
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} ALIAS COMMAND
 
 Add an alias for a COMMAND
 
 See also 'unalias'.
-"
+    HELP
 
     CATEGORY      = 'support'
     MAX_ARGS      = 2  # Need at most this many

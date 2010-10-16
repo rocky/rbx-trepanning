@@ -7,15 +7,16 @@ require_relative 'base/cmd'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
-    HELP = 
-"list[>] [FIRST [NUM]]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME}[>] [FIRST [NUM]]
 
-List source code. 
+#{NAME} source code. 
 
 Without arguments, prints lines centered around the current
-line. If this is the first list command issued since the debugger
+line. If this is the first #{NAME} command issued since the debugger
 command loop was entered, then the current line is the current
-frame. If a subsequent list command was issued with no intervening
+frame. If a subsequent #{NAME} command was issued with no intervening
 frame changing, then that is start the line after we last one
 previously shown.
 
@@ -26,7 +27,7 @@ The number of line to show is controled by the debugger listsize
 setting. Use 'set listsize' or 'show listsize' to see or set the
 value.
 
-\"list -\" shows lines before a previous listing. 
+\"#{NAME} -\" shows lines before a previous listing. 
 
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number.  When there two numbers are
@@ -39,23 +40,22 @@ just something that evaluates to a positive integer.
 
 Some examples:
 
-list 5            # List centered around line 5
-list 4+1          # Same as above.
-list 5>           # List starting at line 5
-list foo.rb:5     # List centered around line 5 of foo.rb
-list foo.rb 5     # Same as above.
-list foo.rb:5>    # List starting around line 5 of foo.rb
-list foo.rb  5 6  # list lines 5 and 6 of foo.rb
-list foo.rb  5 2  # Same as above, since 2 < 5.
-list foo.rb:5 2   # Same as above
-list .            # List lines centered from where we currently are stopped
-list -            # List lines previous to those just shown
-"
+#{NAME} 5            # List centered around line 5
+#{NAME} 4+1          # Same as above.
+#{NAME} 5>           # List starting at line 5
+#{NAME} foo.rb:5     # List centered around line 5 of foo.rb
+#{NAME} foo.rb 5     # Same as above.
+#{NAME} foo.rb:5>    # List starting around line 5 of foo.rb
+#{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
+#{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
+#{NAME} foo.rb:5 2   # Same as above
+#{NAME} .            # List lines centered from where we currently are stopped
+#{NAME} -            # List lines previous to those just shown
+    HELP
 
-    ALIASES       = %w(l list> l>)
+    ALIASES       = %W(l #{NAME}> l>)
     CATEGORY      = 'files'
     MAX_ARGS      = 3
-    NAME          = File.basename(__FILE__, '.rb')
     SHORT_HELP    = 'List source code'
   end
 
@@ -197,80 +197,73 @@ list -            # List lines previous to those just shown
 end
 
 if __FILE__ == $0
-  if  not (ARGV.size == 1 && ARGV[0] == 'noload')
-    ISEQS__        = {}
-    SCRIPT_ISEQS__ = {}
-    ARGV[0..-1]    = ['noload']
-    load(__FILE__)
-  else    
-    require_relative '../location'
-    require_relative '../mock'
-    require_relative '../frame'
-    dbgr, cmd = MockDebugger::setup
-    cmd.proc.send('frame_initialize')
-    LineCache::cache(__FILE__)
-    cmd.run([cmd.name])
-    cmd.run([cmd.name, __FILE__ + ':10'])
-
-    def run_cmd(cmd, args)
-      seps = '--' * 10
-      puts "%s %s %s" % [seps, args.join(' '), seps]
-      cmd.run(args)
-    end
-      
-
-    load 'tmpdir.rb'
-    run_cmd(cmd, %W(#{cmd.name} tmpdir.rb 10))
-    run_cmd(cmd, %W(#{cmd.name} tmpdir.rb))
-
-    # cmd.proc.frame = sys._getframe()
-    # cmd.proc.setup()
-    # cmd.run([cmd.name])
-
-    run_cmd(cmd, %w(list .))
-    run_cmd(cmd, %w(list 30))
-
-    # cmd.run(['list', '9+1'])
-
-    run_cmd(cmd, %w(list> 10))
-    run_cmd(cmd, %w(list 3000))
-    run_cmd(cmd, %w(list run_cmd))
-
-    p = Proc.new do 
-      |x,y| x + y
-    end
-    run_cmd(cmd, %W(#{cmd.name} p))
-
-    # Function from a file found via an instruction sequence
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize))
-
-    # Use Class/method name. 15 isn't in the function - should this be okay?
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 15))
-
-    # Start line and count, since 3 < 30
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
-
-    # Start line finish line 
-    run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
-
-    # puts '--' * 10
-    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
-    # puts '--' * 10
-    # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
-    # cmd.run([cmd.name, 'os.path:5'])
-
-    # require 'thread_frame'
-    # tf = RubyVM::ThreadFrame.current
-    # cmd.proc.frame_setup(tf)
-    # brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
-    # brkpt_cmd.run(['break'])
-    # line = __LINE__
-    # run_cmd(cmd, [cmd.name, __LINE__.to_s])
-
-    # disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
-    # disable_cmd.run(['disable', '1'])
-
-    # run_cmd(cmd, ['list', line.to_s])
-    # run_cmd(cmd, %w(list parse_list_cmd))
+  require_relative '../location'
+  require_relative '../mock'
+  require_relative '../frame'
+  dbgr, cmd = MockDebugger::setup
+  cmd.proc.send('frame_initialize')
+  LineCache::cache(__FILE__)
+  cmd.run([cmd.name])
+  cmd.run([cmd.name, __FILE__ + ':10'])
+  
+  def run_cmd(cmd, args)
+    seps = '--' * 10
+    puts "%s %s %s" % [seps, args.join(' '), seps]
+    cmd.run(args)
   end
+  
+  
+  load 'tmpdir.rb'
+  run_cmd(cmd, %W(#{cmd.name} tmpdir.rb 10))
+  run_cmd(cmd, %W(#{cmd.name} tmpdir.rb))
+  
+  # cmd.proc.frame = sys._getframe()
+  # cmd.proc.setup()
+  # cmd.run([cmd.name])
+  
+  run_cmd(cmd, %W(cmd.name .))
+  run_cmd(cmd, %W(cmd.name 30))
+  
+  # cmd.run(['list', '9+1'])
+  
+  run_cmd(cmd, %W(cmd.name> 10))
+  run_cmd(cmd, %W(cmd.name 3000))
+  run_cmd(cmd, %W(cmd.name run_cmd))
+  
+  p = Proc.new do 
+    |x,y| x + y
+  end
+  run_cmd(cmd, %W(#{cmd.name} p))
+  
+  # Function from a file found via an instruction sequence
+  run_cmd(cmd, %W(#{cmd.name} Columnize.columnize))
+  
+  # Use Class/method name. 15 isn't in the function - should this be okay?
+  run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 15))
+  
+  # Start line and count, since 3 < 30
+  run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 30 3))
+  
+  # Start line finish line 
+  run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
+  
+  # puts '--' * 10
+  # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
+  # puts '--' * 10
+  # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
+  # cmd.run([cmd.name, 'os.path:5'])
+  
+  # require 'thread_frame'
+  # tf = RubyVM::ThreadFrame.current
+  # cmd.proc.frame_setup(tf)
+  # brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
+  # brkpt_cmd.run(['break'])
+  # line = __LINE__
+  # run_cmd(cmd, [cmd.name, __LINE__.to_s])
+  
+  # disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
+  # disable_cmd.run(['disable', '1'])
+  
+  # run_cmd(cmd, ['list', line.to_s])
+  # run_cmd(cmd, %W(cmd.name parse_list_cmd))
 end
