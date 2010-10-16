@@ -14,15 +14,7 @@ execption is stopped in the called method.
   SHORT_HELP   = 'Step into next method call or to next line'
 
   def run(args)
-    max = step_over_by(1)
-    
-    @proc.after_cmdloop
-    @proc.dbgr.listen(true)
-    
-    # We remove the max position breakpoint no matter what
-    max.remove! if max
-    @proc.before_cmdloop
-    
+    @proc.step_return_to_program(step_over_by(1))
   end
 end
 

@@ -71,6 +71,16 @@ class Trepan
       before_cmdloop
     end
 
+    # Return to program removing the step temporary breakpoint if
+    # it exists.
+    def step_return_to_program(step_bp)
+      after_cmdloop
+      dbgr.listen(true)
+      # We remove the temprorary stepping breakpoint no matter what
+      step_bp.remove! if step_bp
+      before_cmdloop
+    end
+
     def quit(cmd='exit')
       @next_level      = 32000 # I'm guessing the stack size can't
                                # ever reach this
@@ -107,6 +117,7 @@ class Trepan
     end
 
     def running_initialize
+      @step_count      = 0
       @stop_condition  = nil
       @stop_events     = nil
       @to_method       = nil
@@ -117,61 +128,62 @@ class Trepan
       return true if @step_count < 0
 
       if @settings[:'debugskip']
-        msg "diff: #{@different_pos}, event : #{@core.event}, #{@stop_events.inspect}" 
+        msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}" 
         msg "step_count  : #{@step_count}" 
         msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
         msg "next_thread : #{@next_thread},   thread: #{Thread.current}" 
       end
 
+
       return true if 
-        !frame || (@next_level < @frame.stack_size &&
-                   Thread.current == @next_thread)
+        !frame || (@next_level < @stack_size &&
+                   @current_thread == @next_thread)
 
-      new_pos = [@frame.source_container, frame_line,
-                 @stack_size, @current_thread, @core.event, @frame.pc_offset]
+      new_pos = [@frame.file, @frame.line,
+                 @stack_size, @current_thread, @event]
 
-      skip_val = @stop_events && !@stop_events.member?(@core.event)
+      skip_val = false
+      # skip_val = @stop_events && !@stop_events.member?(@event)
 
-      # If the last stop was a breakpoint, don't stop again if we are at
-      # the same location with a line event.
-      skip_val |= (@last_pos[4] == 'brkpt' && 
-                   @core.event == 'line' &&
-                   @frame.pc_offset == @last_pos[5])
+      # # If the last stop was a breakpoint, don't stop again if we are at
+      # # the same location with a line event.
+      # skip_val ||= (@last_pos[4] == 'brkpt' && 
+      #               @event == 'line')
 
-      if @settings[:'debugskip']
-        puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
-      end
+      # if @settings[:'debugskip']
+      #   puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
+      # end
 
-      @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
-      unless skip_val
-        condition_met = 
-          if @stop_condition
-            puts 'stop_cond' if @settings[:'debugskip']
-            debug_eval_no_errmsg(@stop_condition)
-          elsif @to_method
-            puts "method #{@frame.method} #{@to_method}" if 
-              @settings[:'debugskip']
-            @frame.method == @to_method
-          else
-            puts 'uncond' if @settings[:'debugskip']
-            true
-          end
+      # @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
+      # unless skip_val
+      #   condition_met = 
+      #     if @stop_condition
+      #       puts 'stop_cond' if @settings[:'debugskip']
+      #       debug_eval_no_errmsg(@stop_condition)
+      #     elsif @to_method
+      #       puts "method #{@frame.method} #{@to_method}" if 
+      #         @settings[:'debugskip']
+      #       @frame.method == @to_method
+      #     else
+      #       puts 'uncond' if @settings[:'debugskip']
+      #       true
+      #     end
           
-        msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
-             "new: #{new_pos}, different #{@different_pos.inspect}") if 
-          @settings[:'debugskip']
-        skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
-                    !condition_met)
-      end
+      #   msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
+      #        "new: #{new_pos}, different #{@different_pos.inspect}") if 
+      #     @settings[:'debugskip']
+      #   skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
+      #               !condition_met)
+      # end
 
-      @last_pos = new_pos if !@stop_events || @stop_events.member?(@core.event)
+      # @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
 
-      unless skip_val
-        # Set up the default values for the
-        # next time we consider skipping.
-        @different_pos = @settings[:different]
-        @stop_events   = nil
-      end
+      # unless skip_val
+      #   # Set up the default values for the
+      #   # next time we consider skipping.
+      #   @different_pos = @settings[:different]
+      #   @stop_events   = nil
+      # end
 
       return skip_val
     end
