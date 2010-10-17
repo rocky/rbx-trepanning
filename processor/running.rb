@@ -109,7 +109,7 @@ class Trepan
 
     def stepping_skip?
 
-      return true if @step_count < 0
+      return false if @step_count <= 0
 
       if @settings[:'debugskip']
         msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}" 
@@ -119,14 +119,15 @@ class Trepan
       end
 
 
-      return true if 
+      return false if 
         !frame || (@next_level < @stack_size &&
                    @current_thread == @next_thread)
 
       new_pos = [@frame.file, @frame.line,
                  @stack_size, @current_thread, @event]
 
-      skip_val = false
+      @step_count -= 1
+      skip_val = true
       # skip_val = @stop_events && !@stop_events.member?(@event)
 
       # # If the last stop was a breakpoint, don't stop again if we are at

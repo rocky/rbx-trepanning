@@ -224,7 +224,10 @@ class Trepan
       if breakpoint? || 'start' == @event
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
-        return if stepping_skip? # || @stack_size <= @hide_level
+        if stepping_skip? # || @stack_size <= @hide_level
+          step(@return_to_program, @step_count)
+          return true
+        end
       end
 
       @prompt = "(#{@settings[:prompt]}): " # compute_prompt
@@ -239,26 +242,29 @@ class Trepan
       
       @return_to_program = false
       @cmdloop_prehooks.run
+      return false
     end
 
 
     # This is the main entry point.
     def process_commands
-      before_cmdloop
+      skip_command = before_cmdloop
       while not @leave_cmd_loop do
         begin
-          break if process_command_and_quit?()
+          if !skip_command 
+            break if process_command_and_quit?()
+          end
           if @return_to_program
             after_cmdloop
             if @step_count >= 0 
-              step_bp = step_over_by(@step_count)
+              step_bp = step_over_by(1)
               dbgr.listen(@return_to_program='step')
               # We remove the temprorary stepping breakpoint no matter what
               step_bp.remove! if step_bp
             else
               dbgr.listen
             end
-            before_cmdloop
+            skip_command = before_cmdloop
           end
         rescue SystemExit
           ## @dbgr.stop

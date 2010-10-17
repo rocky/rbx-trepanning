@@ -17,7 +17,21 @@ See also 'continue', 'next' and 'nexti' commands.
   SHORT_HELP   = 'Step into next method call or to next line'
 
   def run(args)
-    @proc.step('step')
+    if args.size == 1
+      step_count = 1
+    else
+      step_str = args[1]
+      opts = {
+        :msg_on_error => 
+        "The #{NAME} command argument must eval to an integer. Got: %s" % 
+        step_str,
+        :min_value => 1
+      }
+      step_count = @proc.get_an_int(step_str, opts)
+      return unless step_count
+    end
+    
+    @proc.step('step', step_count-1)
   end
 end
 

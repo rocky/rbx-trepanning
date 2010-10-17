@@ -31,7 +31,7 @@ See also 'step' and 'nexti'.
       step_str = args[1]
       opts = {
         :msg_on_error => 
-        "The 'next' command argument must eval to an integer. Got: %s" % 
+        "The #{NAME} command argument must eval to an integer. Got: %s" % 
         step_str,
         :min_value => 1
       }
@@ -39,7 +39,7 @@ See also 'step' and 'nexti'.
       return unless step_count
     end
     
-    @proc.step('next', step_count)
+    @proc.step('next', step_count-1)
   end
   
 end
