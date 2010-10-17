@@ -101,5 +101,21 @@ class Trepan
       
       return next_interesting(exec, fin)
     end
+
+    def is_a_goto(exec, ip)
+      goto = Rubinius::InstructionSet.opcodes_map[:goto]
+      git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
+      gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
+      
+      i = exec.iseq[ip]
+      
+      case i
+      when goto, git, gif
+        return true
+      end
+      
+      return false
+    end
+
   end
 end

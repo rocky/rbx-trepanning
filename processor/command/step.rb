@@ -1,5 +1,6 @@
 require 'rubygems'; require 'require_relative'
-require_relative './next'
+require_relative 'base/cmd'
+require_relative '../stepping'
 
 class Trepan::Command::StepCommand < Trepan::Command
 
@@ -8,13 +9,19 @@ class Trepan::Command::StepCommand < Trepan::Command
   NAME         = File.basename(__FILE__, '.rb')
   HELP         = <<-HELP
 Behaves like 'next', but if there is a method call on the current line,
-execption is stopped in the called method.
+exception is stopped in the called method.
+
+See also 'continue', 'next' and 'nexti' commands.
       HELP
   NEED_RUNNING = true
   SHORT_HELP   = 'Step into next method call or to next line'
 
   def run(args)
-    @proc.step_return_to_program(@proc.step_over_by(1))
+    @proc.step('step')
   end
 end
 
+if __FILE__ == $0
+  require_relative '../mock'
+  dbgr, cmd = MockDebugger::setup
+end

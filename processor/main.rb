@@ -210,7 +210,6 @@ class Trepan
 
       # Save it to the history.
       @dbgr.history_io.puts @last_command
-      return leave_cmdloop
     end
 
     def after_cmdloop
@@ -222,7 +221,7 @@ class Trepan
       frame_setup
 
       @unconditional_prehooks.run
-      if breakpoint?
+      if breakpoint? || 'start' == @event
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
         return if stepping_skip? # || @stack_size <= @hide_level
@@ -237,7 +236,8 @@ class Trepan
       # end
 
       # @eventbuf.add_mark if @settings[:tracebuffer]
-
+      
+      @return_to_program = false
       @cmdloop_prehooks.run
     end
 
@@ -248,6 +248,18 @@ class Trepan
       while not @leave_cmd_loop do
         begin
           break if process_command_and_quit?()
+          if @return_to_program
+            after_cmdloop
+            if @step_count >= 0 
+              step_bp = step_over_by(@step_count)
+              dbgr.listen(@return_to_program='step')
+              # We remove the temprorary stepping breakpoint no matter what
+              step_bp.remove! if step_bp
+            else
+              dbgr.listen
+            end
+            before_cmdloop
+          end
         rescue SystemExit
           ## @dbgr.stop
           raise

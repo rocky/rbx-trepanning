@@ -26,7 +26,7 @@ See also 'step' and 'nexti'.
 
   def run(args)
     if args.size == 1
-      step = 1
+      step_count = 1
     else
       step_str = args[1]
       opts = {
@@ -35,14 +35,11 @@ See also 'step' and 'nexti'.
         step_str,
         :min_value => 1
       }
-      step = @proc.get_an_int(step_str, opts)
-      return unless step
+      step_count = @proc.get_an_int(step_str, opts)
+      return unless step_count
     end
     
-    @proc.step_over_by(step)
-    @proc.after_cmdloop
-    @proc.dbgr.listen
-    @proc.before_cmdloop
+    @proc.step('next', step_count)
   end
   
 end

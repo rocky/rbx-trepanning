@@ -1,13 +1,17 @@
 require 'rubygems'; require 'require_relative'
-require_relative './next'
+require_relative 'base/cmd'
+require_relative '../stepping'
+require_relative '../../app/breakpoint'
 
-class Trepan::Command::NextInstructionCommand < Trepan::Command::NextCommand
+class Trepan::Command::NextInstructionCommand < Trepan::Command
   ALIASES      = %w(ni)
   CATEGORY     = 'running'
   HELP         = <<-HELP
 Continue but stop execution at the next bytecode instruction.
 
 Does not step into send instructions.
+
+See also 'continue', 'step', and 'next' commands.
       HELP
   NAME         = File.basename(__FILE__, '.rb')
   NEED_STACK   = true
@@ -34,9 +38,9 @@ Does not step into send instructions.
     next_ip = @proc.frame.ip + insn.width
     
     if next_ip >= exec.iseq.size
-      step_to_parent
-    elsif is_a_goto(exec, @proc.frame.ip)
-      set_breakpoints_between(exec, @proc.frame.ip, next_ip)
+      @proc.step_to_parent
+    elsif @proc.is_a_goto(exec, @proc.frame.ip)
+      @proc.set_breakpoints_between(exec, @proc.frame.ip, next_ip)
     else
       line = exec.line_from_ip(next_ip)
       
@@ -44,21 +48,11 @@ Does not step into send instructions.
       bp.for_step!
       bp.activate
     end
-    @proc.return_to_program
+    @proc.continue('nexti')
   end
-  
-  def is_a_goto(exec, ip)
-    goto = Rubinius::InstructionSet.opcodes_map[:goto]
-    git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
-    gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
-    
-    i = exec.iseq[ip]
-    
-    case i
-    when goto, git, gif
-      return true
-    end
-    
-    return false
-  end
+end
+
+if __FILE__ == $0
+  require_relative '../mock'
+  dbgr, cmd = MockDebugger::setup
 end

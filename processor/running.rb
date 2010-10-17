@@ -23,13 +23,14 @@ class Trepan
     # # execution.
     # # FIXME: turn line_number into a condition.
 
-    # def continue
-    #   @next_level      = 32000 # I'm guessing the stack size can't
-    #                            # ever reach this
-    #   @next_thread     = nil
-    #   @step_count      = -1    # No more event stepping
-    #   @leave_cmd_loop  = true  # Break out of the processor command loop.
-    # end
+    def continue(how_to_continue)
+      @next_level      = 32000 # I'm guessing the stack size can't
+                               # ever reach this
+      @next_thread     = nil
+      @step_count      = -1    # No more event stepping
+      # @leave_cmd_loop  = true  # Break out of the processor command loop.
+      @return_to_program = how_to_continue
+    end
 
     # # Does whatever needs to be done to set to "next" program
     # # execution.
@@ -51,34 +52,17 @@ class Trepan
     #   @next_thread     = Thread.current
     # end
 
-    # # Does whatever needs to be done to set to step program
-    # # execution.
-    # def step(step_count=1, opts={}, condition=nil)
-    #   continue
-    #   @step_count = step_count
-    #   @different_pos   = opts[:different_pos] if 
-    #     opts.keys.member?(:different_pos)
-    #   @stop_condition  = condition
-    #   @stop_events     = opts[:stop_events]   if 
-    #     opts.keys.member?(:stop_events)
-    #   @to_method       = opts[:to_method]
-    # end
-
-    # Return to program
-    def return_to_program
-      after_cmdloop
-      dbgr.listen
-      before_cmdloop
-    end
-
-    # Return to program removing the step temporary breakpoint if
-    # it exists.
-    def step_return_to_program(step_bp)
-      after_cmdloop
-      dbgr.listen(true)
-      # We remove the temprorary stepping breakpoint no matter what
-      step_bp.remove! if step_bp
-      before_cmdloop
+    # Does whatever needs to be done to set to step program
+    # execution.
+    def step(how_to_continue, step_count=1, opts={}, condition=nil)
+      continue(how_to_continue)
+      @step_count = step_count
+      @different_pos   = opts[:different_pos] if 
+        opts.keys.member?(:different_pos)
+      @stop_condition  = condition
+      @stop_events     = opts[:stop_events]   if 
+        opts.keys.member?(:stop_events)
+      @to_method       = opts[:to_method]
     end
 
     def quit(cmd='exit')
