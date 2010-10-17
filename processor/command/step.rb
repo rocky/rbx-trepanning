@@ -1,7 +1,7 @@
 require 'rubygems'; require 'require_relative'
 require_relative './next'
 
-class Trepan::Command::StepCommand < Trepan::Command::NextCommand
+class Trepan::Command::StepCommand < Trepan::Command
 
   ALIASES      = %w(s)
   CATEGORY     = 'running'
@@ -14,7 +14,7 @@ execption is stopped in the called method.
   SHORT_HELP   = 'Step into next method call or to next line'
 
   def run(args)
-    @proc.step_return_to_program(step_over_by(1))
+    @proc.step_return_to_program(@proc.step_over_by(1))
   end
 end
 

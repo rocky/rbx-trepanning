@@ -9,7 +9,7 @@ require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
 %w(default breakpoint disassemble eval load_cmds location frame hook msg 
-   running validate).each do
+   running stepping validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -134,7 +134,7 @@ class Trepan
     end
 
     def compute_prompt
-      th = @dbgr.debugee_thread
+      th = @current_thread
       thread_str = 
         if 2 == Thread.list.size
           ''
@@ -347,15 +347,15 @@ if __FILE__ == $0
   puts cmd_obj.class.const_get(:HELP)
   puts cmd_obj.class.const_get(:SHORT_HELP)
 
-  ## puts cmdproc.compute_prompt
-  # Thread.new{ puts cmdproc.compute_prompt }.join
+  cmdproc.instance_variable_set('@current_thread', Thread.current)
+  puts cmdproc.compute_prompt
+  Thread.new{ puts cmdproc.compute_prompt }.join
 
-  # x = Thread.new{ Thread.pass; x = 1 }
-  # puts cmdproc.compute_prompt
-  # x.join
-  # cmdproc.debug_nest += 1
-  # puts cmdproc.compute_prompt
-
+  x = Thread.new{ Thread.pass; x = 1 }
+  puts cmdproc.compute_prompt
+  x.join
+  cmdproc.debug_nest += 1
+  puts cmdproc.compute_prompt
 
   # if ARGV.size > 0
   #   cmdproc.msg('Enter "q" to quit')
