@@ -24,6 +24,10 @@ module Trepanning
     ## dbgr.trace_filter << self.method(:debug_program)
     ## dbgr.trace_filter << Kernel.method(:load)
 
+
+    # Any frame from us or below should be hidden by default.
+    hide_level = Rubinius::VM.backtrace(0, true).size
+
     old_dollar_0 = $0
 
     # Without the dance below to set $0, setting it to a signifcantly
@@ -35,7 +39,7 @@ module Trepanning
     ## trace_var(:$0, dollar_0_tracker)
 
     ## FIXME: we gets lots of crap before we get to the real stuff.
-    Trepan.start(:set_restart => true) 
+    Trepan.start(:set_restart => true, :hide_level => hide_level)
     Kernel::load program_to_debug
 
     # The dance we have to undo to restore $0 and undo the mess created

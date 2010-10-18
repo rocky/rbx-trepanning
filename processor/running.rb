@@ -1,9 +1,12 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
+require 'set'
 ## require_relative '../app/core'
 class Trepan
   class CmdProcessor
 
+    attr_accessor :ignore_methods  # Methods we don't want to ever stop
+                                   # in.
     attr_accessor :stop_condition  # String or nil. When not nil
                                    # this has to eval non-nil
                                    # in order to stop.
@@ -32,18 +35,19 @@ class Trepan
       @return_to_program = how_to_continue
     end
 
-    # # Does whatever needs to be done to set to "next" program
-    # # execution.
-    # def finish(level_count=0, opts={})
-    #   step(0, opts)
-    #   @next_level        = @frame.stack_size - level_count
-    #   @next_thread       = Thread.current
-    #   @stop_events       = Set.new(%w(return))
+    # Does whatever setup needs to be done to set to ignore stepping
+    # to the finish of the current method. Elsewhere in
+    # "skipping_step?" we do the checking.
+    def finish(level_count=0, opts={})
+      step('finish', 0, opts)
+      @next_level        = @stack_size - level_count + 1
+      @next_thread       = @current_thread
 
-    #   # Try high-speed (run-time-assisted) method
-    #   @frame.trace_off   = true  # No more tracing in this frame
-    #   @frame.return_stop = true  # don't need to 
-    # end
+      # # Try high-speed (run-time-assisted) method
+      # @frame.trace_off   = true  # No more tracing in this frame
+      # @frame.return_stop = true  # don't need to 
+    end
+
     # # Does whatever needs to be done to set to "next" program
     # # execution.
     # def next(step_count=1, opts={})
@@ -101,6 +105,7 @@ class Trepan
     end
 
     def running_initialize
+      @ignore_methods  = Set.new
       @step_count      = 0
       @stop_condition  = nil
       @stop_events     = nil
@@ -109,25 +114,40 @@ class Trepan
 
     def stepping_skip?
 
-      return false if @step_count <= 0
-
-      if @settings[:'debugskip']
-        msg "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}" 
-        msg "step_count  : #{@step_count}" 
-        msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
-        msg "next_thread : #{@next_thread},   thread: #{Thread.current}" 
+      if @step_count <= 0  
+        # We may eventually stop for some other reason, but it's not
+        # because we were stepping here.
+        return false 
       end
 
+      if @settings[:'debugskip']
+        msg "diff: #{@different_pos}, event: #{@event}" 
+        msg "step_count  : #{@step_count}" 
+        msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
+        msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
+      end
 
-      return false if 
-        !frame || (@next_level < @stack_size &&
-                   @current_thread == @next_thread)
+      p ['+++1', @frame.method]
+      if @ignore_methods.member?(@frame.method)
+        puts "+++ ignored"
+        return true
+      end
+
+      # FIXME: do we need?
+      if !frame || (@next_level < @stack_size &&
+                    @current_thread == @next_thread)
+        # The above is to handle finish.
+        return false 
+      end
 
       new_pos = [@frame.file, @frame.line,
                  @stack_size, @current_thread, @event]
 
       @step_count -= 1
+
+      # Assume we are not going to skip this step event.
       skip_val = true
+
       # skip_val = @stop_events && !@stop_events.member?(@event)
 
       # # If the last stop was a breakpoint, don't stop again if we are at
@@ -135,9 +155,10 @@ class Trepan
       # skip_val ||= (@last_pos[4] == 'brkpt' && 
       #               @event == 'line')
 
-      # if @settings[:'debugskip']
-      #   puts "skip: #{skip_val.inspect}, last: #{@last_pos}, new: #{new_pos}" 
-      # end
+      if @settings[:'debugskip']
+        puts("skip: #{skip_val.inspect}, last: #{@last_pos}, " + 
+          "new: #{new_pos.inspect}")
+      end
 
       # @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
       # unless skip_val
@@ -163,12 +184,12 @@ class Trepan
 
       # @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
 
-      # unless skip_val
-      #   # Set up the default values for the
-      #   # next time we consider skipping.
-      #   @different_pos = @settings[:different]
-      #   @stop_events   = nil
-      # end
+      unless skip_val
+        # Set up the default values for the
+        # next time we consider step skipping.
+        @different_pos = @settings[:different]
+        # @stop_events   = nil
+      end
 
       return skip_val
     end

@@ -221,7 +221,7 @@ class Trepan
       frame_setup
 
       @unconditional_prehooks.run
-      if breakpoint? || 'start' == @event
+      if breakpoint?
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
         if stepping_skip? # || @stack_size <= @hide_level
@@ -258,7 +258,7 @@ class Trepan
             after_cmdloop
             if @step_count >= 0 
               step_bp = step_over_by(1)
-              dbgr.listen(@return_to_program='step')
+              dbgr.listen('step' == @return_to_program)
               # We remove the temprorary stepping breakpoint no matter what
               step_bp.remove! if step_bp
             else

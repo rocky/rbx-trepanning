@@ -15,7 +15,7 @@ for the current line is disassembled only.
   SHORT_HELP   = 'Show the bytecode for the current method'
   
   def run(args)
-    if args[1] == "all"
+    if 'all' == args[1]
       section = "Bytecode for #{@proc.frame.method.name}"
       msg current_method.decode
     else
@@ -24,3 +24,15 @@ for the current line is disassembled only.
   end
 end
 
+if __FILE__ == $0
+  require_relative '../mock'
+  dbgr, cmd = MockDebugger::setup
+  def foo(cmd)
+    puts "#{cmd.name}"
+    cmd.run([cmd.name])
+    puts '=' * 40
+    puts "#{cmd.name} all"
+    cmd.run([cmd.name, 'all'])
+  end
+  foo(cmd)
+end

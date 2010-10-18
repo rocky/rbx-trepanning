@@ -50,6 +50,7 @@ class Trepan
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
 
     @processor = CmdProcessor.new(self)
+
     @intf     = [Trepan::UserInterface.new(@input, @output)]
     @settings[:cmdfiles].each do |cmdfile|
       add_command_file(cmdfile)
@@ -141,6 +142,10 @@ class Trepan
   def start(settings = {})
     @settings = @settings.merge(settings)
     spinup_thread
+    @debugee_thread = @thread
+    if @settings[:hide_level]
+      @processor.hidelevels[@thread] = @settings[:hide_level]
+    end
 
     # Feed info to the debugger thread!
     locs = Rubinius::VM.backtrace(@settings[:offset] + 1, true)

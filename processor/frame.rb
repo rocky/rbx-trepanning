@@ -88,15 +88,18 @@ class Trepan
 
       @threads2frames   ||= {} 
       @threads2frames[@current_thread] = @top_frame
+      max_stack_size = @dbgr.locations.size
       @hide_level         = 
         if @settings[:debugstack]
           0
         else
           @hidelevels[@current_thread] ||=  
-            find_main_script(@dbgr.locations) || @dbgr.locations.size
+            find_main_script(@dbgr.locations) || max_stack_size
         end
       
-      @stack_size = @dbgr.locations.size - @hide_level
+      @stack_size = if @hide_level >= max_stack_size  
+                      max_stack_size else max_stack_size - @hide_level
+                    end
       
       ## frame_eval_remap if 'EVAL' == @frame.type
     end
