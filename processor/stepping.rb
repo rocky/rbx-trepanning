@@ -113,16 +113,5 @@ class Trepan
       
       return bp1
     end
-    
-    def next_interesting(meth, ip)
-      pop = Rubinius::InstructionSet.opcodes_map[:pop]
-      
-      if meth.iseq[ip] == pop
-        return ip + 1
-      end
-      
-      return ip
-    end
-    
   end
 end

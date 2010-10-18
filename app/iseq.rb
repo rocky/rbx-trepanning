@@ -1,10 +1,12 @@
-# Frame code from reference debugger.
+# Module for working with instruction sequences.
 module Trepanning
   module ISeq
+    OP_GOTO = Rubinius::InstructionSet.opcodes_map[:goto]
+    OP_GOTO_IF_TRUE  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
+    OP_GOTO_IF_FALSE = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
+    OP_RET           = Rubinius::InstructionSet.opcodes_map[:ret]
+
     def goto_between(meth, start, fin)
-      goto = Rubinius::InstructionSet.opcodes_map[:goto]
-      git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
-      gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
       
       iseq = meth.iseq
       
@@ -12,9 +14,9 @@ module Trepanning
       while i < fin
         op = iseq[i]
         case op
-        when goto
+        when OP_GOTO
           return next_interesting(meth, iseq[i + 1]) # goto target
-        when git, gif
+        when OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE
           return [next_interesting(meth, iseq[i + 1]),
                   next_interesting(meth, i + 2)] # target and next ip
         else
@@ -22,37 +24,32 @@ module Trepanning
           i += (op.arg_count + 1)
         end
       end
-      
-      return next_interesting(meth, fin)
-    end
 
-    def is_a_goto(meth, ip)
-      goto = Rubinius::InstructionSet.opcodes_map[:goto]
-      git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
-      gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
-      
-      i = meth.iseq[ip]
-      
-      case i
-      when goto, git, gif
-        case i
-        when goto, git, gif
-          return true
-        end
-        
-        return false
+      if fin == meth.lines.last
+        return -1
+      else
+        return next_interesting(meth, fin)
       end
     end
 
+    def next_interesting(meth, ip)
+      pop = Rubinius::InstructionSet.opcodes_map[:pop]
+      
+      if meth.iseq[ip] == pop
+        return ip + 1
+      end
+      
+      return ip
+    end
+    
     def return_between(meth, start, fin)
-      ret = Rubinius::InstructionSet.opcodes_map[:ret]
       iseq = meth.iseq
       ips = []
       i = start
       while i < fin
         op = iseq[i]
         case op
-        when ret
+        when OP_RET
           ips << i 
         end
         op = Rubinius::InstructionSet[op]
@@ -68,8 +65,9 @@ if __FILE__ == $0
   locations = Rubinius::VM.backtrace(0, true)
   call_loc = locations[1]
   meth = call_loc.method
-  puts "call_loc: #{is_a_goto(meth, call_loc.ip).inspect}"
   puts meth.decode
   ips = return_between(meth, meth.lines.first, meth.lines.last)
-  puts "meth.lines.return_between: #{ips.inspect}"
+  puts "return: #{ips.inspect}"
+  ips = goto_between(meth, meth.lines.first, meth.lines.last)
+  puts "goto: #{ips.inspect}"
 end
