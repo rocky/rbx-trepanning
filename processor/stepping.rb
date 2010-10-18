@@ -1,20 +1,22 @@
 require 'rubygems'; require 'require_relative'
+require_relative '../app/iseq'
 class Trepan
   class CmdProcessor
+    include Trepanning::ISeq
     def step_over_by(step)
       f = @frame
       
       ip = -1
       
-      exec = f.method
+      meth = f.method
       possible_line = f.line + step
-      fin_ip = exec.first_ip_on_line possible_line
+      fin_ip = meth.first_ip_on_line possible_line
       
       if fin_ip == -1
         return step_to_parent
       end
       
-      set_breakpoints_between(exec, f.ip, fin_ip)
+      set_breakpoints_between(meth, f.ip, fin_ip)
     end
     
     def step_to_return
@@ -24,12 +26,12 @@ class Trepan
         return
       end
       
-      exec = f.method
+      meth = f.method
       ip = -1
-      fin_ip = exec.lines.last
+      fin_ip = meth.lines.last
       
-      set_breakpoints_between(exec, f.ip, fin_ip)
-      bp = Trepanning::Breakpoint.for_ip(exec, ip, {:event => 'return'})
+      set_breakpoints_between(meth, f.ip, fin_ip)
+      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'return'})
       bp.for_step!
       bp.activate
       
@@ -43,24 +45,24 @@ class Trepan
         return
       end
       
-      exec = f.method
+      meth = f.method
       ip = f.ip
       
-      bp = Trepanning::Breakpoint.for_ip(exec, ip, {:event => 'return'})
+      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'return'})
       bp.for_step!
       bp.activate
       
       return bp
     end
     
-    def set_breakpoints_between(exec, start_ip, fin_ip)
-      ips = goto_between(exec, start_ip, fin_ip)
+    def set_breakpoints_between(meth, start_ip, fin_ip)
+      ips = goto_between(meth, start_ip, fin_ip)
       if ips.kind_of? Fixnum
         ip = ips
       else
         one, two = ips
-        bp1 = Trepanning::Breakpoint.for_ip(exec, one, {:event => 'line'})
-        bp2 = Trepanning::Breakpoint.for_ip(exec, two, {:event => 'line'})
+        bp1 = Trepanning::Breakpoint.for_ip(meth, one, {:event => 'line'})
+        bp2 = Trepanning::Breakpoint.for_ip(meth, two, {:event => 'line'})
         
         bp1.paired_with(bp2)
         bp2.paired_with(bp1)
@@ -79,20 +81,20 @@ class Trepan
         return nil
       end
       
-      bp = Trepanning::Breakpoint.for_ip(exec, ip, {:event => 'line'})
+      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'line'})
       bp.for_step!
       bp.activate
       
       return bp
     end
     
-    def set_breakpoints_on_return_between(exec, start_ip, fin_ip)
-      ips = return_between(exec, start_ip, fin_ip)
+    def set_breakpoints_on_return_between(meth, start_ip, fin_ip)
+      ips = return_between(meth, start_ip, fin_ip)
       bp1 = nil
       0.upto(ips.size-1) do |i| 
-        bp1 = Trepanning::Breakpoint.for_ip(exec, i, {:event => 'return'})
+        bp1 = Trepanning::Breakpoint.for_ip(meth, i, {:event => 'return'})
         # FIXME handle pairing
-        # bp2 = Trepanning::Breakpoint.for_ip(exec, two, {:event => 'return'})
+        # bp2 = Trepanning::Breakpoint.for_ip(meth, two, {:event => 'return'})
         # bp1.paired_with(bp2)
         # bp2.paired_with(bp1)
         
@@ -112,76 +114,15 @@ class Trepan
       return bp1
     end
     
-    def next_interesting(exec, ip)
+    def next_interesting(meth, ip)
       pop = Rubinius::InstructionSet.opcodes_map[:pop]
       
-      if exec.iseq[ip] == pop
+      if meth.iseq[ip] == pop
         return ip + 1
       end
       
       return ip
     end
     
-    def goto_between(exec, start, fin)
-      goto = Rubinius::InstructionSet.opcodes_map[:goto]
-      git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
-      gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
-      
-      iseq = exec.iseq
-      
-      i = start
-      while i < fin
-        op = iseq[i]
-        case op
-        when goto
-          return next_interesting(exec, iseq[i + 1]) # goto target
-        when git, gif
-          return [next_interesting(exec, iseq[i + 1]),
-                  next_interesting(exec, i + 2)] # target and next ip
-        else
-          op = Rubinius::InstructionSet[op]
-          i += (op.arg_count + 1)
-        end
-      end
-      
-      return next_interesting(exec, fin)
-    end
-
-    def return_between(exec, start, fin)
-      ret = Rubinius::InstructionSet.opcodes_map[:ret]
-      
-      iseq = exec.iseq
-      
-      ips = []
-      i = start
-      while i < fin
-        op = iseq[i]
-        case op
-        when ret
-          ips << i 
-        else
-          op = Rubinius::InstructionSet[op]
-          i += (op.arg_count + 1)
-        end
-      end
-      
-      return ips
-    end
-
-    def is_a_goto(exec, ip)
-      goto = Rubinius::InstructionSet.opcodes_map[:goto]
-      git  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
-      gif  = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
-      
-      i = exec.iseq[ip]
-      
-      case i
-      when goto, git, gif
-        return true
-      end
-      
-      return false
-    end
-
   end
 end

@@ -1,22 +1,17 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
+require_relative 'cmd-helper'
 require_relative '../../processor/main'
 ## require_relative '../../app/core'
-
-# Mock debugger stub. FIXME: put in comment helper routine.
-class Trepan
-end
 
 # Test Trepan:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
 
+  include UnitHelper
   def setup
-    @dbg     = Trepan.new
-    ## @core    = Trepan::Core.new(@dbg)
-    ## @cmdproc = @core.processor = Trepan::CmdProcessor.new(@core)
-    @cmdproc = Trepan::CmdProcessor.new(self)
-    @cmds    = @cmdproc.instance_variable_get('@commands')
+    common_setup
+    @cmds = @cmdproc.instance_variable_get('@commands')
   end
 
   # See that we have can load up commands
@@ -30,7 +25,7 @@ class TestCmdProcessor < Test::Unit::TestCase
     assert cmd_obj.respond_to?(:run), 'Command should have a run method'
   end
 
-  def no__test_compute_prompt
+  def no_test_compute_prompt
     assert_equal('(rbdbgr): ', @cmdproc.compute_prompt)
     Thread.new{ assert_equal('(rbdbgr@55): ', @cmdproc.compute_prompt.gsub(/@\d+/, '@55'))}.join
     x = Thread.new{ Thread.pass; x = 1 }

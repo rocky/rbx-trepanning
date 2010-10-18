@@ -11,7 +11,7 @@ class TestCommandAliasUnalias < Test::Unit::TestCase
   include UnitHelper
   def setup
     common_setup
-    @name     = File.basename(__FILE__, '.rb').split(/-/)[2]
+    @name = File.basename(__FILE__, '.rb').split(/-/)[2]
   end
 
   def check_alias(should_not_have, cmd_name, *args)
@@ -45,7 +45,5 @@ class TestCommandAliasUnalias < Test::Unit::TestCase
     assert_equal(true, alias_defined?('ki'))
     check_alias(false, 'unalias', 'ki')
     assert_equal(false, alias_defined?('ki'))
-
   end
-
 end

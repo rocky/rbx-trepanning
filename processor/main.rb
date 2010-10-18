@@ -84,9 +84,8 @@ class Trepan
       UNMASKABLE_EVENTS = Set.new(['end', 'raise', 'unknown'])
     end
 
-    def initialize(core, settings={})
-      ## @core            = core
-      @dbgr            =  core
+    def initialize(dbgr, settings={})
+      @dbgr            =  dbgr
       @debug_nest      = 1
       @hidelevels      = {}
       @last_command    = nil
