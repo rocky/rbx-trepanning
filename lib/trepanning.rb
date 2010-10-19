@@ -48,6 +48,8 @@ class Trepan
   def initialize(settings={})
     @breakpoint = nil
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
+    @input  ||= @settings[:input]
+    @output ||= @settings[:output]
 
     @processor = CmdProcessor.new(self)
 
@@ -162,6 +164,10 @@ class Trepan
 
     Thread.current.set_debugger_thread @thread
     self
+  end
+
+  def stop(settings = {})
+    # Nothing for now...
   end
 
   def add_command_file(cmdfile, stderr=$stderr)

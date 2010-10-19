@@ -59,7 +59,7 @@ class Trepan
 
 
     unless defined?(EVENT2ICON)
-      # We use event icons in printing locations.
+      # Event icons used in printing locations.
       EVENT2ICON = {
         'brkpt'          => 'xx',
         'c-call'         => 'C>',

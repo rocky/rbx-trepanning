@@ -61,11 +61,11 @@ Rake::TestTask.new(:'test:unit') do |t|
   t.verbose = true
 end
 
-# desc 'Test functional - the medium-sized tests'
-# Rake::TestTask.new(:'test:functional') do |t|
-#   t.test_files = FileList['test/functional/**/test-*.rb']
-#   t.verbose = true
-# end
+desc 'Test functional - the medium-sized tests'
+Rake::TestTask.new(:'test:functional') do |t|
+  t.test_files = FileList['test/functional/**/test-*.rb']
+  t.verbose = true
+end
 
 # desc 'Test integration - end-to-end blackbox tests'
 # Rake::TestTask.new(:'test:integration') do |t|
@@ -77,7 +77,7 @@ desc 'Test everything - unit tests for now.'
 task :default => :test
 task :test do
   # exceptions = %w(test:unit test:functional test:integration).collect do |task|
-  exceptions = %w(test:unit).collect do |task|
+  exceptions = %w(test:unit test:functional).collect do |task|
     begin
       Rake::Task[task].invoke
       nil

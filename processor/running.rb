@@ -128,9 +128,7 @@ class Trepan
         msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       end
 
-      p ['+++1', @frame.method]
       if @ignore_methods.member?(@frame.method)
-        puts "+++ ignored"
         return true
       end
 
