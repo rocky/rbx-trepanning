@@ -34,7 +34,7 @@ module Trepanning
       @ip = ip
       @line = line
       @for_step = false
-      @paired_bp = nil
+      @related_bp = []
 
       opts = BRKPT_DEFAULT_SETTINGS.merge(opts)
       opts.keys.each do |key|
@@ -50,7 +50,8 @@ module Trepanning
       @set = false
     end
 
-    attr_reader :method, :ip, :line, :paired_bp, :descriptor
+    attr_reader :method, :ip, :line, :descriptor
+    attr_accessor :related_bp
 
     def for_step!
       @temp = true
@@ -65,8 +66,11 @@ module Trepanning
       @for_step
     end
 
-    def paired_with(bp)
-      @paired_bp = bp
+    def related_with(bp)
+      @related_bp += [bp] + bp.related_bp
+      @related_bp.uniq!
+      # List of related breakpoints should be shared.
+      bp.related_bp = @related_bp
     end
 
     def activate
@@ -77,9 +81,9 @@ module Trepanning
     def hit!
       return unless @temp
 
-      remove!
-
-      @paired_bp.remove! if @paired_bp
+      @related_bp.each do |bp|
+        bp.remove!
+      end
     end
 
     # def condition?(bind)
@@ -177,7 +181,7 @@ module Trepanning
         return false
       end
 
-      @debugger.processor "Resolved breakpoint for #{@klass_name}#{@which}#{@name}"
+      @debugger.processor.msg "Resolved breakpoint for #{@klass_name}#{@which}#{@name}"
 
       @debugger.processor.set_breakpoint_method descriptor, meth, @line
 

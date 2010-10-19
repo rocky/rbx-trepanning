@@ -25,8 +25,7 @@ class Trepan
     end
 
     def breakpoint_find(bpnum, show_errmsg = true)
-      brkpts = @dbgr.breakpoints
-      if 0 == brkpts.size 
+      if 0 == @brkpts.size 
         errmsg('No breakpoints set.') if show_errmsg
         return nil
       elsif bpnum > brkpts.size || bpnum < 1
@@ -34,7 +33,7 @@ class Trepan
                [bpnum, brkpts.size]) if show_errmsg
         return nil
       end
-      bp = @dbgr.breakpoints[bpnum-1]
+      bp = @brkpts[bpnum]
       unless bp
         errmsg "Unknown breakpoint '#{bpnum}'" if show_errmsg
         return nil
@@ -124,10 +123,7 @@ class Trepan
     def delete_breakpoint_by_number(bpnum, do_enable=true)
       bp = breakpoint_find(bpnum)
       return false unless bp
-      
-      bp.delete!
-      
-      @dbgr.breakpoints[bpnum-1] = nil
+      @brkpts.delete(bpnum)
       return true
     end
 

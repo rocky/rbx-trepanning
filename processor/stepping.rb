@@ -30,12 +30,7 @@ class Trepan
       ip = -1
       fin_ip = meth.lines.last
       
-      set_breakpoints_between(meth, f.ip, fin_ip)
-      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'return'})
-      bp.for_step!
-      bp.activate
-      
-      return bp
+      set_breakpoints_on_return_between(meth, f.ip, fin_ip)
     end
     
     def step_to_parent
@@ -64,8 +59,7 @@ class Trepan
         bp1 = Trepanning::Breakpoint.for_ip(meth, one, {:event => 'line'})
         bp2 = Trepanning::Breakpoint.for_ip(meth, two, {:event => 'line'})
         
-        bp1.paired_with(bp2)
-        bp2.paired_with(bp1)
+        bp1.related_with(bp2)
         
         bp1.for_step!
         bp2.for_step!
@@ -90,28 +84,26 @@ class Trepan
     
     def set_breakpoints_on_return_between(meth, start_ip, fin_ip)
       ips = return_between(meth, start_ip, fin_ip)
-      bp1 = nil
-      0.upto(ips.size-1) do |i| 
-        bp1 = Trepanning::Breakpoint.for_ip(meth, i, {:event => 'return'})
-        # FIXME handle pairing
-        # bp2 = Trepanning::Breakpoint.for_ip(meth, two, {:event => 'return'})
-        # bp1.paired_with(bp2)
-        # bp2.paired_with(bp1)
-        
-        bp1.for_step!
-        # bp2.for_step!
-        
-        # bp1.activate
-        # bp2.activate
-        return bp1
+      if ips.empty?
+        errmsg '"ret" opcode not found'
+        return []
       end
       
-      if nil == bp1
-        errmsg 'Return not found'
-        return nil
-      end
+      bp1 = Trepanning::Breakpoint.for_ip(meth, ips[0], 
+                                          { :event => 'return',
+                                            :temp  => true})
+      bp1.activate
+      result = [bp1]
       
-      return bp1
+      1.upto(ips.size-1) do |i| 
+        bp2 = Trepanning::Breakpoint.for_ip(meth, ips[i], 
+                                            { :event => 'return',
+                                              :temp  => true})
+        bp1.related_with(bp2)
+        bp2.activate
+        result << bp2
+      end
+      return result
     end
   end
 end

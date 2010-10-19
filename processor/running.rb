@@ -39,7 +39,8 @@ class Trepan
     # to the finish of the current method. Elsewhere in
     # "skipping_step?" we do the checking.
     def finish(level_count=0, opts={})
-      step('finish', 0, opts)
+      step_to_return
+      continue('finish')
       @next_level        = @stack_size - level_count + 1
       @next_thread       = @current_thread
 
