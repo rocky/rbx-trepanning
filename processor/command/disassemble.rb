@@ -16,7 +16,8 @@ for the current line is disassembled only.
   
   def run(args)
     if 'all' == args[1]
-      section = "Bytecode for #{@proc.frame.method.name}"
+      # FIXME: first msg is a section command.
+      msg "Bytecode for #{@proc.frame.location.describe}"
       msg current_method.decode
     else
       @proc.show_bytecode

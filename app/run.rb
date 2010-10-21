@@ -9,7 +9,7 @@ module Trepanning
   # The caller must ensure that ARGV is set up to remove any debugger
   # arguments or things that the debugged program isn't supposed to
   # see.  FIXME: Should we make ARGV an explicit parameter?
-  def debug_program(dbgr, ruby_path, program_to_debug)
+  def debug_program(dbgr, ruby_path, program_to_debug, start_opts={})
 
     # Make sure Ruby script syntax checks okay.
     # Otherwise we get a load message that looks like trepanning has 
@@ -39,7 +39,8 @@ module Trepanning
     ## trace_var(:$0, dollar_0_tracker)
 
     ## FIXME: we gets lots of crap before we get to the real stuff.
-    Trepan.start(:set_restart => true, :hide_level => hide_level)
+    start_opts = {:hide_level => hide_level}.merge(start_opts)
+    dbgr.start(start_opts)
     Kernel::load program_to_debug
 
     # The dance we have to undo to restore $0 and undo the mess created

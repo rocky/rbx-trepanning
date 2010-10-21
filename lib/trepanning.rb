@@ -1,4 +1,5 @@
 require 'readline'
+require 'compiler/iseq'
 
 require 'rubygems'; require 'require_relative'
 require_relative '../app/frame'
@@ -309,7 +310,8 @@ class Trepan
     ip = @current_frame.ip
 
     meth = @current_frame.method
-    partial = meth.iseq.decode_between(ip, ip+1)
+    decoder = Rubinius::InstructionDecoder.new(meth.iseq)
+    partial = decoder.decode_between(ip, ip+1)
 
     partial.each do |ins|
       op = ins.shift

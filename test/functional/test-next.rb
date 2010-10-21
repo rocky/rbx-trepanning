@@ -71,7 +71,3 @@ class TestNext < Test::Unit::TestCase
 end
 
 
-
-
-
-

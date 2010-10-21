@@ -6,15 +6,16 @@
 require 'rubygems'
 require 'require_relative'
 require 'linecache'
+require_relative '../app/method'
 ## require_relative '../app/condition'
 ## require_relative '../app/file'
-## require_relative '../app/thread'
 class Trepan
   class CmdProcessor
 
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
 
+    include Trepanning::Method
     ## include Trepanning
     ## include Trepan::ThreadHelper
     ## include Trepan::Condition
@@ -150,66 +151,46 @@ class Trepan
     #   nil
     # end
 
-    # # Parse a breakpoint position. Return
-    # # - the position - a Fixnum
-    # # - the instruction sequence to use
-    # # - whether the postion is an offset or a line number
-    # # - the condition (by default 'true') to use for this breakpoint
-    # # - the condition (by default 'true') to use for this breakpoint
-    # def breakpoint_position(args)
-    #   first = args.shift
-    #   # FIXME:
-    #   name, container, position = nil, nil, nil # parse_position(first, nil, true)
-    #   if container && position
-    #     iseq = find_iseqs_with_lineno(container[1], position) || object_iseq(first)
-    #     unless iseq
-    #       unless @frame.iseq.source_container[1] == container[1]
-    #         errmsg "Unable to find instruction sequence with #{position} in #{container[1]}"
-    #         return [nil, nil, nil, true]
-    #       end
-    #       iseq = @frame.iseq
-    #     end
-    #     use_offset = false 
-    #   else
-    #     iseq = object_iseq(first)
-    #     position_str = 
-    #       if iseq
-    #         # Got name and possibly position
-    #         name = first
-    #         if args.empty? 
-    #           # FIXME: *Still* have a bug stopping at offset 0.
-    #           # So stop at next offset after 0.
-    #           # 'o0' 
-    #           "o#{@frame.iseq.offsetlines.keys.sort[1]}"
-    #         else
-    #           args.shift
-    #         end
-    #       else
-    #         iseq = @frame.iseq unless container
-    #         first
-    #       end
-    #     use_offset = 
-    #       if position_str.size > 0 && position_str[0].downcase == 'o'
-    #         position_str[0] = ''
-    #         true
-    #       else
-    #         false
-    #       end
-    #     opts = {
-    #       :msg_on_error => 
-    #       "argument '%s' does not seem to eval to a method or an integer." % 
-    #       position_str,
-    #       :min_value => 0
-    #     }
-    #     position  = get_an_int(position_str, opts)
-    #   end
-    #   condition = 'true'
-    #   if args.size > 0 && 'if' == args[0] 
-    #     condition_try = args[1..-1].join(' ')
-    #     condition = condition_try if valid_condition?(condition_try)
-    #   end
-    #   return [position, iseq, use_offset, condition, name]
-    # end
+    # Parse a breakpoint position. On success return
+    #   - the class name or nil if we return a CompiledMethod class
+    #   - the method the position is in - a CompiledMethod or a String
+    #   - the line - a Fixnum
+    #   - whether the position is an instance or not
+    # On failure, an error message is shown and we return nil.
+    def breakpoint_position(args)
+      if args.size == 0
+        args = [frame.line.to_s]
+      end
+      if args[0] == 'main.__script__'
+        if args.size > 2
+          errmsg 'Expecting only a line number'
+          return nil
+        elsif args.size == 2
+          return nil unless (line = @proc.get_an_int(args[1]))
+        else
+          line = nil
+        end
+        return ['main.__script__', 'main', '.', '__script__', line]
+      elsif args.size == 1
+        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(args[0])
+        if m
+          return [m[0], m[1], m[2], m[3], m[4] ? m[4].to_i : nil]
+        elsif line = Integer(args[0]) rescue nil
+          meth = find_method_with_line(frame.location.method, line)
+          unless meth
+            errmsg "Cannot find method location for line '#{line}'"
+            return nil 
+          end
+
+          return ["#{meth.describe}", nil, '#', meth, line]
+        else
+          errmsg 'Cannot parse breakpoint location'
+          return nil
+        end
+      end
+      errmsg 'Cannot parse breakpoint location'
+      return nil
+    end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
     # Any other value is raises TypeError.

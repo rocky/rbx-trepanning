@@ -42,7 +42,11 @@ class Trepan
     end
     
     def set_breakpoint_method(descriptor, method, line=nil)
-      exec = method.executable
+      exec = if method.kind_of?(Rubinius::CompiledMethod)
+               method
+             else 
+               method.executable
+             end
       
       unless exec.kind_of?(Rubinius::CompiledMethod)
         errmsg "Unsupported method type: #{exec.class}"
@@ -62,7 +66,7 @@ class Trepan
       end
 
       bp = @brkpts.add(descriptor, exec, ip, line, 
-                       @brkpts.max, {:event => 'brkpt'})
+                       @brkpts.max+1, {:event => 'brkpt'})
       bp.activate
       msg "Set breakpoint #{bp.id}: #{bp.location}"
       return bp
