@@ -1,23 +1,17 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+
 class Trepan
   module Util
 
-    def safe_repr(str, max, suffix='...')
+    def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && str.size > max && !str.index("\n")
-        char = str[0..0]
-        opt_quote = 
-          if '"' == char || "'" == char
-            max -= 1
-            char
-          else
-            ''
-          end
-        "%s%s%s" % [ str[0...max], opt_quote, suffix ]
+        "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
       else
         str
       end
     end
-
+    module_function :safe_repr
+    
     # Find user portion of script skipping over Rubinius code loading.
     # Unless hidestack is off, we don't show parts of the frame below this.
     def find_main_script(locs)
@@ -27,9 +21,7 @@ class Trepan
       end
       nil
     end
-
-    module_function :safe_repr
-
+    module_function :find_main_script
   end
 end
 
@@ -40,16 +32,4 @@ if __FILE__ == $0
   puts safe_repr(string, 17)
   puts safe_repr(string.inspect, 17)
   puts safe_repr(string.inspect, 17, '')
-
-  locs = Rubinius::VM.backtrace(0, true)
-  locs.each_with_index do |loc, i|
-    puts "#{i} #{loc.describe_receiver} #{loc.name}"
-  end
-
-  i = find_main_script(locs)
-  if i
-    puts "start is at #{i}"
-  else
-    puts "Didn't find start in the above"
-  end
 end
