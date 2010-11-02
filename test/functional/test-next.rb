@@ -29,7 +29,7 @@ class TestNext < Test::Unit::TestCase
     z = 7
     ##############################
     d.stop # ({'remove': true})
-    out = [">> ", "d.start", '-- ', 'x = 5', '-- ', 'z = 7']
+    out = ['>> ', 'd.start', '-- ', 'x = 5', '-- ', 'z = 7']
     compare_output(out, d, cmds)
   end
     
