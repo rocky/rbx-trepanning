@@ -29,7 +29,7 @@ class TestFinish < Test::Unit::TestCase
            'd.start',
            '-- ',
            'x = fact(4)',
-           '?? ',    # FIXME - shouldn't be ??
+           '-> ',
            'return 1 if x <= 1',
            'end',
            'D=> true']
@@ -61,7 +61,7 @@ class TestFinish < Test::Unit::TestCase
            'd.start',
            '-- ',
            'x = something(4)',
-           '?? ', # FIXME - shouldn't be ??
+           '-> ',
            'return 1 if x <= 1',
            '<- ',
            '22', '22']

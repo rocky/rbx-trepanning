@@ -225,7 +225,9 @@ class Trepan
         @breakpoint.hit! 
         @breakpoint.event || 'brkpt'
       else
-        '??'
+        # Evan assures me that the only way the breakpoint can be nil
+        # is if we are stepping and enter a function.
+        'step-call'
       end
     @processor.instance_variable_set('@event', event)
 

@@ -30,14 +30,12 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
     #   msg @proc.core.hook_arg.inspect if @proc.core.hook_arg
     # end
 
-    if @proc.brkpt
-      if @proc.brkpt.event == :Breakpoint
-        msg('It stopped at %sbreakpoint %d.' %
-            [@proc.brkpt.temp? ? 'temporary ' : '',
-             @proc.brkpt.id])
-      else
-        msg("It stopped at a #{@proc.event} event.")
-      end
+    if @proc.brkpt && @proc.brkpt.event == :Breakpoint
+      msg('It stopped at %sbreakpoint %d.' %
+          [@proc.brkpt.temp? ? 'temporary ' : '',
+           @proc.brkpt.id])
+    else
+      msg("It stopped at a #{@proc.event} event.")
     end
   end
 

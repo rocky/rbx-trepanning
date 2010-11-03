@@ -64,6 +64,7 @@ class Trepan
         'brkpt'          => 'xx',
         'c-call'         => 'C>',
         'c-return'       => '<C',
+        'step-call'      => '->',
         'call'           => '->',
         'class'          => '::',
         'coverage'       => '[]',
