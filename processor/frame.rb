@@ -25,7 +25,7 @@ class Trepan
     # level. The default or showing all levels is 0.
     attr_accessor :hidelevels
 
-    # Hash[container] -> file container Gives us a way to map non-file
+    # Hash[container] -> file container. This gives us a way to map non-file
     # container objects to a file container for display.
     attr_accessor :remap_container
     
@@ -127,7 +127,7 @@ class Trepan
     end
 
     def set_hide_level
-      @hide_level         = 
+      @hide_level = 
         if !@settings[:hidelevel] || @settings[:hidelevel] < 0
           @hidelevels[@current_thread] ||=  
             find_main_script(@dbgr.locations) || max_stack_size

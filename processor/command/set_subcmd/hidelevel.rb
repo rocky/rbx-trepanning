@@ -65,5 +65,4 @@ if __FILE__ == $0
   subcommand.summary_help(name)
   puts
   puts '-' * 20
-  puts subcommand.save_command
 end

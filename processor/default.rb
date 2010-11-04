@@ -24,7 +24,7 @@ class Trepan
                                    # nil or -1 means compute value. 0
                                    # means hide none. Less than 0 means show
                                    # all stack entries.
-      :maxlist       => 10,        # Number of source lines in list 
+      :maxlist       => 10,        # Number of source lines to list 
       :maxstack      => 10,        # backtrace limit
       :maxstring     => 150,       # Strings which are larger than this
                                    # will be truncated to this length when
@@ -37,7 +37,7 @@ class Trepan
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
-      :user_cmd_dir  => File.join(Trepanning::HOME_DIR, 'rbdbgr', 'command'),
+      :user_cmd_dir  => File.join(Trepanning::HOME_DIR, 'tepanx', 'command'),
                                    # User command directory
 
       # Rubinius-specific user variables
