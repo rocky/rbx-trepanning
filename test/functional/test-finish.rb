@@ -17,7 +17,7 @@ class TestFinish < Test::Unit::TestCase
       x = x * fact(x-1)
       return x
     end
-    cmds = %w(next step bt finish) + ['pr x', 'continue'] 
+    cmds = %w(step bt finish) + ['pr x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################
@@ -26,7 +26,6 @@ class TestFinish < Test::Unit::TestCase
     ##############################
     d.stop # ({:remove => true})
     out = ['>> ', 
-           'd.start',
            '-- ',
            'x = fact(4)',
            '-> ',
@@ -49,7 +48,7 @@ class TestFinish < Test::Unit::TestCase
           22
         end
     end
-    cmds = %w(next step finish) + ['pr x', 'continue'] 
+    cmds = %w(step finish) + ['pr x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################
@@ -57,10 +56,9 @@ class TestFinish < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['>> ', 
-           'd.start',
-           '-- ',
-           'x = something(4)',
+    out = [
+           '-- ', 
+           'x = something(4)', 
            '-> ',
            'return 1 if x <= 1',
            '<- ',

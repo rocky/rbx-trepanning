@@ -16,7 +16,7 @@ class TestNext < Test::Unit::TestCase
     x = 5
     y = 6
     d.stop
-    out = [">> ", "d.start", '-- ', 'x = 5', '-- ', 'y = 6']
+    out = ['-- ', 'x = 5', '-- ', 'y = 6', '-- ', 'd.stop']
     compare_output(out, d, cmds)
     
     # See that we can next with a computed count value
@@ -28,15 +28,15 @@ class TestNext < Test::Unit::TestCase
     y = 6
     z = 7
     ##############################
-    d.stop # ({'remove': true})
-    out = ['>> ', 'd.start', '-- ', 'x = 5', '-- ', 'z = 7']
+    d.stop
+    out = ['-- ', 'x = 5', '-- ', 'y = 6', '-- ', 'd.stop']
     compare_output(out, d, cmds)
   end
     
   def test_next_between_fn
     
     # Next over functions
-    cmds = ['step', 'next 2', 'continue']
+    cmds = ['next 2', 'continue']
     d = strarray_setup(cmds)
     d.start
     ########### t2 ###############
@@ -48,7 +48,7 @@ class TestNext < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = [">> ", "d.start", '-- ', 'def fact(x)', '-- ', 'y = 5']
+    out = ['-- ', 'def fact(x)', '-- ', 'y = 5']
     compare_output(out, d, cmds)
   end
   

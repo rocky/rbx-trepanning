@@ -129,7 +129,8 @@ class Trepan
   end
 
   def self.start(settings={})
-    global(settings).start(:offset => 1)
+    global(settings).start(:offset => 1, 
+                           :immediate => settings[:immediate])
   end
 
   # This is simplest API point. This starts up the debugger in the caller
@@ -142,7 +143,7 @@ class Trepan
   # Startup the debugger, skipping back +offset+ frames. This lets you start
   # the debugger straight into callers method.
   #
-  def start(settings = {})
+  def start(settings = {:immediate => false})
     @settings = @settings.merge(settings)
     spinup_thread
     @debugee_thread = @thread
@@ -155,7 +156,10 @@ class Trepan
 
     method = Rubinius::CompiledMethod.of_sender
 
-    bp = Trepanning::Breakpoint.new('<start>', method, 0, 0, 0, {:event => 'start'})
+    event = settings[:immediate] ? 'debugger-call' : 'start'
+    bp = Trepanning::Breakpoint.new('<start>', method, 0, 0, 0, 
+                                    {:event => event}
+                                     )
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]

@@ -19,7 +19,7 @@ class TestStep < Test::Unit::TestCase
     y = 6
     ##############################
     d.stop
-    out = [">> ", "d.start", "-- ", "x = 5"]
+    out = ['-- ', 'x = 5', '-- ', 'y = 6']
     compare_output(out, d, cmds)
 
     # See that we can step with a computed count value
@@ -32,7 +32,7 @@ class TestStep < Test::Unit::TestCase
     z = 7
     ##############################
     d.stop # ({:remove => true})
-    out = [">> ", "d.start", "-- ", "y = 6"]
+    out = ["-- ", "x = 5", "-- ", "z = 7"]
     compare_output(out, d, cmds)
     
     # # Test step>

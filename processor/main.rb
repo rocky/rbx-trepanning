@@ -74,6 +74,7 @@ class Trepan
         'raise'          => '!!',
         'return'         => '<-',
         'start'          => '>>',
+        'start'          => '>>',
         'switch'         => 'sw',
         'trace-var'      => '$V',
         'unknown'        => '?!',
@@ -226,6 +227,9 @@ class Trepan
       else
         if stepping_skip? # || @stack_size <= @hide_level
           step(@return_to_program, @step_count)
+          return true
+        elsif @event == 'start'
+          step('step', 0)
           return true
         end
       end
