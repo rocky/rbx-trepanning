@@ -15,7 +15,7 @@ class Trepan
 
     # frame index in a "backtrace" command
     attr_accessor :frame_index
-    attr_accessor :hide_level
+    attr_reader   :hide_level
 
     # Hash[thread_id] -> FixNum, the level of the last frame to
     # show. If we called the debugger directly, then there is
@@ -91,19 +91,7 @@ class Trepan
 
       @threads2frames   ||= {} 
       @threads2frames[@current_thread] = @top_frame
-      max_stack_size = @dbgr.locations.size
-      @hide_level         = 
-        if @settings[:debugstack]
-          0
-        else
-          @hidelevels[@current_thread] ||=  
-            find_main_script(@dbgr.locations) || max_stack_size
-        end
-      
-      @stack_size = if @hide_level >= max_stack_size  
-                      max_stack_size else max_stack_size - @hide_level
-                    end
-      
+      set_hide_level
       ## frame_eval_remap if 'EVAL' == @frame.type
     end
 
@@ -138,6 +126,20 @@ class Trepan
       [frame, frame_num]
     end
 
+    def set_hide_level
+      @hide_level         = 
+        if !@settings[:hidelevel] || @settings[:hidelevel] < 0
+          @hidelevels[@current_thread] ||=  
+            find_main_script(@dbgr.locations) || max_stack_size
+        else
+          @settings[:hidelevel]
+        end
+      max_stack_size = @dbgr.locations.size
+      @stack_size = if @hide_level >= max_stack_size  
+                      max_stack_size else max_stack_size - @hide_level
+                    end
+    end
+      
     # def get_nonsync_frame(tf)
     #   if (tf.stack_size > 10)
     #     check_frames = (0..5).map{|i| tf.prev(i).method}
@@ -192,8 +194,6 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  # require 'thread_frame'
-  require_relative './mock'
   require_relative 'main'   # Have to include before defining CmdProcessor!
                             # FIXME
   class Trepan::CmdProcessor
@@ -201,20 +201,22 @@ if __FILE__ == $0
       puts msg
     end
     def print_location
-      puts "#{frame.file} #{frame.line}"
+      puts "frame location: #{frame.file} #{frame.line}"
     end
   end
 
-  dbgr = MockDebugger::MockDebugger.new
-  proc = Trepan::CmdProcessor.new(dbgr)
-  proc.frame_initialize
-  proc.frame_setup
-  0.upto(proc.stack_size) { |i| proc.adjust_frame(i, true) }
+  require_relative './mock'
+  dbgr, cmd = MockDebugger::setup('exit', false)
+  # require_relative '../lib/trepanning'
+  # Trepan.start(:set_restart => true)
+  proc  = cmd.proc
+  0.upto(proc.stack_size-1) { |i| proc.adjust_frame(i, true) }
   puts '*' * 10
   proc.adjust_frame(-1, true)
   proc.adjust_frame(0, true)
   puts '*' * 10
   proc.stack_size.times { proc.adjust_frame(1, false) }
+  puts '*' * 10
   proc.adjust_frame(proc.stack_size-1, true)
   proc.stack_size.times { proc.adjust_frame(-1, false) }
     

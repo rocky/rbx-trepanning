@@ -178,11 +178,12 @@ class Trepan
 
   class ShowIntSubcommand < Subcommand
     def run(args)
-      if self.respond_to?(:short_help)
-        doc = short_help
-      else
-        doc = my_const(:HELP)[5..-2].capitalize
-      end
+      doc = 
+        if self.respond_to?(:short_help)
+          short_help
+        else
+          my_const(:HELP)[5..-2].capitalize
+        end
       run_show_int(doc)
     end
   end

@@ -3,9 +3,9 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../../base/subsubcmd'
 
-class Trepan::Subcommand::ShowMaxList < Trepan::ShowIntSubSubcommand
+class Trepan::SubSubcommand::ShowMaxList < Trepan::ShowIntSubSubcommand
   unless defined?(HELP)
-    HELP = 'Show the number of source file lines to list.'
+    HELP = 'Show the number of source file lines to list'
     MIN_ABBREV   = 'lis'.size
     NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %w(show max list)

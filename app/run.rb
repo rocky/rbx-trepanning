@@ -26,7 +26,7 @@ module Trepanning
 
 
     # Any frame from us or below should be hidden by default.
-    hide_level = Rubinius::VM.backtrace(0, true).size
+    hide_level = Rubinius::VM.backtrace(0, true).size+1
 
     old_dollar_0 = $0
 

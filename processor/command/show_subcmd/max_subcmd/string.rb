@@ -3,7 +3,7 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../../base/subsubcmd'
 
-class Trepan::Subcommand::ShowMaxString < Trepan::ShowIntSubSubcommand
+class Trepan::SubSubcommand::ShowMaxString < Trepan::ShowIntSubSubcommand
   unless defined?(HELP)
     HELP = 'Show the number of characters in a string before truncating.
 

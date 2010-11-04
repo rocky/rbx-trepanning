@@ -3,7 +3,7 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../../base/subsubcmd'
 
-class Trepan::Subcommand::ShowMaxStack < Trepan::ShowIntSubSubcommand
+class Trepan::SubSubcommand::ShowMaxStack < Trepan::ShowIntSubSubcommand
   unless defined?(HELP)
     HELP         = 'Show the number of backtrace lines the debugger will show'
     MIN_ABBREV   = 'sta'.size

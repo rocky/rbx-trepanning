@@ -53,7 +53,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('set')
@@ -61,7 +60,7 @@ if __FILE__ == $0
   testcmdMgr = Trepan::Subcmd.new(subcommand)
 
   subcommand.run_show_bool
-  subcommand.summary_help(name)
+  subcommand.summary_help(subcommand.name)
   puts
   puts '-' * 20
   puts subcommand.save_command

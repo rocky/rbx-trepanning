@@ -13,7 +13,7 @@ class Trepan::Subcommand::ShowDifferent < Trepan::ShowBoolSubcommand
 
   def run(args)
     if 'nostack' == @proc.settings[:different]
-      msg("different is nostack.")
+      msg "%s is nostack." % HELP[5..-1].capitalize
     else
       super
     end
@@ -25,14 +25,17 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('show')
   subcommand = Trepan::Subcommand::ShowDifferent.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
 
-  subcommand.run_show_bool
-  name = File.basename(__FILE__, '.rb')
-  subcommand.summary_help(name)
+  subcommand.run(cmd.name)
+  [true, false].each do |val|
+    subcommand.proc.settings[:different] = val
+    subcommand.run(cmd.name)
+  end
+  subcommand.summary_help(cmd.name)
+  puts
+  puts '-' * 20
 end

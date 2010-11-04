@@ -298,56 +298,41 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  if !(ARGV.size == 1 && ARGV[0] == 'noload')
-    ARGV[0..-1]    = ['noload']
-    load(__FILE__)
-  else    
-    require 'thread_frame'
-    require_relative '../app/mock'
-    require_relative 'main' # Have to include before defining CmdProcessor!
-                            # FIXME
-
-    dbgr, proc = MockDebugger::setup('foo')
-    # proc.frame_setup(RubyVM::ThreadFrame.current)
-    onoff = %w(1 0 on off)
-    onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
-    %w(1 1E bad 1+1 -5).each do |val| 
-      puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
-    end
-    def foo; 5 end
-    def proc.errmsg(msg)
-      puts msg
-    end
-    puts proc.object_iseq('food').inspect
-    puts proc.object_iseq('foo').inspect
-
-    puts proc.object_iseq('foo@validate.rb').inspect
-    puts proc.object_iseq('proc.object_iseq').inspect
-    
-    puts proc.parse_position_one_arg('tmpdir.rb').inspect
-
-    puts '=' * 40
-    ['Array#map', 'Trepan::CmdProcessor.new',
-     'foo', 'proc.errmsg'].each do |str|
-      puts "#{str} should be true: #{proc.method?(str).inspect}"
-    end
-    puts '=' * 40
-    # require_relative '../lib/trepanning'
-    # dbgr = Trepan.new(:set_restart => true)
-    # dbgr.debugger
-
-    # FIXME:
-    # Array#foo should be false: true
-    # Trepan::CmdProcessor.allocate should be false: true
-
-    ['food', '.errmsg'].each do |str|
-      puts "#{str} should be false: #{proc.method?(str).inspect}"
-    end
-    puts '-' * 20
-    # p proc.breakpoint_position(%w(O0))
-    # p proc.breakpoint_position(%w(1))
-    # p proc.breakpoint_position(%w(2 if a > b))
-    p proc.get_int_list(%w(1+0 3-1 3))
-    p proc.get_int_list(%w(a 2 3))
+  require_relative './mock'
+  dbgr, cmd = MockDebugger::setup('exit', false)
+  proc  = cmd.proc
+  onoff = %w(1 0 on off)
+  onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
+  %w(1 1E bad 1+1 -5).each do |val| 
+    puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
   end
+  def foo; 5 end
+  def proc.errmsg(msg)
+    puts msg
+  end
+  puts proc.parse_position_one_arg('tmpdir.rb').inspect
+  
+  puts '=' * 40
+  ['Array#map', 'Trepan::CmdProcessor.new',
+   'foo', 'proc.errmsg'].each do |str|
+    puts "#{str} should be true: #{proc.method?(str).inspect}"
+  end
+  puts '=' * 40
+  # require_relative '../lib/trepanning'
+  # dbgr = Trepan.new(:set_restart => true)
+  # dbgr.debugger
+  
+  # FIXME:
+  # Array#foo should be false: true
+  # Trepan::CmdProcessor.allocate should be false: true
+  
+  ['food', '.errmsg'].each do |str|
+    puts "#{str} should be false: #{proc.method?(str).inspect}"
+  end
+  puts '-' * 20
+  # p proc.breakpoint_position(%w(O0))
+  # p proc.breakpoint_position(%w(1))
+  # p proc.breakpoint_position(%w(2 if a > b))
+  p proc.get_int_list(%w(1+0 3-1 3))
+  p proc.get_int_list(%w(a 2 3))
 end

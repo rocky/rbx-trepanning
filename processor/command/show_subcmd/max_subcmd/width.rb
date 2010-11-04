@@ -3,7 +3,7 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../../base/subsubcmd'
 
-class Trepan::Subcommand::ShowMaxWidth < Trepan::ShowIntSubSubcommand
+class Trepan::SubSubcommand::ShowMaxWidth < Trepan::ShowIntSubSubcommand
   unless defined?(HELP)
     HELP = 'Show the number of characters the debugger thinks are in a line.'
     MIN_ABBREV   = 'wid'.size
@@ -31,7 +31,7 @@ if __FILE__ == $0
   # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
-  puts max_cmd.summary_help(maxx_cmd)
-  puts
-  maxx_cmd.run([])
+  # puts max_cmd.summary_help(maxx_cmd)
+  # puts
+  # maxx_cmd.run([])
 end
