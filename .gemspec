@@ -41,7 +41,7 @@ EOF
   spec.author       = 'R. Bernstein'
   spec.bindir       = 'bin'
   spec.email        = 'rockyb@rubyforge.net'
-  spec.executables = ['trepan']
+  spec.executables = ['trepanx']
   spec.files        = FILES.to_a  
   spec.has_rdoc     = true
   spec.homepage     = 'http://wiki.github.com/rocky/rbx-trepanning'
