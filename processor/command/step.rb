@@ -31,7 +31,7 @@ See also 'continue', 'next' and 'nexti' commands.
       return unless step_count
     end
     
-    @proc.step('step', step_count-1)
+    @proc.step('step', step_count)
   end
 end
 

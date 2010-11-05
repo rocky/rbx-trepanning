@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rbconfig'
-load File.join(File.dirname(__FILE__), %w(.. .. bin trepan))
+load File.join(File.dirname(__FILE__), %w(.. .. bin trepanx))
 
 # Test bin/trepan Module methods
 class TestBinTrepan < Test::Unit::TestCase

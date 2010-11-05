@@ -39,7 +39,7 @@ See also 'step' and 'nexti'.
       return unless step_count
     end
     
-    @proc.step('next', step_count-1)
+    @proc.step('next', step_count)
   end
   
 end

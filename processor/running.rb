@@ -113,23 +113,34 @@ class Trepan
       @to_method       = nil
     end
 
+    # If we are not in some kind of steppable event, return 
+    # false. If we are in a steppable event, update step state
+    # and return true if the step count is 0 and other conditions
+    # like the @settings[:different] are met.
     def stepping_skip?
 
-      if @step_count <= 0  
+      # @settings[:debugskip] = true
+      if @step_count < 0  
         # We may eventually stop for some other reason, but it's not
         # because we were stepping here.
         return false 
       end
 
-      if @settings[:'debugskip']
-        msg "diff: #{@different_pos}, event: #{@event}" 
-        msg "step_count  : #{@step_count}" 
-        msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
-        msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
-      end
+      # if @settings[:debugskip]
+      #   msg "diff: #{@different_pos}, event: #{@event}" 
+      #   msg "step_count  : #{@step_count}" 
+      #   msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
+      #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
+      # end
 
       if @ignore_methods.member?(@frame.method)
+        @return_to_program = 'step'
         return true
+      end
+
+      # Only skip on these kinds of events
+      unless %w(step-call line).include?(@event)
+        return false
       end
 
       # FIXME: do we need?
@@ -139,29 +150,26 @@ class Trepan
         return false 
       end
 
+      # We are in some kind of stepping event, so do whatever we
+      # do to record that we've hit the step. Whether we decide
+      # to stop, will be done after recording the step took place.
+      @step_count -= 1 unless step_count == 0
       new_pos = [@frame.file, @frame.line,
                  @stack_size, @current_thread, @event]
 
-      @step_count -= 1
 
-      # Assume we are not going to skip this step event.
-      skip_val = true
+      # Decide whether this step is skippable.
+      skip_val = false
 
-      # skip_val = @stop_events && !@stop_events.member?(@event)
-
-      # # If the last stop was a breakpoint, don't stop again if we are at
-      # # the same location with a line event.
-      # skip_val ||= (@last_pos[4] == 'brkpt' && 
-      #               @event == 'line')
-
-      if @settings[:'debugskip']
-        puts("skip: #{skip_val.inspect}, last: #{@last_pos}, " + 
-          "new: #{new_pos.inspect}")
+      if @settings[:debugskip]
+        msg("last: #{@last_pos.inspect}, ")
+        msg("new:  #{new_pos.inspect}")
+        msg("skip: #{skip_val.inspect}, event: #{@event}")
       end
 
-      # @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
-      # unless skip_val
-      #   condition_met = 
+      @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
+      condition_met = @step_count == 0
+
       #     if @stop_condition
       #       puts 'stop_cond' if @settings[:'debugskip']
       #       debug_eval_no_errmsg(@stop_condition)
@@ -177,11 +185,12 @@ class Trepan
       #   msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
       #        "new: #{new_pos}, different #{@different_pos.inspect}") if 
       #     @settings[:'debugskip']
-      #   skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
-      #               !condition_met)
-      # end
+      skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
+                  !condition_met)
+      msg("skip_val: #{skip_val}, count #{@step_count}") if 
+        @settings[:debugskip]
 
-      # @last_pos = new_pos if !@stop_events || @stop_events.member?(@event)
+      @last_pos = new_pos
 
       unless skip_val
         # Set up the default values for the
@@ -190,6 +199,7 @@ class Trepan
         # @stop_events   = nil
       end
 
+      @return_to_program = 'step' if skip_val && !@return_to_program
       return skip_val
     end
 
