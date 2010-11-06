@@ -20,7 +20,7 @@ frame. If a subsequent #{NAME} command was issued with no intervening
 frame changing, then that is start the line after we last one
 previously shown.
 
-If the command has a '>' suffix, then lines centering is disabled and
+If the command has a '>' suffix, then line centering is disabled and
 listing begins at the specificed location.
 
 The number of line to show is controled by the debugger listsize

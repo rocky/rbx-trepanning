@@ -5,8 +5,9 @@ require 'set'
 class Trepan
   class CmdProcessor
 
-    attr_accessor :ignore_methods  # Methods we don't want to ever stop
-                                   # in.
+    attr_accessor :ignore_methods  # Hash[Method inspect string] ->
+                                   # String action. Methods we don't
+                                   # want to ever stop in.
     attr_accessor :stop_condition  # String or nil. When not nil
                                    # this has to eval non-nil
                                    # in order to stop.
@@ -106,9 +107,7 @@ class Trepan
     end
 
     def running_initialize
-      ## FIXME: Want this to be a Hash with step/next action
-      ## but equality test isn't working. Investigate.
-      @ignore_methods  = []
+      @ignore_methods  = {}
 
       @step_count      = 0
       @stop_condition  = nil
@@ -135,19 +134,12 @@ class Trepan
       #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       # end
 
-      begin
-        # meth = eval("method #{@frame.method.name.inspect}", @frame.binding)
-        # For reasons I don't understand include? or member? don't work
-        if @ignore_methods.to_a.include?(frame.method)
-          ## FIXME: want to get step/next from @ignore_methods hash.
-          @return_to_program = 'step'
+      mi = frame.method.inspect
+      @ignore_methods.each do |m, val|
+        if m == mi
+          @return_to_program = val
           return true
         end
-        # if @ignore_methods.include?(meth)
-        #   @return_to_program = 'next'
-        #   return true
-        # end
-      rescue
       end
 
       # Only skip on these kinds of events
