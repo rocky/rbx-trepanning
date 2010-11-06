@@ -40,9 +40,6 @@ class Trepan
                                    # the command loop (which often continues to 
                                    # run the debugged program). 
     attr_accessor :line_no         # Last line shown in "list" command
-    attr_accessor :next_level      # Fixnum. frame.stack_size has to
-                                   # be <= than this.  If next'ing,
-                                   # this will be > 0.
     attr_accessor :next_thread     # Thread. If non-nil then in
                                    # stepping the thread has to be
                                    # this thread.
@@ -93,7 +90,6 @@ class Trepan
       @hidelevels      = {}
       @last_command    = nil
       @last_pos        = [nil, nil, nil, nil, nil, nil]
-      @next_level      = 32000
       @next_thread     = nil
       @user_variables = 0
       

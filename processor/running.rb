@@ -28,11 +28,8 @@ class Trepan
     # # FIXME: turn line_number into a condition.
 
     def continue(how_to_continue)
-      @next_level      = 32000 # I'm guessing the stack size can't
-                               # ever reach this
       @next_thread     = nil
       @step_count      = -1    # No more event stepping
-      # @leave_cmd_loop  = true  # Break out of the processor command loop.
       @return_to_program = how_to_continue
     end
 
@@ -42,7 +39,6 @@ class Trepan
     def finish(level_count=0, opts={})
       step_to_return
       continue('finish')
-      @next_level        = @stack_size - level_count + 1
       @next_thread       = @current_thread
 
       # # Try high-speed (run-time-assisted) method
@@ -54,7 +50,6 @@ class Trepan
     # # execution.
     # def next(step_count=1, opts={})
     #   step(step_count, opts)
-    #   @next_level      = @top_frame.stack_size
     #   @next_thread     = Thread.current
     # end
 
@@ -130,7 +125,6 @@ class Trepan
       # if @settings[:debugskip]
       #   msg "diff: #{@different_pos}, event: #{@event}" 
       #   msg "step_count  : #{@step_count}" 
-      #   msg "next_level  : #{@next_level},    ssize : #{@stack_size}" 
       #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       # end
 
@@ -145,13 +139,6 @@ class Trepan
       # Only skip on these kinds of events
       unless %w(step-call line).include?(@event)
         return false
-      end
-
-      # FIXME: do we need?
-      if !frame || (@next_level < @stack_size &&
-                    @current_thread == @next_thread)
-        # The above is to handle finish.
-        return false 
       end
 
       # We are in some kind of stepping event, so do whatever we

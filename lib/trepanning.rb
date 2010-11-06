@@ -76,8 +76,8 @@ class Trepan
 
     ## FIXME: put in fn
     @processor.dbgr = self
-    m = Rubinius::Loader.method(:debugger).executable.inspect
-    @processor.ignore_methods[m] = 'step'
+    ## m = Rubinius::Loader.method(:debugger).executable.inspect
+    ## @processor.ignore_methods[m] = 'step'
 
     @thread = nil
     @frames = []

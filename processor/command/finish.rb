@@ -65,15 +65,12 @@ if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   [%W(#{cmd.name} 1), %w(fin 2-1), %w(n foo)].each do |c|
-    cmd.proc.next_level = 0
     cmd.proc.leave_cmd_loop = false
     result = cmd.run(c)
     puts 'Run result: %s' % result
-    puts 'level_count %d, leave_cmd_loop: %s' % [cmd.proc.next_level,
-                                                cmd.proc.leave_cmd_loop]
+    puts 'leave_cmd_loop: %s' % cmd.proc.leave_cmd_loop
   end
   [%w(fin), [cmd.name]].each do |c|
-    cmd.proc.next_level = 0
     cmd.proc.leave_cmd_loop = false
     result = cmd.run(c)
     puts cmd.proc.different_pos
