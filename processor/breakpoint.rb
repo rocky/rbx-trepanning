@@ -41,7 +41,9 @@ class Trepan
       bp
     end
     
-    def set_breakpoint_method(descriptor, method, line=nil)
+    def set_breakpoint_method(descriptor, method, line=nil,
+                              opts={:event => 'brkpt',
+                                :temp => false})
       exec = if method.kind_of?(Rubinius::CompiledMethod)
                method
              else 
@@ -65,10 +67,10 @@ class Trepan
         ip = 0
       end
 
-      bp = @brkpts.add(descriptor, exec, ip, line, 
-                       @brkpts.max+1, {:event => 'brkpt'})
+      bp = @brkpts.add(descriptor, exec, ip, line, @brkpts.max+1, opts)
       bp.activate
-      msg "Set breakpoint #{bp.id}: #{bp.location}"
+      msg("Set %sbreakpoint #{bp.id}: #{bp.location}" % 
+          (opts[:temp] ? 'temporary ' : ''))
       return bp
     end
 

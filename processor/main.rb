@@ -62,6 +62,7 @@ class Trepan
       # Event icons used in printing locations.
       EVENT2ICON = {
         'brkpt'          => 'xx',
+        'tbrkpt'         => 'x1',
         'c-call'         => 'C>',
         'c-return'       => '<C',
         'step-call'      => '->',
