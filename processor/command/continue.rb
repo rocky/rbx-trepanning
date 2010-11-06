@@ -28,14 +28,48 @@ See also 'step', 'next', and 'nexti' commands.
 
   # This is the method that runs the command
   def run(args)
+
+    ## FIXME: DRY this code, tbreak and break.
     unless args.size == 1
       describe, klass_name, which, name, line = 
         @proc.breakpoint_position(args[1..-1])
-      return unless describe
+      unless describe
+        errmsg "Can't parse temporary breakpoint location"
+        return 
+      end
       if name.kind_of?(Rubinius::CompiledMethod)
         bp = @proc.set_breakpoint_method(describe, name, line,
                                          {:temp=>true, :event =>'tbrkpt'})
-        return unless bp
+        unless bp
+          errmsg "Trouble setting temporary breakpoint"
+          return 
+        end
+      else
+        return unless klass_name
+        begin
+          klass = @proc.debug_eval(klass_name, settings[:maxstring])
+        rescue NameError
+          errmsg "Unable to find class/module: #{klass_name}"
+          return
+        end
+        
+        begin
+          if which == "#"
+            method = klass.instance_method(name)
+          else
+            method = klass.method(name)
+          end
+        rescue NameError
+          errmsg "Unable to find method '#{name}' in #{klass}"
+          return
+        end
+        arg_str = args[1..-1].join(' ')
+        bp = @proc.set_breakpoint_method(arg_str.strip, method, line,
+                                         {:temp=>true, :event =>'tbrkpt'})
+        unless bp
+          errmsg "Trouble setting temporary breakpoint"
+          return 
+        end
       end
     end
     @proc.continue('continue')

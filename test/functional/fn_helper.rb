@@ -8,22 +8,13 @@ module FnTestHelper
   ## include Trace
 
   ## # Synchronous events without C frames or instructions
-  ## TEST_STEP_EVENT_MASK = LINE_EVENT_MASK | CLASS_EVENT_MASK | CALL_EVENT_MASK |
-  ##  RETURN_EVENT_MASK  
-
   # Common setup to create a debugger with String Array I/O attached
   def strarray_setup(debugger_cmds, insn_stepping=false)
     stringin               = Trepan::StringArrayInput.open(debugger_cmds)
     stringout              = Trepan::StringArrayOutput.open
     d_opts                 = {:input  => stringin, :output => stringout,
                               :nx     => true}
-    ## d_opts[:core_opts]     = {:step_events => TEST_STEP_EVENT_MASK}
-    ## d_opts[:core_opts][:step_events] ||= INSN_EVENT_MASK if insn_stepping
     d                      = Trepan.new(d_opts)
-
-    # Remove vm and switch from unmaskable events to increase predictability
-    # of test results
-    ## d.core.instance_variable_set('@unmaskable_events', %w(brkpt raise))
 
     d.settings[:basename]  = true
     d.settings[:different] = false
@@ -83,13 +74,14 @@ module FnTestHelper
       s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
     end
 
-    # Remove VM offset locations. 
+    # Canonicalize breakpoint messages. 
     # For example: 
-    #	VM offset 2 of instruction sequence "block in compare_output".
-    # becomes 
-    #   VM offset 55 of instruction sequence "block in compare_output".
-    a3 = a2.map do |s|
-      s.gsub(/VM offset \d+/, 'VM offset 55')
+    #   Set breakpoint 1: test/functional/test-tbreak.rb:10 (@0)
+    # becomes :
+    #   Set breakpoint 1: foo.rb:55 (@3)
+     a3 = a2.map do |s|
+      s.gsub(/^Set breakpoint (\d+): .+:(\d+) \(@\d+\)/, 
+             'Set breakpoint \1: foo.rb:55 (@3)')
     end
     return a3
   end

@@ -227,7 +227,8 @@ class Trepan
       set_frame(0)
 
       if @breakpoint
-        # Some breakpoints are frame specific
+        # Some breakpoints are frame specific. Check for this.  hit!
+        # also removes the breakpoint if it was temporary and hit.
         break if @breakpoint.hit!(@locations.first.variables)
       else
         break

@@ -82,11 +82,16 @@ module Trepanning
       @method.set_breakpoint @ip, self
     end
 
+    # Return true if the breakpoint is relevant. That is, the
+    # breakpoint is either not a scoped or it is scoped and test_scope
+    # matches the desired scope. We also remove the breakpoint and any
+    # related breakpoints if it was hit and temporary.
     def hit!(test_scope)
       return true unless @temp
       return false if @scope && test_scope != @scope
 
       @related_bp.each { |bp| bp.remove! }
+      remove!
       return true
     end
 
