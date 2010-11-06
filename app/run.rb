@@ -21,8 +21,8 @@ module Trepanning
     end
     # print "\032\032starting\n" if Trepan.annotate and Trepan.annotate > 2
 
-    ## dbgr.trace_filter << self.method(:debug_program)
-    ## dbgr.trace_filter << Kernel.method(:load)
+    dbgr.processor.ignore_methods << self.method(:debug_program).executable
+    # dbgr.trace_filter << Kernel.method(:load)
 
 
     # Any frame from us or below should be hidden by default.

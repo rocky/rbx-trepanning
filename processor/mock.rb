@@ -38,7 +38,7 @@ module MockDebugger
       @frames               = []
 
       ## @core                 = Trepan::Core.new(self)
-      ## @trace_filter         = []
+      @trace_filter         = []
 
       # Don't allow user commands in mocks.
       ## @core.processor.settings[:user_cmd_dir] = nil 

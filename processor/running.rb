@@ -106,7 +106,10 @@ class Trepan
     end
 
     def running_initialize
-      @ignore_methods  = Set.new
+      ## FIXME: Want this to be a Hash with step/next action
+      ## but equality test isn't working. Investigate.
+      @ignore_methods  = []
+
       @step_count      = 0
       @stop_condition  = nil
       @stop_events     = nil
@@ -118,7 +121,6 @@ class Trepan
     # and return true if the step count is 0 and other conditions
     # like the @settings[:different] are met.
     def stepping_skip?
-
       # @settings[:debugskip] = true
       if @step_count < 0  
         # We may eventually stop for some other reason, but it's not
@@ -133,9 +135,19 @@ class Trepan
       #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       # end
 
-      if @ignore_methods.member?(@frame.method)
-        @return_to_program = 'step'
-        return true
+      begin
+        # meth = eval("method #{@frame.method.name.inspect}", @frame.binding)
+        # For reasons I don't understand include? or member? don't work
+        if @ignore_methods.to_a.include?(frame.method)
+          ## FIXME: want to get step/next from @ignore_methods hash.
+          @return_to_program = 'step'
+          return true
+        end
+        # if @ignore_methods.include?(meth)
+        #   @return_to_program = 'next'
+        #   return true
+        # end
+      rescue
       end
 
       # Only skip on these kinds of events
