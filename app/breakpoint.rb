@@ -33,7 +33,11 @@ module Trepanning
       @method = method
       @ip = ip
       @line = line
-      @for_step = false
+
+      # If not nil, is a Rubinius::VariableScope. This is what we 
+      # check to have call-frame-specific breakpoints.
+      @scope = nil
+
       @related_bp = []
 
       opts = BRKPT_DEFAULT_SETTINGS.merge(opts)
@@ -53,17 +57,17 @@ module Trepanning
     attr_reader :method, :ip, :line, :descriptor
     attr_accessor :related_bp
 
-    def for_step!
-      @temp = true
-      @for_step = true
+    def scoped!(scope, temp = true)
+      @temp = temp
+      @scope = scope
     end
 
     def set_temp!
       @temp = true
     end
 
-    def for_step?
-      @for_step
+    def scoped?
+      !!@scope
     end
 
     def related_with(bp)
@@ -78,12 +82,12 @@ module Trepanning
       @method.set_breakpoint @ip, self
     end
 
-    def hit!
-      return unless @temp
+    def hit!(test_scope)
+      return true unless @temp
+      return false if @scope && test_scope != @scope
 
-      @related_bp.each do |bp|
-        bp.remove!
-      end
+      @related_bp.each { |bp| bp.remove! }
+      return true
     end
 
     # def condition?(bind)

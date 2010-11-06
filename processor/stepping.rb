@@ -44,7 +44,7 @@ class Trepan
       ip = f.ip
       
       bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'return'})
-      bp.for_step!
+      bp.scoped!(@frame.scope)
       bp.activate
       
       return bp
@@ -61,8 +61,8 @@ class Trepan
         
         bp1.related_with(bp2)
         
-        bp1.for_step!
-        bp2.for_step!
+        bp1.scoped!(@frame.scope)
+        bp2.scoped!(@frame.scope)
         
         bp1.activate
         bp2.activate
@@ -76,7 +76,7 @@ class Trepan
       end
       
       bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'line'})
-      bp.for_step!
+      bp.scoped!(@frame.scope)
       bp.activate
       
       return bp
@@ -92,6 +92,7 @@ class Trepan
       bp1 = Trepanning::Breakpoint.for_ip(meth, ips[0], 
                                           { :event => 'return',
                                             :temp  => true})
+      bp1.scoped!(@frame.scope)
       bp1.activate
       result = [bp1]
       
@@ -99,6 +100,7 @@ class Trepan
         bp2 = Trepanning::Breakpoint.for_ip(meth, ips[i], 
                                             { :event => 'return',
                                               :temp  => true})
+        bp2.scoped!(@frame.scope)
         bp1.related_with(bp2)
         bp2.activate
         result << bp2

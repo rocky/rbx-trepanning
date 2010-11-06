@@ -208,28 +208,34 @@ class Trepan
   #
   def listen(step_into=false)
     @breakpoint = nil
-    if @channel
-      if step_into
-        @channel << :step
+    while true
+      if @channel
+        if step_into
+          @channel << :step
+        else
+          @channel << true
+        end
+      end
+
+      # Wait for someone to stop
+      @breakpoint, @debugee_thread, @channel, @locations = 
+        @local_channel.receive
+
+      # Uncache all frames since we stopped at a new place
+      @frames = []
+
+      set_frame(0)
+
+      if @breakpoint
+        # Some breakpoints are frame specific
+        break if @breakpoint.hit!(@locations.first.variables)
       else
-        @channel << true
+        break
       end
     end
 
-    # Wait for someone to stop
-    @breakpoint, thr, chan, locs = @local_channel.receive
-
-    # Uncache all frames since we stopped at a new place
-    @frames = []
-
-    @locations = locs
-    @debuggee_thread = thr
-    @channel = chan
-    set_frame(0)
-
     event = 
       if @breakpoint
-        @breakpoint.hit! 
         @breakpoint.event || 'brkpt'
       else
         # Evan assures me that the only way the breakpoint can be nil

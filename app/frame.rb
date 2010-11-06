@@ -76,5 +76,9 @@ class Trepan
       @location.method
     end
 
+    def scope
+      @location.variables
+    end
+
   end
 end

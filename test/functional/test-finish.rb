@@ -7,17 +7,17 @@ class TestFinish < Test::Unit::TestCase
 
   include FnTestHelper
 
-  # FIXME: looks like I need to do more work on handling recursive
-  # functions!
-  def NO_test_finish_between_fn
-    
-    # Finish over functions
+  def test_finish_between_fn
+    # "Finish" over a recursive function. We use a recursive function
+    # so that we check that the temporary breakpoint created in the
+    # implementation is specific to the frame. See Rubinius issue
+    # #558.
     def fact(x)
       return 1 if x <= 1
       x = x * fact(x-1)
       return x
     end
-    cmds = %w(step bt finish) + ['pr x', 'continue'] 
+    cmds = %w(step finish) + ['pr x', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################
@@ -25,13 +25,13 @@ class TestFinish < Test::Unit::TestCase
     y = 5
     ##############################
     d.stop # ({:remove => true})
-    out = ['>> ', 
-           '-- ',
+    out = ['-- ',
            'x = fact(4)',
            '-> ',
            'return 1 if x <= 1',
-           'end',
-           'D=> true']
+           '<- ',
+           'return x',
+           '24']
     compare_output(out, d, cmds)
   end
   

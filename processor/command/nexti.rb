@@ -45,7 +45,7 @@ See also 'continue', 'step', and 'next' commands.
       line = exec.line_from_ip(next_ip)
       
       bp = Trepanning::Breakpoint.for_ip(exec, next_ip, :event => 'vm-insn')
-      bp.for_step!
+      bp.scoped!(@proc.frame.scope)
       bp.activate
     end
     @proc.continue('nexti')

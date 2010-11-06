@@ -52,6 +52,34 @@ class TestNext < Test::Unit::TestCase
     compare_output(out, d, cmds)
   end
   
+  def test_scoped_next
+    # "Next" over a recursive function. We use a recursive function so
+    # that we check that the temporary breakpoint created in the
+    # implementation is specific to the frame. See Rubinius issue
+    # #558.
+    def fact(x)
+      return 1 if x <= 1
+      x = x * fact(x-1)
+      return x
+    end
+    cmds = ['step', 'next 3', 'pr x', 'continue'] 
+    d = strarray_setup(cmds)
+    d.start
+    ##############################
+    x = fact(4)
+    y = 5
+    ##############################
+    d.stop # ({:remove => true})
+    out = ['-- ',
+           'x = fact(4)',
+           '-> ',
+           'return 1 if x <= 1',
+           '-- ',
+           'return x',
+           '24']
+    compare_output(out, d, cmds)
+  end
+
   # def test_next_in_exception
   #   cmds = %w(next! continue)
   #   d = strarray_setup(cmds)
