@@ -22,6 +22,27 @@ class Trepan
       nil
     end
     module_function :find_main_script
+
+    # When we are run via -Xdebug, $0 isn't set when the debugger is called.
+    # It can however be found as Rubinius::Loader#script.
+    def get_dollar_0
+      if defined?($0)
+        $0
+      else
+        locs = Rubinius::VM.backtrace(0, true).select do |loc| 
+          loc.method.name == :main
+        end
+        locs.each do |loc|
+          receiver = loc.instance_variable_get('@receiver')
+          if receiver
+            script = receiver.instance_variable_get('@script')
+            return script if script
+          end
+        end
+        return nil
+      end
+    end
+    module_function :get_dollar_0
   end
 end
 

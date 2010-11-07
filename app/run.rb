@@ -25,8 +25,8 @@ module Trepanning
     m = self.method(:debug_program).executable.inspect
     dbgr.processor.ignore_methods[m]='step'
 
-    # m = Kernel.method(:load).executable.inspect
-    # dbgr.processor.ignore_methods[m]='step'
+    m = Kernel.method(:load).executable.inspect
+    dbgr.processor.ignore_methods[m]='step'
 
     # Any frame from us or below should be hidden by default.
     hide_level = Rubinius::VM.backtrace(0, true).size+1

@@ -3,6 +3,7 @@ require 'compiler/iseq'
 
 require 'rubygems'; require 'require_relative'
 require_relative '../app/frame'
+require_relative '../app/util'           # get_dollar_0
 require_relative '../processor/main'
 require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
@@ -67,7 +68,12 @@ class Trepan
     @initial_dir  = @settings[:initial_dir]
     @restart_argv = 
       if @settings[:set_restart]
-        [File.expand_path($0)] + ARGV
+        dollar_0 = get_dollar_0 
+        if dollar_0
+          [File.expand_path(dollar_0)] + ARGV
+        else
+          nil
+        end
       elsif @settings[:restart_argv]
         @settings[:restart_argv]
       else 
