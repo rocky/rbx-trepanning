@@ -27,11 +27,13 @@ in each frame.
     
     msg "Backtrace:"
     
-    @proc.dbgr.each_frame(@proc.frame) do |frame|
+    @proc.dbgr.each_frame(@proc.top_frame) do |frame|
       return if count and frame.number >= count
 
-      msg "%4d %s" % [frame.number, 
-                      frame.describe(:show_ip => verbose)]
+
+      prefix = (frame == @proc.frame) ? '-->' : '   '
+      msg "%s #%d %s" % [prefix, frame.number, 
+                         frame.describe(:show_ip => verbose)]
       
       if verbose
         frame.local_variables.each do |local|
