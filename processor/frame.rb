@@ -43,7 +43,7 @@ class Trepan
         @frame_index = frame_num
         ## frame_eval_remap if 'EVAL' == @frame.type
         print_location
-        @line_no = frame.line
+        @line_no = @frame.line
         @frame
       else
         nil

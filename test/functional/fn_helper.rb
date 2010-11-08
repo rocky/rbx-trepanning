@@ -80,8 +80,8 @@ module FnTestHelper
     # becomes :
     #   Set breakpoint 1: foo.rb:55 (@3)
      a3 = a2.map do |s|
-      s.gsub(/^Set breakpoint (\d+): .+:(\d+) \(@\d+\)/, 
-             'Set breakpoint \1: foo.rb:55 (@3)')
+      s.gsub(/^Set (temporary )?breakpoint (\d+): .+:(\d+) \(@\d+\)/, 
+             'Set \1breakpoint \2: foo.rb:55 (@3)')
     end
     return a3
   end
