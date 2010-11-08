@@ -8,7 +8,7 @@ class Trepan::SubSubcommand::SetSubstitute < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     HELP   = 'Set instruction sequence-to-filename mapping'
     NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set substitute)
+    PREFIX = %W(set #{NAME})
   end
 end
 

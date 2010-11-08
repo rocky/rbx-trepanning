@@ -77,6 +77,7 @@ module Trepanning
       ## p ['++++1', meth, lines]
       return meth if lines.member?(line) 
       scope = meth.scope
+      return nil unless scope.current_script
       meth  = scope.current_script.compiled_method
       lines = lines_of_method(meth)
       ## p ['++++2', meth, lines]

@@ -5,32 +5,25 @@ require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::SetMax < Trepan::SubSubcommandMgr
-  unless defined?(HELP)
-    HELP   = 'Set maximum length for things which may have unbounded size'
-    NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %w(set max)
-  end
+  HELP   = 'Set maximum length for things which may have unbounded size'
+  NAME   = File.basename(__FILE__, '.rb')
+  PREFIX = %W(set #{NAME})
 
-  # def run(args)
-  #   puts "foo"
-  #   require 'trepanning'
-  #   Trepan.debug
-  #   super
-  # end
 end
 
 if __FILE__ == $0
+  # Demo it.
   require_relative '../../mock'
-  dbgr, cmd = MockDebugger::setup('set')
-  # cmds = dbgr.core.processor.commands
-  # set_cmd = cmds['set']
-  # command = Trepan::SubSubcommand::SetMax.new(dbgr.core.processor, 
-  #                                             set_cmd)
-  # name = File.basename(__FILE__, '.rb')
-  # cmd_args = ['set', name]
-  # set_cmd.instance_variable_set('@last_args', cmd_args)
-  # command.run(cmd_args)
+  cmd_ary          = Trepan::SubSubcommand::SetMax::PREFIX
+  dbgr, parent_cmd = MockDebugger::setup(cmd_ary[0], false)
+  cmd              = Trepan::SubSubcommand::SetMax.new(dbgr.processor, 
+                                                    parent_cmd)
+  cmd_name       = cmd_ary.join('')
+  prefix_run = cmd_ary[1..-1]
+  cmd.run(prefix_run)
   # require_relative '../../../lib/trepanning'
   # # Trepan.debug(:set_restart => true)
-  # command.run(['set', name, 'string', 30])
+  ## puts cmd.summary_help(cmd.name)
+  ## puts
+  ## puts '-' * 20
 end

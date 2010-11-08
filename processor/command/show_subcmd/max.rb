@@ -18,15 +18,13 @@ end
 
 if __FILE__ == $0
   require_relative '../../mock'
-  dbgr = MockDebugger::MockDebugger.new
-  cmds = dbgr.core.processor.commands
-  show_cmd = cmds['show']
-  # command = Trepan::SubSubcommand::ShowMax.new(dbgr.core.processor, 
-  #                                                show_cmd)
-  # name = File.basename(__FILE__, '.rb')
-  # cmd_args = ['show', name]
-  # show_cmd.instance_variable_set('@last_args', cmd_args)
+  cmd_ary          = Trepan::SubSubcommand::ShowMax::PREFIX
+  dbgr, parent_cmd = MockDebugger::setup(cmd_ary[0], false)
+  cmd              = Trepan::SubSubcommand::ShowMax.new(dbgr.processor, 
+                                                        parent_cmd)
+  cmd_name       = cmd_ary.join('')
+  prefix_run = cmd_ary[1..-1]
+  cmd.run(prefix_run)
   # # require_relative '../../../lib/trepanning'
   # # Trepan.debug(:set_restart => true)
-  # command.run(cmd_args)
 end

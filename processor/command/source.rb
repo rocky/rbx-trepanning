@@ -5,20 +5,24 @@
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 require_relative '../../interface/script'
+require_relative '../../io/null_output'
 # Mfile     = import_relative('file', '...lib', 'pydbgr')
 
 class Trepan::Command::SourceCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [-v][-Y|-N][-c] FILE
+#{NAME} [-v][-Y|-N][-c][-q] FILE
 
 Read debugger commands from a file named FILE.  Optional -v switch
 (before the filename) causes each command in FILE to be echoed as it
 is executed.  Option -Y sets the default value in any confirmation
 command to be 'yes' and -N sets the default value to 'no'.
 
-Note that the command startup file '.pydbgrc' is read automatically
+Option -q will turn off any debugger output that normally occurs in the
+running of the program.
+
+Note that the command startup file '.trepanx' is read automatically
 via a source command the debugger is started.
 
 An error in any command terminates execution of the command file
@@ -34,6 +38,8 @@ unless option -c is given.
     verbose = false
     parms   = args[1..-1]
     opts    = {}
+    intf    = @proc.dbgr.intf
+    output  = intf[-1].output
     parms.each do |arg|
       case arg
       when '-v'
@@ -44,6 +50,8 @@ unless option -c is given.
         opts[:confirm_val]    = false
       when '-c'
         opts[:abort_on_error] = false
+      when '-q'
+        output = Trepan::OutputNull.new(nil)
       end
     end
     
@@ -56,10 +64,7 @@ unless option -c is given.
     end
     
     # Push a new debugger interface.
-    intf = @proc.dbgr.intf
-    script_intf = Trepan::ScriptInterface.new(expanded_file,
-                                              intf[-1].output,
-                                              opts)
+    script_intf = Trepan::ScriptInterface.new(expanded_file, output, opts)
     intf << script_intf
     return false
   end
@@ -69,9 +74,10 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  puts "#{ARGV.size}"
+  Trepan::Command::SourceCommand 
+  puts "Args given: #{ARGV.size}"
   if ARGV.size > 0 
-    puts "running... #{name} #{ARGV}"
+    puts "running... #{cmd.name} #{ARGV}"
     cmd.run([cmd.name, *ARGV])
   end
 end

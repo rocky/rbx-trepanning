@@ -16,25 +16,23 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show')
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  max_cmd        = Trepan::SubSubcommand::ShowMax.new(dbgr.processor, 
-                                                      show_cmd)
-  cmd_ary        = Trepan::SubSubcommand::ShowMaxList::PREFIX
+  cmd_ary          = Trepan::SubSubcommand::ShowMaxList::PREFIX
+  dbgr, parent_cmd = MockDebugger::setup(cmd_ary[0], false)
+  cmd              = Trepan::SubSubcommand::ShowMax.new(dbgr.processor, 
+                                                        parent_cmd)
   cmd_name       = cmd_ary.join('')
-  subcmd         = Trepan::SubSubcommand::ShowMaxList.new(show_cmd.proc,
-                                                          max_cmd,
-                                                          cmd_name)
+  subcmd         = Trepan::SubSubcommand::ShowMaxList.new(parent_cmd.proc,
+                                                          cmd,
+                                                          cmd.name)
   prefix_run = cmd_ary[1..-1]
   subcmd.run(prefix_run)
   
   # require_relative '../../../../lib/trepanning'
   # dbgr = Trepan.new(:set_restart => true)
   # dbgr.debugger
-  puts subcmd.summary_help(name)
+  puts subcmd.summary_help(cmd.name)
   puts
   puts '-' * 20
 end

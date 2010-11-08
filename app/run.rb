@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
+require 'rubygems'; require 'require_relative'
+require_relative '../io/null_output'
 module Trepanning
 
   :module_function # All functions below are easily publically accessible
@@ -25,8 +27,16 @@ module Trepanning
     m = self.method(:debug_program).executable.inspect
     dbgr.processor.ignore_methods[m]='step'
 
-    m = Kernel.method(:load).executable.inspect
-    dbgr.processor.ignore_methods[m]='step'
+    ## HACK to skip over loader code.
+    input = Trepan::StringArrayInput.open(['next', 'next', 'step'])
+    startup = Trepan::ScriptInterface.new('startup', 
+                                          Trepan::OutputNull.new(nil),
+                                          # dbgr.intf[0].output,
+                                          :input => input)
+    dbgr.intf << startup
+
+    # m = Kernel.method(:load).executable.inspect
+    # dbgr.processor.ignore_methods[m]='step'
 
     # Any frame from us or below should be hidden by default.
     hide_level = Rubinius::VM.backtrace(0, true).size+1

@@ -61,14 +61,16 @@ class Trepan
     def initialize(out, opts={})
       @output = out
       @flush_after_write = false
+      @eof    = false
     end
 
     def close
       @output.close if @output
+      @eof = true
     end
 
     def eof? 
-      @input.eof?
+      @eof
     end
 
     def flush

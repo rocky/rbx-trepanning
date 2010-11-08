@@ -29,9 +29,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  name = File.basename(__FILE__, '.rb')
 
-  dbgr, set_cmd = MockDebugger::setup('set')
+  dbgr, set_cmd = MockDebugger::setup('set', false)
   max_cmd       = Trepan::SubSubcommand::SetMax.new(dbgr.processor, 
                                                       set_cmd)
   cmd_ary       = Trepan::SubSubcommand::SetMaxWidth::PREFIX
@@ -43,8 +42,7 @@ if __FILE__ == $0
   subcmd.run(prefix_run)
   subcmd.run(prefix_run + %w(0))
   subcmd.run(prefix_run + %w(20))
-  name = File.basename(__FILE__, '.rb')
-  subcmd.summary_help(name)
+  subcmd.summary_help(subcmd.name)
   puts
   puts '-' * 20
   puts subcmd.save_command
