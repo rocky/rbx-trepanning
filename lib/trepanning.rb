@@ -10,6 +10,7 @@ require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'
 require_relative '../app/display'        # FIXME: remove
 require_relative '../interface/user'     # user interface (includes I/O)
+require_relative '../io/null_output'
   
 #
 # The Rubinius Trepan debugger.
@@ -130,6 +131,26 @@ class Trepan
       @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
   end
 
+  ## HACK to skip over loader code. Until I find something better...
+  def skip_loader
+    cmds = 
+      if @settings[:skip_loader] == :Xdebug
+        ['continue Rubinius::CodeLoader#load_script',
+         'continue 67',
+         'step'
+        ]
+      else
+        ['next', 'next', 'step']
+      end
+
+    input = Trepan::StringArrayInput.open(cmds)
+    startup = Trepan::ScriptInterface.new('startup', 
+                                          Trepan::OutputNull.new(nil),
+                                          :input => input)
+    @intf << startup
+  end
+
+
   attr_reader :variables, :current_frame, :breakpoints
   attr_reader :locations, :history_io, :debugee_thread
 
@@ -154,6 +175,7 @@ class Trepan
   #
   def start(settings = {:immediate => false})
     @settings = @settings.merge(settings)
+    skip_loader if @settings[:skip_loader]
     spinup_thread
     @debugee_thread = @thread
     if @settings[:hide_level]

@@ -17,7 +17,11 @@ module Trepanning
     :offset          => 0,     # skipping back +offset+ frames. This lets you start
                                # the debugger straight into callers method.
     :restart_argv    => [],    # Command run when "restart" is given
-    :restore_profile => nil    # Profile used to set/restore debugger state
+    :restore_profile => nil,   # Profile used to set/restore debugger state
+    :skip_loader     => false  # If run via -Xdebug or trepanx
+                               # command-line we need this to skip
+                               # over some initial Rubinius loader
+                               # commands.
   } unless defined?(DEFAULT_SETTINGS)
 
   # Default settings for Debugger run from the command line.
