@@ -27,10 +27,10 @@ class Trepan
                               # interfaces with us.  An array, so that
                               # interfaces with us.  An array, so that
                               # interfaces can be stacked.
-  attr_reader   :initial_dir  # String. Current directory when program
-                              # started. Used in restart program.
-  attr_accessor :restart_argv # How to restart us, empty or nil. 
-                              # Note restart_argv[0] is typically $0.
+  attr_accessor :restart_argv # How to restart us, empty or nil.
+                              # Note: restart_argv is typically C's
+                              # **argv, not Ruby's ARGV. So
+                              # restart_argv[0] is $0.
   attr_reader   :settings     # Hash[:symbol] of things you can configure
   attr_reader   :deferred_breakpoints
   attr_reader   :processor
@@ -60,26 +60,8 @@ class Trepan
     @settings[:cmdfiles].each do |cmdfile|
       add_command_file(cmdfile)
     end if @settings.member?(:cmdfiles)
-    ## @core     = Core.new(self, @settings[:core_opts])
-    if @settings[:initial_dir]
-      Dir.chdir(@settings[:initial_dir])
-    else
-      @settings[:initial_dir] = Dir.pwd
-    end
-    @initial_dir  = @settings[:initial_dir]
-    @restart_argv = 
-      if @settings[:set_restart]
-        dollar_0 = get_dollar_0 
-        if dollar_0
-          [File.expand_path(dollar_0)] + ARGV
-        else
-          nil
-        end
-      elsif @settings[:restart_argv]
-        @settings[:restart_argv]
-      else 
-        nil
-      end
+    Dir.chdir(@settings[:initial_dir]) if @settings[:initial_dir]
+    @restart_argv = @settings[:restart_argv]
 
     ## FIXME: put in fn
     @processor.dbgr = self

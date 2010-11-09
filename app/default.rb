@@ -12,11 +12,12 @@ module Trepanning
     :cmdproc_opts    => {},    # Default Debugger::CmdProcessor settings
     :core_opts       => {},    # Default Debugger::Core settings
     :delete_restore  => true,  # Delete restore profile after reading? 
-    :initial_dir     => nil,   # Current directory run when "restart" is given
-    :nx              => false, # Don't run user startup file (e.g. .rbdbgrc)
+    :initial_dir     => nil,   # If --cd option was given, we save it here.
+    :nx              => false, # Don't run user startup file (e.g. .trepanxrc)
     :offset          => 0,     # skipping back +offset+ frames. This lets you start
                                # the debugger straight into callers method.
-    :restart_argv    => [],    # Command run when "restart" is given
+    :restart_argv    => Rubinius::OS_ARGV,
+                               # Command run when "restart" is given.
     :restore_profile => nil,   # Profile used to set/restore debugger state
     :skip_loader     => false  # If run via -Xdebug or trepanx
                                # command-line we need this to skip

@@ -16,8 +16,6 @@ module MockDebugger
     attr_accessor :frame        # Actually a "Rubinius::Location object
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
-    attr_reader   :initial_dir  # String. Current directory when program
-                                # started. Used in restart program.
     attr_accessor :restart_argv # How to restart us, empty or nil. 
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
@@ -36,6 +34,7 @@ module MockDebugger
       @current_frame        = Trepan::Frame.new(self, 0, @locations[0])
       @debugee_thread       = Thread.current
       @frames               = []
+      @restart_argv         = Rubinius::OS_STARTUP_DIR
 
       ## @core                 = Trepan::Core.new(self)
       @trace_filter         = []
