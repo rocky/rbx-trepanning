@@ -32,10 +32,10 @@ end
 
 # Monkeypatch to save the current IRB statement to be run.
 class IRB::Context
-  alias_method :_ruby_debug_original_evaluate, :evaluate
+  alias_method :_trepanx_original_evaluate, :evaluate
   def evaluate(line, line_no)
     $trepanx_irb_statements = line
-    _ruby_debug_original_evaluate(line, line_no)
+    _trepanx_original_evaluate(line, line_no)
   end
 end
 
