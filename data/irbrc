@@ -5,9 +5,9 @@
 # with their own file.
 IRB.conf[:PROMPT_MODE] = :SIMPLE
 IRB.conf[:PROMPT][:SIMPLE] = 
-    {:PROMPT_C=>"trepan ?> ",
-     :PROMPT_I=>"trepan >> ",
-     :PROMPT_N=>"trepan >> ",
+    {:PROMPT_C=>"trepanx ?> ",
+     :PROMPT_I=>"trepanx >> ",
+     :PROMPT_N=>"trepanx >> ",
      :PROMPT_S=>nil,
      :RETURN=>"=> %s\n"}
 
@@ -20,22 +20,21 @@ IRB.conf[:PROMPT][:SIMPLE] =
 puts "You are in a trepan session. You should have access to program scope."
 puts "'dbgr', 'step', 'ne', 'q', 'cont' commands have been added."
 
-if defined?($trepan) && $trepan
-   puts 'You should have access to debugger state via global variable $trepan'
+if defined?($trepanx) && $trepanx
+   puts 'You should have access to debugger state via global variable $trepanx'
 end
-if defined?($trepan_frame) && $trepan_frame
-   puts 'You should have access to the program frame via global variable $trepan_frame'
+if defined?($trepanx_frame) && $trepanx_frame
+   puts 'You should have access to the program frame via global variable $trepanx_frame'
 end
-if defined?($trepan_cmdproc) && $trepan_cmdproc
-   puts 'You should have access to the command processor via global variable $trepan_cmdproc'
+if defined?($trepanx_cmdproc) && $trepanx_cmdproc
+   puts 'You should have access to the command processor via global variable $trepanx_cmdproc'
 end
 
-# Monkeypatch to save the current IRB statement to be run and make the instruction sequence
-# "filename" unique. Possibly not needed.
+# Monkeypatch to save the current IRB statement to be run.
 class IRB::Context
   alias_method :_ruby_debug_original_evaluate, :evaluate
   def evaluate(line, line_no)
-    $trepan_irb_statements = line
+    $trepanx_irb_statements = line
     _ruby_debug_original_evaluate(line, line_no)
   end
 end
