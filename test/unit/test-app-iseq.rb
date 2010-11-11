@@ -10,7 +10,7 @@ class TestAppISeq < Test::Unit::TestCase
     def single_return
       meth = Rubinius::VM.backtrace(0, true)[0].method
       first, last = [meth.lines.first, meth.lines.last]
-      [last, return_between(meth, first, last)]
+      [last, yield_or_return_between(meth, first, last)]
     end
 
     def branching(bool)

@@ -5,6 +5,7 @@ module Trepanning
     OP_GOTO_IF_TRUE  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
     OP_GOTO_IF_FALSE = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
     OP_RET           = Rubinius::InstructionSet.opcodes_map[:ret]
+    OP_YIELD_STACK   = Rubinius::InstructionSet.opcodes_map[:yield_stack]
 
     def goto_between(meth, start, fin)
       
@@ -42,14 +43,13 @@ module Trepanning
       return ip
     end
     
-    def return_between(meth, start, fin)
+    def yield_or_return_between(meth, start, fin)
       iseq = meth.iseq
       ips = []
       i = start
       while i < fin
         op = iseq[i]
-        case op
-        when OP_RET
+        if [OP_RET, OP_YIELD_STACK].member?(op)
           ips << i 
         end
         op = Rubinius::InstructionSet[op]

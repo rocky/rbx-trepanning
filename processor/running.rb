@@ -37,7 +37,7 @@ class Trepan
     # to the finish of the current method. Elsewhere in
     # "skipping_step?" we do the checking.
     def finish(level_count=0, opts={})
-      step_to_return
+      step_to_return_or_yield
       continue('finish')
       @next_thread       = @current_thread
 

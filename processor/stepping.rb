@@ -19,7 +19,7 @@ class Trepan
       set_breakpoints_between(meth, f.ip, fin_ip)
     end
     
-    def step_to_return
+    def step_to_return_or_yield
       f = @frame
       unless f
         msg 'Unable to find frame to finish'
@@ -83,9 +83,9 @@ class Trepan
     end
     
     def set_breakpoints_on_return_between(meth, start_ip, fin_ip)
-      ips = return_between(meth, start_ip, fin_ip)
+      ips = yield_or_return_between(meth, start_ip, fin_ip)
       if ips.empty?
-        errmsg '"ret" opcode not found'
+        errmsg '"ret" or "yield_stack" opcode not found'
         return []
       end
       
