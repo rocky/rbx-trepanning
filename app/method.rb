@@ -6,7 +6,7 @@ module Trepanning
     ## Rubinius::CompiledMethod...
     ##
     # Locates the instruction address (IP) of the first instruction on
-    # the specified line it is in CompiledMethod cm. or nil if no
+    # the specified line if is in CompiledMethod cm only, or nil if no
     # match for the specified line is found.
     #
     # @return [Fixnum, NilClass] returns
@@ -23,6 +23,7 @@ module Trepanning
       end
       return nil
     end
+    module_function :locate_line_in_cm
 
     ## As of Nov 6. 2010 the following method in Rubinius needs
     ## adjusting.
@@ -40,6 +41,7 @@ module Trepanning
     #   nil if nothing is found, else an array of size 2 containing the method
     #   the line was found in and the IP pointing there.
     def locate_line(line, cm=self)
+      ## p [cm, lines_of_method(cm)]
       ip = locate_line_in_cm(line, cm)
       return cm, ip if ip
 
@@ -54,6 +56,7 @@ module Trepanning
       # No child method is a match - fail
       return nil
     end
+    module_function :locate_line
 
     def lines_of_method(meth)
       lines = []
@@ -62,6 +65,7 @@ module Trepanning
       end
       return lines
     end
+    module_function :lines_of_method
 
     # Returns a CompiledMethod for the specified line. We search the
     # current method +meth+ and then up the parent scope.  If we hit
@@ -88,6 +92,7 @@ module Trepanning
           # child is the top-most scope. Search down from here.
           meth = child.current_script.compiled_method
           pair = locate_line(line, meth)
+          ## pair = meth.locate_line(line)
           return pair ? pair[0] : nil
         end
         meth = scope.current_script.compiled_method
@@ -96,7 +101,9 @@ module Trepanning
       end
       return meth
     end
+    module_function :find_method_with_line
   end
+
 end
 
 if __FILE__ == $0
