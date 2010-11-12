@@ -27,4 +27,5 @@ if __FILE__ == $0
   cmd              = Trepan::Subcommand::ShowArgs.new(parent_cmd)
   cmd.run([])
   cmd.summary_help(cmd.name)
+  puts
 end

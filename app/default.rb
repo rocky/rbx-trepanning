@@ -7,10 +7,10 @@ module Trepanning
   # I am not sure if we need to sets of hashes, but we'll start out
   # that way.
 
-  # Default settings for a Debugger class object
+  # Default settings for a Trepan class object
   DEFAULT_SETTINGS = {
-    :cmdproc_opts    => {},    # Default Debugger::CmdProcessor settings
-    :core_opts       => {},    # Default Debugger::Core settings
+    :cmdproc_opts    => {},    # Default Trepan::CmdProcessor settings
+    :core_opts       => {},    # Default Trepan::Core settings
     :delete_restore  => true,  # Delete restore profile after reading? 
     :initial_dir     => nil,   # If --cd option was given, we save it here.
     :nx              => false, # Don't run user startup file (e.g. .trepanxrc)
@@ -25,7 +25,7 @@ module Trepanning
                                # commands.
   } unless defined?(DEFAULT_SETTINGS)
 
-  # Default settings for Debugger run from the command line.
+  # Default settings for Trepan run from the command line.
   DEFAULT_CMDLINE_SETTINGS = {
     :cmdfiles => [],  # Initialization command files to run
     :nx       => false, # Don't run user startup file (e.g. .trepanxrc)

@@ -6,19 +6,22 @@ require_relative '../../app/run'
 class Trepan::Command::RestartCommand < Trepan::Command
 
   unless defined?(HELP)
+    NAME         = File.basename(__FILE__, '.rb')
     ALIASES      = %w(R run)
-    HELP = 
-      'restart - Restart debugger and program via an exec
-    call. All state is lost, and new copy of the debugger is used.'
+    HELP = <<-HELP
+#{NAME} 
+
+Restart debugger and program via an exec call. All state is lost, and
+new copy of the debugger is used.
+    HELP
     
     CATEGORY     = 'running'
     MAX_ARGS     = 0  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = '(Hard) restart of program via exec()'
   end
     
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
 
     dbgr = @proc.dbgr
     argv = dbgr.restart_argv
@@ -34,7 +37,6 @@ class Trepan::Command::RestartCommand < Trepan::Command
       else
         msg 'Restarting...'
         @proc.run_cmd(%w(save))
-        argv.unshift
         # FIXME: Run atexit finalize routines?
         Dir.chdir(Rubinius::OS_STARTUP_DIR)
         exec(*argv)
@@ -46,13 +48,12 @@ class Trepan::Command::RestartCommand < Trepan::Command
 end
 
 if __FILE__ == $0
-  exit if ARGV[0] == 'exit'
-
+  exit if ARGV[-1] == 'exit'
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   dbgr.restart_argv = []
   cmd.run([cmd.name])
-  dbgr.restart_argv = [File.expand_path($0), 'exit']
+  dbgr.restart_argv = Rubinius::OS_ARGV + ['exit']
   # require_relative '../../debugger'
   # Trepan.start
   cmd.run([cmd.name])

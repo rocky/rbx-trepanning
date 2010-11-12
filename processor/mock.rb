@@ -16,6 +16,8 @@ module MockDebugger
     attr_accessor :frame        # Actually a "Rubinius::Location object
     attr_accessor :core         # access to Debugger::Core instance
     attr_accessor :intf         # The way the outside world interfaces with us.
+    attr_reader   :initial_dir  # String. Current directory when program
+                                # started. Used in restart program.
     attr_accessor :restart_argv # How to restart us, empty or nil. 
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
@@ -58,7 +60,7 @@ module MockDebugger
 
     if ARGV.size > 0 && ARGV[0] == 'debug'
       require_relative '../lib/trepanning'
-      dbgr = Debugger.new
+      dbgr = Trepan.new
       dbgr.debugger
     else
       dbgr = MockDebugger.new
