@@ -15,34 +15,22 @@ class Trepan
     # Find user portion of script skipping over Rubinius code loading.
     # Unless hidestack is off, we don't show parts of the frame below this.
     def find_main_script(locs)
+      candidate = nil
       (locs.size-1).downto(0) do |i|
-        return locs.size - i - 1 if 'main.' == locs[i].describe_receiver &&
-          :__script__ == locs[i].name
-      end
-      nil
-    end
-    module_function :find_main_script
-
-    # When we are run via -Xdebug, $0 isn't set when the debugger is called.
-    # It can however be found as Rubinius::Loader#script.
-    def get_dollar_0
-      if defined?($0)
-        $0
-      else
-        locs = Rubinius::VM.backtrace(0, true).select do |loc| 
-          loc.method.name == :main
-        end
-        locs.each do |loc|
-          receiver = loc.instance_variable_get('@receiver')
-          if receiver
-            script = receiver.instance_variable_get('@script')
-            return script if script
+        loc = locs[i]
+        if 'main.' == loc.describe_receiver &&
+            :__script__ == loc.name
+          if loc.method.active_path =~ /\/trepanx$/
+            # Might have been run from standalone trepanx.
+            candidate = i
+          else
+            return locs.size - i - 1 
           end
         end
-        return nil
       end
+      candidate ? locs.size - candidate - 1 : nil
     end
-    module_function :get_dollar_0
+    module_function :find_main_script
   end
 end
 
@@ -53,4 +41,9 @@ if __FILE__ == $0
   puts safe_repr(string, 17)
   puts safe_repr(string.inspect, 17)
   puts safe_repr(string.inspect, 17, '')
+  locs = Rubinius::VM.backtrace(0)
+  locs.each_with_index do |l, i| 
+    puts "#{i}: #{l.describe}"
+  end
+  puts "main script in above is #{locs.size() - 1 - find_main_script(locs)}"
 end

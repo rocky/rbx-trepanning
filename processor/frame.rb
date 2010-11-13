@@ -129,7 +129,7 @@ class Trepan
     def set_hide_level
       @hide_level = 
         if !@settings[:hidelevel] || @settings[:hidelevel] < 0
-          @hidelevels[@current_thread] ||=  
+          @settings[:hidelevel] = @hidelevels[@current_thread] =  
             find_main_script(@dbgr.locations) || max_stack_size
         else
           @settings[:hidelevel]

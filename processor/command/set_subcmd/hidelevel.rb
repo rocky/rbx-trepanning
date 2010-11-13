@@ -45,6 +45,7 @@ See also 'backtrace' and 'show hidelevel'.
       val = @proc.get_an_int(args[2])
       return unless val
     end
+    @proc.hidelevels[@current_thread] = nil
     @proc.settings[:hidelevel] = val
     @proc.set_hide_level
   end
