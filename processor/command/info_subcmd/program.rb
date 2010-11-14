@@ -16,6 +16,7 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
     frame = @proc.frame
     ## m = 'Program stop event: %s' % @proc.core.event
     m = ''
+    m += "Frame index #{@proc.frame_index}, " if @proc.frame_index != 0
     m += 
       if frame.method
         "PC offset %d of method: %s" %
@@ -35,7 +36,7 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
           [@proc.brkpt.temp? ? 'temporary ' : '',
            @proc.brkpt.id])
     else
-      msg("It stopped at a #{@proc.event} event.")
+      msg("Program stopped at a #{@proc.event} event.")
     end
   end
 

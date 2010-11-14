@@ -1,3 +1,6 @@
+require 'rubygems'; require 'require_relative'
+require_relative '../app/iseq'
+
 class Trepan
   class CmdProcessor
 
@@ -10,7 +13,7 @@ class Trepan
         fin = meth.iseq.size
       end
 
-      # FIXME: Add section in addtion to "msg"
+      # FIXME: Add section instead of "msg"
       msg "Bytecode between #{start} and #{fin-1} for line #{line}"
 
       iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)
@@ -32,8 +35,9 @@ class Trepan
           end
         end
 
+        prefix = Trepanning::ISeq::disasm_prefix(ip, frame.ip, meth)
         # FIXME: was section
-        msg " %4d: #{op.opcode} #{ins.join(', ')}" % ip
+        msg "#{prefix} %04d: #{op.opcode} #{ins.join(', ')}" % ip
 
         ip += (ins.size + 1)
       end

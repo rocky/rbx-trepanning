@@ -5,6 +5,16 @@ require_relative '../../app/iseq'
 
 class TestAppISeq < Test::Unit::TestCase
   include Trepanning::ISeq
+
+  def test_disasm_prefix
+    meth = Rubinius::VM.backtrace(0, true)[0].method
+    assert_equal(' -->', disasm_prefix(0, 0, meth))
+    assert_equal('    ', disasm_prefix(0, 1, meth))
+    meth.set_breakpoint(0, nil)
+    assert_equal('B-->', disasm_prefix(0, 0, meth))
+    assert_equal('B   ', disasm_prefix(0, 1, meth))
+  end
+
   def test_basic
 
     def single_return

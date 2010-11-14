@@ -80,8 +80,8 @@ module IRB # :nodoc:
       ARGV.replace(args)
       
       # If the user has a IRB profile, run that now.
-      if ENV['RBDBGR_IRB']
-        ENV['IRBRC'] = ENV['RBDBGR_IRB']
+      if ENV['TREPANX_IRB']
+        ENV['IRBRC'] = ENV['TREPANX_IRB']
         @CONF[:RC_NAME_GENERATOR]=nil
         IRB.run_config
       end

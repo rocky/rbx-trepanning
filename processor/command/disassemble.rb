@@ -1,5 +1,6 @@
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
+require_relative '../../app/iseq'
 
 class Trepan::Command::DisassembleCommand < Trepan::Command
   ALIASES      = %w(dis)
@@ -13,12 +14,17 @@ for the current line is disassembled only.
   NAME         = File.basename(__FILE__, '.rb')
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
-  
+
   def run(args)
     if 'all' == args[1]
       # FIXME: first msg is a section command.
       msg "Bytecode for #{@proc.frame.location.describe}"
-      msg current_method.decode
+      current_method.decode.each do |insn|
+        prefix = Trepanning::ISeq::disasm_prefix(insn.ip, 
+                                                 @proc.frame.ip,
+                                                 @proc.frame.method)
+        msg "#{prefix} #{insn}"
+      end
     else
       @proc.show_bytecode
     end

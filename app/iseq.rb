@@ -7,6 +7,19 @@ module Trepanning
     OP_RET           = Rubinius::InstructionSet.opcodes_map[:ret]
     OP_YIELD_STACK   = Rubinius::InstructionSet.opcodes_map[:yield_stack]
 
+    # Returns prefix string to indicate whether a breakpoint has been
+    # set at this ip and or whether we are currently stopped at this ip.
+    def disasm_prefix(ip, frame_ip, meth)
+      prefix = meth.breakpoint?(ip) ? 'B' : ' ' 
+      prefix += 
+        if ip == frame_ip
+          '-->'
+        else
+          '   '
+        end
+    end
+    module_function :disasm_prefix
+
     def goto_between(meth, start, fin)
       
       iseq = meth.iseq
@@ -66,8 +79,10 @@ if __FILE__ == $0
   call_loc = locations[1]
   meth = call_loc.method
   puts meth.decode
-  ips = return_between(meth, meth.lines.first, meth.lines.last)
+  ips = yield_or_return_between(meth, meth.lines.first, meth.lines.last)
   puts "return: #{ips.inspect}"
   ips = goto_between(meth, meth.lines.first, meth.lines.last)
   puts "goto: #{ips.inspect}"
+  puts Trepanning::ISeq::disasm_prefix(ips[0], ips[0], meth)
+  p Trepanning::ISeq::disasm_prefix(10, ips[0], meth)
 end
