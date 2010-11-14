@@ -15,8 +15,8 @@ class Trepan
                                    # If no breakpoint stop this is nil.
 
     def breakpoint_initialize
-      @brkpts          = BreakpointMgr.new
-      @brkpt           = nil
+      @brkpts = BreakpointMgr.new
+      @brkpt  = nil
     end
 
     def breakpoint?
@@ -138,15 +138,6 @@ class Trepan
     end
 
     # MRI 1.9.2 code
-    # # Delete a breakpoint given its breakpoint number.
-    # def delete_breakpoint_by_number(bpnum, do_enable=true)
-    #   bp = breakpoint_find(bpnum)
-    #   return false unless bp
-          
-    #   @brkpts.delete_by_brkpt(bp)
-    #   return true
-    # end
-
     # # Enable or disable a breakpoint given its breakpoint number.
     # def en_disable_breakpoint_by_number(bpnum, do_enable=true)
     #   bp = breakpoint_find(bpnum)
