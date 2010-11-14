@@ -220,6 +220,7 @@ class Trepan
 
       @unconditional_prehooks.run
       if breakpoint?
+        delete_breakpoint(@brkpt) if @brkpt.temp?
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
         if stepping_skip? # || @stack_size <= @hide_level

@@ -21,7 +21,7 @@ class Trepan
 
     def breakpoint?
       @brkpt = @dbgr.breakpoint
-      return !!@brkpt && @brkpt.event == 'brkpt'
+      return !!@brkpt && %w(tbrkpt brkpt).member?(@brkpt.event)
     end
 
     def breakpoint_find(bpnum, show_errmsg = true)
@@ -129,7 +129,11 @@ class Trepan
     def delete_breakpoint_by_number(bpnum, do_enable=true)
       bp = breakpoint_find(bpnum)
       return false unless bp
-      @brkpts.delete(bpnum)
+      delete_breakpoint(bp)
+    end
+
+    def delete_breakpoint(bp)
+      @brkpts.delete_by_brkpt(bp)
       return true
     end
 
