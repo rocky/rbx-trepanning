@@ -80,5 +80,16 @@ class Trepan
       @location.variables
     end
 
+    def eval?
+      static = @location.static_scope
+      static && static.script && static.script.eval_source
+    end
+
+    def eval_string
+      return nil unless eval?
+      static = @location.static_scope
+      static.script.eval_source
+    end
+
   end
 end

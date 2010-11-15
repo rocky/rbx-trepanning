@@ -53,10 +53,17 @@ class Trepan
     def loc_and_text(loc)
       filename = @frame.location.method.active_path
       line_no  = @frame.location.line
-      text     = line_at(filename, line_no)
-      map_file, map_line = LineCache::map_file_line(filename, line_no)
-      if [filename, line_no] != [map_file, map_line]
-        loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+      static   = @frame.location.static_scope
+
+      if @frame.eval?
+        # FIXME: do more here. Like cache and remap file.
+        text = @frame.eval_string.split(/\n/)[line_no-1]
+      else
+        text = line_at(filename, line_no)
+        map_file, map_line = LineCache::map_file_line(filename, line_no)
+        if [filename, line_no] != [map_file, map_line]
+          loc += " remapped #{canonic_file(map_file)}:#{map_line}"
+        end
       end
         
       [loc, line_no, text]
