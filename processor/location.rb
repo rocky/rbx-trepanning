@@ -51,13 +51,16 @@ class Trepan
     end
 
     def loc_and_text(loc)
-      filename = @frame.location.method.active_path
-      line_no  = @frame.location.line
-      static   = @frame.location.static_scope
+      location = @frame.location
+      filename = location.method.active_path
+      line_no  = location.line
+      static   = location.static_scope
 
+      # FIXME: @frame.eval should probably in Rubinius. Is also 
+      # in linecache for now. Use one of those and remove from app/frame.rb
       if @frame.eval?
-        # FIXME: do more here. Like cache and remap file.
-        text = @frame.eval_string.split(/\n/)[line_no-1]
+        # FIXME: do more here. Like remap file.
+        text = LineCache::getline(static.script, line_no)
       else
         text = line_at(filename, line_no)
         map_file, map_line = LineCache::map_file_line(filename, line_no)

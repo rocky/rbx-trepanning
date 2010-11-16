@@ -172,7 +172,7 @@ class Trepan
         end
         return ['main.__script__', 'main', '.', '__script__', line]
       elsif args.size == 1
-        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+)(?:[:](\d+))?/.match(args[0])
+        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:](\d+))?/.match(args[0])
         if m
           return [m[0], m[1], m[2], m[3], m[4] ? m[4].to_i : nil]
         elsif line = Integer(args[0]) rescue nil

@@ -147,9 +147,15 @@ Some examples:
       file  = @proc.frame.file
     end
     last = first + listsize - 1 unless last
-  
-    LineCache::cache(file)
-    return file, first, last
+
+    if @proc.frame.eval?
+      script = @proc.frame.location.static_scope.script 
+      LineCache::cache(script)
+    else
+      LineCache::cache(file)
+      script = nil
+    end
+    return file, script, first, last
   end
 
   def no_frame_msg
@@ -166,13 +172,15 @@ Some examples:
         (listsize-1) / 2
       end
 
-    file, first, last = 
+    file, script, first, last = 
       parse_list_cmd(args[1..-1], listsize, center_correction)
     frame = @proc.frame
     return unless file
 
+    cached_item = script || file
+
     # We now have range information. Do the listing.
-    max_line = LineCache::size(file)
+    max_line = LineCache::size(cached_item)
     unless max_line 
       errmsg('File "%s" not found.' % file)
       return
@@ -191,7 +199,7 @@ Some examples:
 
     begin
       first.upto(last).each do |lineno|
-        line = LineCache::getline(file, lineno,
+        line = LineCache::getline(cached_item, lineno,
                                   @proc.reload_on_change)
         unless line
           msg('[EOF]')
