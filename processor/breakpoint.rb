@@ -41,7 +41,7 @@ class Trepan
       bp
     end
     
-    def set_breakpoint_method(descriptor, method, line=nil,
+    def set_breakpoint_method(descriptor, method, line=nil, ip=nil,
                               opts={:event => 'brkpt',
                                 :temp => false})
       exec = if method.kind_of?(Rubinius::CompiledMethod)
@@ -62,7 +62,7 @@ class Trepan
           errmsg "Unknown line '#{line}' in method '#{method.name}'"
           return nil
         end
-      else
+      elsif !ip
         line = exec.first_line
         ip = 0
       end

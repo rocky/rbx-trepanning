@@ -67,6 +67,14 @@ module Trepanning
     end
     module_function :lines_of_method
 
+    # Return true if ip is the start of some instruction in meth.
+    # FIXME: be more stringent.
+    def valid_ip?(meth, ip)
+      size = meth.lines.size
+      ip >= 0 && ip < meth.lines[size-1]
+    end
+    module_function :valid_ip?
+
     # Returns a CompiledMethod for the specified line. We search the
     # current method +meth+ and then up the parent scope.  If we hit
     # the top and we can't find +line+ that way, then we
@@ -121,4 +129,9 @@ if __FILE__ == $0
   p lines_of_method(meth)
   find_line(line)
   p find_method_with_line(meth, line+2)
+  ip = locate_line( __LINE__, meth)[1]
+  puts "Line #{__LINE__} has ip #{ip}" 
+  [-1, 0, 10, ip, 10000].each do |i|
+    puts "IP #{i} is %svalid" % (valid_ip?(meth, i) ? '' : 'not ')
+  end
 end

@@ -7,6 +7,7 @@ require 'rubygems'
 require 'require_relative'
 require 'linecache'
 require_relative '../app/method'
+require_relative '../app/validate'
 ## require_relative '../app/condition'
 ## require_relative '../app/file'
 class Trepan
@@ -16,7 +17,7 @@ class Trepan
     attr_reader :dbgr_iseqs
 
     include Trepanning::Method
-    ## include Trepanning
+    include Trepan::Validate
     ## include Trepan::ThreadHelper
     ## include Trepan::Condition
 
@@ -158,6 +159,7 @@ class Trepan
     #   - whether the position is an instance or not
     # On failure, an error message is shown and we return nil.
     def breakpoint_position(args)
+      ip = nil
       if args.size == 0
         args = [frame.line.to_s]
       end
@@ -166,26 +168,40 @@ class Trepan
           errmsg 'Expecting only a line number'
           return nil
         elsif args.size == 2
-          return nil unless (line = @proc.get_an_int(args[1]))
-        else
-          line = nil
-        end
-        return ['main.__script__', 'main', '.', '__script__', line]
-      elsif args.size == 1
-        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:](\d+))?/.match(args[0])
-        if m
-          return [m[0], m[1], m[2], m[3], m[4] ? m[4].to_i : nil]
-        elsif line = Integer(args[0]) rescue nil
-          meth = find_method_with_line(frame.location.method, line)
-          unless meth
-            errmsg "Cannot find method location for line '#{line}'"
+          ip, line = line_or_ip(args[1])
+          unless line || ip
+            errmsg ("Expecting a line or an IP offset number")
             return nil 
           end
-
-          return ["#{meth.describe}", nil, '#', meth, line]
         else
-          errmsg 'Cannot parse breakpoint location'
-          return nil
+          ip, line = nil, nil
+        end
+        return [args.join(' '), '.', '__script__', line, ip]
+      elsif args.size == 1
+        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:]([oO])?(\d+))?/.match(args[0])
+        if m
+          if m[4]
+            return [m[0], m[1], m[2], m[3], nil, m[5] ? m[5].to_i : nil]
+          else
+            return [m[0], m[1], m[2], m[3], (m[4] ? m[4].to_i : nil), nil]
+          end
+        else
+          ip, line = line_or_ip(args[0])
+          unless line || ip
+            errmsg ("Expecting a line or an IP offset number")
+            return nil 
+          end
+          if line
+            meth = find_method_with_line(frame.method, line)
+            unless meth
+              errmsg "Cannot find method location for line #{line}"
+              return nil 
+            end
+          elsif valid_ip?(frame.method, ip)
+            return [args.join(' '), meth.class, '#', frame.method, nil, ip]
+          end
+          
+          return ["#{meth.describe}", nil, '#', meth, line, nil]
         end
       end
       errmsg 'Cannot parse breakpoint location'
@@ -318,9 +334,6 @@ if __FILE__ == $0
     puts "#{str} should be true: #{proc.method?(str).inspect}"
   end
   puts '=' * 40
-  # require_relative '../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
   
   # FIXME:
   # Array#foo should be false: true
@@ -330,8 +343,11 @@ if __FILE__ == $0
     puts "#{str} should be false: #{proc.method?(str).inspect}"
   end
   puts '-' * 20
-  # p proc.breakpoint_position(%w(O0))
-  # p proc.breakpoint_position(%w(1))
+  # require_relative '../lib/trepanning'
+  # Trepan.start
+  p proc.breakpoint_position(%w(O0))
+  p proc.breakpoint_position(%w(1))
+  p proc.breakpoint_position(%w(__LINE__))
   # p proc.breakpoint_position(%w(2 if a > b))
   p proc.get_int_list(%w(1+0 3-1 3))
   p proc.get_int_list(%w(a 2 3))

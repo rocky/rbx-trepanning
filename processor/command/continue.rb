@@ -31,14 +31,14 @@ See also 'step', 'next', and 'nexti' commands.
 
     ## FIXME: DRY this code, tbreak and break.
     unless args.size == 1
-      describe, klass_name, which, name, line = 
+      describe, klass_name, which, name, line, ip = 
         @proc.breakpoint_position(args[1..-1])
       unless describe
         errmsg "Can't parse temporary breakpoint location"
         return 
       end
       if name.kind_of?(Rubinius::CompiledMethod)
-        bp = @proc.set_breakpoint_method(describe, name, line,
+        bp = @proc.set_breakpoint_method(describe, name, line, ip,
                                          {:temp=>true, :event =>'tbrkpt'})
         unless bp
           errmsg "Trouble setting temporary breakpoint"

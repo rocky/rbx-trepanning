@@ -37,4 +37,18 @@ class TestAppMethod < Test::Unit::TestCase
                    "Method compare")
     end
   end
+  def test_valid_ip?
+    meth = Rubinius::VM.backtrace(0, true)[0].method
+    ip = Trepanning::Method.locate_line( __LINE__, meth)[1]
+    assert_equal(true, ip.kind_of?(Fixnum), 
+                 "locate line of #{__LINE__} should have gotten an IP;" +
+                 " got: #{ip.inspect}")
+    [[-1, false],
+     [ 0, true], 
+     [ip, true], 
+     [100000, false]].each do |ip, expect|
+      assert_equal expect, Trepanning::Method.valid_ip?(meth, ip)
+    end
+  end
+
 end

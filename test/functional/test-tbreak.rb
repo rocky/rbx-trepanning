@@ -29,8 +29,8 @@ class TestTBreak < Test::Unit::TestCase
     d.stop # ({:remove => true})
     out = ['-- ',
            '2.times do ',
-           'Set breakpoint 1: foo.rb:55 (@3)',
-           "xx ",
+           'Set temporary breakpoint 1: foo.rb:55 (@3)',
+           "x1 ",
            'a = 3'
           ]
     compare_output(out, d, cmds)

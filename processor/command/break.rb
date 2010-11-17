@@ -9,38 +9,46 @@ class Trepan::Command::SetBreakpointCommand < Trepan::Command
   NAME         = File.basename(__FILE__, '.rb')
   HELP         = <<-HELP
 #{NAME} 
-#{NAME} line
-#{NAME} Class[.#]method[:line]
+#{NAME} [line number|offset]
+#{NAME} Class[.#]method[:line-or-offset]
 
-Sets a breakpoint. In the first form, a breakpoint is set at the current
-line you are stopped at. In the second form, you give a line number. 
-The current method name is used for the start of the search. If the line
-number is not found in that method, enclosing scopes are searched for the
-line. 
+Sets a breakpoint. In the first form, a breakpoint is set at the
+current line you are stopped at. In the second form, you give a line
+number or an offset.  An offset is a number that is prefaced with 'O'
+or 'o' and represents a Rubinius VM PC offset. 
+
+The current method name is used for the start of the search. If a line
+number is given and the line number is not found in that method,
+enclosing scopes are searched for the line.
 
 The last form is the most explicit. Use '#' to specify an instance
-method and '.' to specify a class method. If a line number is omitted
-we use the first line of the method.
+method and '.' to specify a class method. If a line number or offset
+is omitted, we use the first line of the method.
 
 Examples:
 
   #{NAME}     # set breakpoint at the current line
   #{NAME} 5   # set breakpoint on line 5
+  #{NAME} O5  # set breakpoint at offset 5
+  #{NAME} o5  # same as above
   #{NAME} Array#pop::3 # Set break at instance method 'pop' in Array, line 3
-  #{NAME} Trepan.start:3 # Set break in class method 'start' of Trepan, line 4
-  #{NAME} Trepan.start   # Set break in class method 'start' of Trepan
+  #{NAME} Trepan.start:3  # Set break in class method 'start' of Trepan, line 3
+  #{NAME} Trepan.start:o3 # Same as above but at offset 3, not line 3.
+  #{NAME} Trepan.start    # Set break in class method 'start' of Trepan
 
-See also 'info breakpoint', and 'delete'. 
+See also 'tbreak', 'info breakpoint', and 'delete'. 
       HELP
   SHORT_HELP   = 'Set a breakpoint at a point in a method'
 
   def run(args, temp=false)
     arg_str = args[1..-1].join(' ')
 
-    describe, klass_name, which, name, line = 
+    describe, klass_name, which, name, line, ip = 
       @proc.breakpoint_position(args[1..-1])
+    event = temp ? 'tbrkpt' : 'brkpt'
+    opts={:event => event, :temp => temp}      
     if name.kind_of?(Rubinius::CompiledMethod)
-      bp = @proc.set_breakpoint_method(describe, name, line)
+      bp = @proc.set_breakpoint_method(describe, name, line, ip, opts)
     else
       return unless klass_name
     
@@ -63,8 +71,8 @@ See also 'info breakpoint', and 'delete'.
         ask_deferred klass_name, which, name, line
         return
       end
-      
-      bp = @proc.set_breakpoint_method(arg_str.strip, method, line)
+
+      bp = @proc.set_breakpoint_method(arg_str.strip, method, line, ip, opts)
     end
       
     bp.set_temp! if temp
