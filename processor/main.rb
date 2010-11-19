@@ -262,8 +262,18 @@ class Trepan
             after_cmdloop
             if @step_count >= 0 
               step_bp = step_over_by(1)
+              ## This is debug code to show that there seems to be 
+              ## a bug in rubinius where a breakpoint set at a return IP
+              ## isn't getting honored. see tmp/step-bug.rc
+              # if step_bp
+              #   if step_bp.related_bp.size == 0
+              #     p ['++2', step_bp.location]
+              #     adjust_frame(1, false)
+              #     run_command('dis all')
+              #   end
+              # end
               dbgr.listen('step' == @return_to_program)
-              # We remove the temprorary stepping breakpoint no matter what
+              # We remove the temporary stepping breakpoint no matter what
               step_bp.remove! if step_bp
             else
               dbgr.listen

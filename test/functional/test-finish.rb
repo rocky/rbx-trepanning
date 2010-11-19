@@ -17,7 +17,8 @@ class TestFinish < Test::Unit::TestCase
       x = x * fact(x-1)
       return x
     end
-    cmds = %w(step finish) + ['pr x', 'continue'] 
+    # An extra 'continue' added in case something goes wrong.
+    cmds = %w(step finish) + ['pr x', 'continue', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################

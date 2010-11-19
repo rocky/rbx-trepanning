@@ -22,24 +22,10 @@ class Trepan
       ip = start
 
       partial.each do |ins|
-        op = ins.shift
-
-        ins.each_index do |i|
-          case op.args[i]
-          when :literal
-            ins[i] = meth.literals[ins[i]].inspect
-          when :local
-            if meth.local_names
-              ins[i] = meth.local_names[ins[i]]
-            end
-          end
-        end
-
+        inst = Rubinius::CompiledMethod::Instruction.new(ins, meth, ip)
         prefix = Trepanning::ISeq::disasm_prefix(ip, frame.ip, meth)
-        # FIXME: was section
-        msg "#{prefix} %04d: #{op.opcode} #{ins.join(', ')}" % ip
-
-        ip += (ins.size + 1)
+        msg "#{prefix} #{inst}"
+        ip += ins.size
       end
     end
   end

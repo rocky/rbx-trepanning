@@ -199,6 +199,9 @@ class Trepan
             end
           elsif valid_ip?(frame.method, ip)
             return [args.join(' '), meth.class, '#', frame.method, nil, ip]
+          else
+            errmsg 'Cannot parse breakpoint location'
+            return nil
           end
           
           return ["#{meth.describe}", nil, '#', meth, line, nil]

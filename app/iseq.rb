@@ -30,6 +30,8 @@ module Trepanning
         case op
         when OP_GOTO
           return next_interesting(meth, iseq[i + 1]) # goto target
+        when OP_RET
+          return -2
         when OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE
           return [next_interesting(meth, iseq[i + 1]),
                   next_interesting(meth, i + 2)] # target and next ip

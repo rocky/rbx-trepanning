@@ -128,9 +128,9 @@ class Trepan
       #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       # end
 
-      mi = frame.method.inspect
+      ms = frame.method.scope
       @ignore_methods.each do |m, val|
-        if m == mi
+        if ms == m.scope
           @return_to_program = val
           return true
         end

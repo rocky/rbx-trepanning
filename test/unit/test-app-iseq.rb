@@ -42,7 +42,7 @@ class TestAppISeq < Test::Unit::TestCase
 
     last, return_ips = single_return
     assert_equal([last-1], return_ips)
-    assert_equal(-1, no_branching)
+    assert_equal(-2, no_branching)
     assert_equal(2, branching(true).size)
   end
 

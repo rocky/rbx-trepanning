@@ -12,7 +12,7 @@ class Trepan
       possible_line = f.line + step
       fin_ip = meth.first_ip_on_line possible_line
       
-      if fin_ip == -1
+      if fin_ip <= -1
         return step_to_parent
       end
       
@@ -32,54 +32,51 @@ class Trepan
       
       set_breakpoints_on_return_between(meth, f.ip, fin_ip)
     end
-    
-    def step_to_parent
-      f = @dbgr.frame(@frame.number + 1)
-      unless f
-        msg 'Unable to find frame to step to next'
-        return
-      end
-      
+
+    def step_to_parent(event='return')
+      f = parent_frame
+      return nil unless f
       meth = f.method
-      ip = f.ip
-      
-      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'return'})
+      ip   = f.ip
+
+      bp = Trepanning::Breakpoint.for_ip(meth, ip, 
+                                         {:event => event, :temp => true})
       bp.scoped!(@frame.scope)
       bp.activate
       
       return bp
     end
-    
+
+    # Sets temporary breakpoints in met between start_ip and fin_ip.
+    # We also set a temporary breakpoint in the caller.
     def set_breakpoints_between(meth, start_ip, fin_ip)
+      opts = {:event => 'line', :temp  => true}
       ips = goto_between(meth, start_ip, fin_ip)
+      bps = []
+      
       if ips.kind_of? Fixnum
-        ip = ips
-      else
-        one, two = ips
-        bp1 = Trepanning::Breakpoint.for_ip(meth, one, {:event => 'line'})
-        bp2 = Trepanning::Breakpoint.for_ip(meth, two, {:event => 'line'})
-        
-        bp1.related_with(bp2)
-        
-        bp1.scoped!(@frame.scope)
-        bp2.scoped!(@frame.scope)
-        
-        bp1.activate
-        bp2.activate
-        
-        return bp1
+        if ips == -1
+          errmsg "No place to step to"
+          return nil
+        elsif ips == -2
+          bps << step_to_parent(event='line')
+          ips = []
+        else
+          ips = [ips]
+        end
       end
-      
-      if ip == -1
-        errmsg "No place to step to"
-        return nil
+
+      ips.each do |ip|
+        bp = Trepanning::Breakpoint.for_ip(meth, ip, opts)
+        bp.scoped!(@frame.scope)
+        bp.activate
+        bps << bp
       end
-      
-      bp = Trepanning::Breakpoint.for_ip(meth, ip, {:event => 'line'})
-      bp.scoped!(@frame.scope)
-      bp.activate
-      
-      return bp
+      first_bp = bps[0]
+      bps[1..-1].each do |bp| 
+        first_bp.related_with(bp) 
+      end
+      return first_bp
     end
     
     def set_breakpoints_on_return_between(meth, start_ip, fin_ip)

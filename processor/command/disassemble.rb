@@ -3,30 +3,50 @@ require_relative './base/cmd'
 require_relative '../../app/iseq'
 
 class Trepan::Command::DisassembleCommand < Trepan::Command
+  NAME         = File.basename(__FILE__, '.rb')
   ALIASES      = %w(dis)
   CATEGORY     = 'data'
   HELP         = <<-HELP
-Disassemble bytecode for the current method. By default, the bytecode
-for the current line is disassembled only.
-    
-    If the argument is 'all', the entire method is shown as bytecode.
+#{NAME} [all]
+
+Disassembles Rubinius VM instructins. By default, the bytecode for the
+current line is disassembled only.
+
+If the argument is 'all', the entire method is shown as bytecode.
+
     HELP
-  NAME         = File.basename(__FILE__, '.rb')
+
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
 
+  def disassemble_method(meth)
+    meth.decode.each do |insn|
+      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, 
+                                               @proc.frame.ip,
+                                               @proc.frame.method)
+      msg "#{prefix} #{insn}"
+    end
+  end
+
   def run(args)
-    if 'all' == args[1]
+    if 1 == args.size
+      @proc.show_bytecode
+    elsif 'all' == args[1]
       # FIXME: first msg is a section command.
       msg "Bytecode for #{@proc.frame.location.describe}"
-      current_method.decode.each do |insn|
-        prefix = Trepanning::ISeq::disasm_prefix(insn.ip, 
-                                                 @proc.frame.ip,
-                                                 @proc.frame.method)
-        msg "#{prefix} #{insn}"
-      end
+      disassemble_method(current_method)
     else
-      @proc.show_bytecode
+      # str = "method(#{args[1].inspect}.to_sym)"
+      # puts str
+      # meth = @proc.debug_eval_no_errmsg(str)
+      # if meth
+      #   # FIXME: first msg is a section command.
+      #   msg "Bytecode for method #{args[1]}"
+      #   disassemble_method(meth)
+      # else
+      #   errmsg "Method #{args[1]} not found"
+      # end
+      errmsg "The only argument we can handle right now is 'all'"
     end
   end
 end

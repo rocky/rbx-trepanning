@@ -43,7 +43,7 @@ See also 'down' and 'frame'.
     end
 
     if args.size == 1
-      # Form is: "down" which means "down 1"
+      # Form is: "up" which means "up 1"
       count = 1
     else
       count_str = args[1]

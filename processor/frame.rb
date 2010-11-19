@@ -126,6 +126,15 @@ class Trepan
       [frame, frame_num]
     end
 
+    def parent_frame
+      frame = @dbgr.frame(@frame.number + 1)
+      unless frame
+        errmsg "Unable to find parent frame at level #{@frame.number+1}"
+        return nil
+      end
+      frame
+    end
+
     def set_hide_level
       @hide_level = 
         if !@settings[:hidelevel] || @settings[:hidelevel] < 0
