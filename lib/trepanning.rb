@@ -242,6 +242,7 @@ class Trepan
         # also removes the breakpoint if it was temporary and hit.
         break if @breakpoint.hit!(@locations.first.variables)
       else
+        @processor.step_bp.remove! if @processor.step_bp
         break
       end
     end

@@ -3,8 +3,11 @@ require_relative '../app/iseq'
 class Trepan
   class CmdProcessor
     include Trepanning::ISeq
-    def step_over_by(step)
-      f = @frame
+    
+    # It might be interesting to allow stepping within a parent frame
+    def step_over_by(step, frame=@top_frame)
+      
+      f = frame
       
       ip = -1
       
@@ -13,7 +16,7 @@ class Trepan
       fin_ip = meth.first_ip_on_line possible_line
       
       if fin_ip <= -1
-        return step_to_parent
+        return step_to_parent('line')
       end
       
       set_breakpoints_between(meth, f.ip, fin_ip)
@@ -41,7 +44,7 @@ class Trepan
 
       bp = Trepanning::Breakpoint.for_ip(meth, ip, 
                                          {:event => event, :temp => true})
-      bp.scoped!(@frame.scope)
+      bp.scoped!(parent_frame.scope)
       bp.activate
       
       return bp
