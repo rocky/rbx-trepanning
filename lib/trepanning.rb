@@ -68,6 +68,7 @@ class Trepan
     ## m = Rubinius::Loader.method(:debugger).executable.inspect
     meth = Rubinius::VM.backtrace(0)[0].method
     @processor.ignore_methods[meth] = 'next'
+    @processor.ignore_methods[method(:debugger)] = 'step'
 
     @thread = nil
     @frames = []
@@ -142,8 +143,8 @@ class Trepan
   end
 
   def self.start(settings={})
-    global(settings).start(:offset => 1, 
-                           :immediate => settings[:immediate])
+    settings = {:immediate => false, :offset => 1}.merge(settings)
+    global(settings).start(settings)
   end
 
   # This is simplest API point. This starts up the debugger in the caller
@@ -381,4 +382,13 @@ class Trepan
 
   private :spinup_thread
 
+end
+
+module Kernel
+  # A simpler way of calling Trepan.start
+  def debugger(settings = {})
+    settings = {:immediate => false, :offset => 2}.merge(settings)
+    Trepan.start(settings)
+  end
+  alias breakpoint debugger unless respond_to?(:breakpoint)
 end
