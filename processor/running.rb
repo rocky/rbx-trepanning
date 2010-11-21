@@ -130,6 +130,11 @@ class Trepan
 
       ms = frame.method.scope
       @ignore_methods.each do |m, val|
+        # Guard against crap put into @ignore_methods
+        unless m.respond_to?(:scope)
+          @ignore_methods.delete(m)
+          next
+        end
         if ms == m.scope
           @return_to_program = val
           return true

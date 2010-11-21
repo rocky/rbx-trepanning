@@ -23,10 +23,10 @@ module Trepanning
     # print "\032\032starting\n" if Trepan.annotate and Trepan.annotate > 2
 
     ## FIXME: put in fn.
-    m = self.method(:debug_program).executable.inspect
+    m = self.method(:debug_program).executable
     dbgr.processor.ignore_methods[m]='step'
 
-    # m = Kernel.method(:load).executable.inspect
+    # m = Kernel.method(:load).executable
     # dbgr.processor.ignore_methods[m]='step'
 
     # Any frame from us or below should be hidden by default.

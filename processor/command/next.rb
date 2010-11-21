@@ -9,6 +9,8 @@ class Trepan::Command::NextCommand < Trepan::Command
   CATEGORY     = 'running'
   NAME         = File.basename(__FILE__, '.rb')
   HELP= <<-HELP
+#{NAME} [NUM]
+
 Attempt to continue execution and stop at the next line. If there is
 a conditional branch between the current position and the next line,
 execution is stopped within the conditional branch instead.
@@ -38,7 +40,7 @@ See also 'step' and 'nexti'.
       step_count = @proc.get_an_int(step_str, opts)
       return unless step_count
     end
-    
+
     @proc.step('next', step_count)
   end
   

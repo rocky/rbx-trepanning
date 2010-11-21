@@ -114,6 +114,38 @@ module Trepanning
 
 end
 
+module Rubinius
+  class CompiledMethod < Executable
+    ##
+    # Returns the address (IP) of the first instruction in this
+    # CompiledMethod that is on the specified line but not before the
+    # given, or the address of the first instruction on the next code
+    # line after the specified line if there are no instructions on
+    # the requested line.  This method only looks at instructions
+    # within the current CompiledMethod; see #locate_line for an
+    # alternate method that also searches inside the child
+    # CompiledMethods.
+
+    #
+    # @return [Fixnum] the address of the first instruction
+    def first_ip_on_line_after(line, start_ip)
+      i = 0
+      last_i = @lines.size - 1
+      while i < last_i
+        ip = @lines.at(i)
+        cur_line = @lines.at(i+1)
+        if cur_line >= line and ip >= start_ip
+          return ip
+        end
+        i += 2
+      end
+
+      -1
+    end
+  end
+end
+
+
 if __FILE__ == $0
   include Trepanning::Method
   require "#{File.dirname(__FILE__)}/../lib/trepanning"

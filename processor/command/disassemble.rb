@@ -7,12 +7,13 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
   ALIASES      = %w(dis)
   CATEGORY     = 'data'
   HELP         = <<-HELP
-#{NAME} [all]
+#{NAME} [all|method]
 
 Disassembles Rubinius VM instructins. By default, the bytecode for the
 current line is disassembled only.
 
-If the argument is 'all', the entire method is shown as bytecode.
+If a method name is given, disassemble just that method. If the
+argument is 'all', the entire method is shown as bytecode.
 
     HELP
 
@@ -20,10 +21,11 @@ If the argument is 'all', the entire method is shown as bytecode.
   SHORT_HELP   = 'Show the bytecode for the current method'
 
   def disassemble_method(meth)
+    frame_ip = (@proc.frame.method == meth) ? @proc.frame.ip : nil
     meth.decode.each do |insn|
       prefix = Trepanning::ISeq::disasm_prefix(insn.ip, 
                                                @proc.frame.ip,
-                                               @proc.frame.method)
+                                               meth)
       msg "#{prefix} #{insn}"
     end
   end
@@ -36,17 +38,16 @@ If the argument is 'all', the entire method is shown as bytecode.
       msg "Bytecode for #{@proc.frame.location.describe}"
       disassemble_method(current_method)
     else
-      # str = "method(#{args[1].inspect}.to_sym)"
-      # puts str
-      # meth = @proc.debug_eval_no_errmsg(str)
-      # if meth
-      #   # FIXME: first msg is a section command.
-      #   msg "Bytecode for method #{args[1]}"
-      #   disassemble_method(meth)
-      # else
-      #   errmsg "Method #{args[1]} not found"
-      # end
-      errmsg "The only argument we can handle right now is 'all'"
+      str = "method(#{args[1].inspect}.to_sym)"
+      puts str
+      meth = @proc.debug_eval_no_errmsg(str)
+      if meth
+        # FIXME: first msg is a section command.
+        msg "Bytecode for method #{args[1]}"
+        disassemble_method(meth.executable)
+      else
+        errmsg "Method #{args[1]} not found"
+      end
     end
   end
 end
