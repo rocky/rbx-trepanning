@@ -4,7 +4,7 @@ require 'rubygems'; require 'require_relative'
 require_relative 'fn_helper'
 
 def discontinuous(obj)
-  if klass = obj.class and klass.kind_of?(Fixnum)
+  if klass = obj.class and klass.kind_of?(String)
     return true
   end
   return nil
@@ -33,12 +33,12 @@ class TestNextBug < Test::Unit::TestCase
     cmds = %w(step next continue)
     d = strarray_setup(cmds)
     d.start
-    discontinuous(5)
+    discontinuous(4)
     d.stop
     out = ['-- ',
-           'discontinuous(5)',
+           'discontinuous(4)',
            '-> ',
-           'if klass = obj.class and klass.kind_of?(Fixnum)',
+           'if klass = obj.class and klass.kind_of?(String)',
            '-- ',
            'return nil'
           ]
