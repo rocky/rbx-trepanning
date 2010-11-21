@@ -56,10 +56,7 @@ class Trepan
       line_no  = location.line
       static   = location.static_scope
 
-      # FIXME: @frame.eval should probably in Rubinius. Is also 
-      # in linecache for now. Use one of those and remove from app/frame.rb
       if @frame.eval?
-        # FIXME: do more here. Like remap file.
         file = LineCache::map_script(static.script)
         text = LineCache::getline(static.script, line_no)
         loc += " remapped #{canonic_file(file)}:#{line_no}"

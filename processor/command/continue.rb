@@ -64,7 +64,7 @@ See also 'step', 'next', and 'nexti' commands.
           return
         end
         arg_str = args[1..-1].join(' ')
-        bp = @proc.set_breakpoint_method(arg_str.strip, method, line,
+        bp = @proc.set_breakpoint_method(arg_str.strip, method, line, nil,
                                          {:temp=>true, :event =>'tbrkpt'})
         unless bp
           errmsg "Trouble setting temporary breakpoint"
