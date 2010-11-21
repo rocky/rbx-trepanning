@@ -1,6 +1,4 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require 'tempfile'
-# require 'linecache'
 require 'rubygems'; require 'require_relative'
 require_relative '../app/frame'
 require_relative '../app/util'
@@ -41,7 +39,6 @@ class Trepan
       if frame 
         @frame = @dbgr.frame(frame_num)
         @frame_index = frame_num
-        ## frame_eval_remap if 'EVAL' == @frame.type
         print_location unless @settings[:traceprint]
         @line_no = @frame.line
         @frame
@@ -64,23 +61,6 @@ class Trepan
     #   container
     # end
 
-    # # If frame type is EVAL, set up to remap the string to a temporary file.
-    # def frame_eval_remap
-    #   to_str = Trepan::Frame::eval_string(@frame)
-    #   return nil unless to_str.is_a?(String)
-
-    #   # All systems go!
-    #   unless @remap_iseq.member?(@frame.iseq.sha1)
-    #     tempfile = Tempfile.new(['eval-', '.rb'])
-    #     tempfile.open.puts(to_str)
-
-    #     @remap_iseq[@frame.iseq.sha1] = ['file', tempfile.path]
-    #     tempfile.close
-    #     LineCache::cache(tempfile.path)
-    #   end
-    #   return true
-    # end
-
     # Initializes the thread and frame variables: @frame, @top_frame, 
     # @frame_index, @current_thread, and @threads2frames
     def frame_setup
@@ -92,7 +72,6 @@ class Trepan
       @threads2frames   ||= {} 
       @threads2frames[@current_thread] = @top_frame
       set_hide_level
-      ## frame_eval_remap if 'EVAL' == @frame.type
     end
 
     # Remove access to thread and frame variables

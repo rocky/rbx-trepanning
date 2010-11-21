@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'
-require 'linecache'
+ require 'linecache'
 require_relative 'disassemble'
 require_relative 'msg'
 require_relative 'frame'
@@ -60,7 +60,9 @@ class Trepan
       # in linecache for now. Use one of those and remove from app/frame.rb
       if @frame.eval?
         # FIXME: do more here. Like remap file.
+        file = LineCache::map_script(static.script)
         text = LineCache::getline(static.script, line_no)
+        loc += " remapped #{canonic_file(file)}:#{line_no}"
       else
         text = line_at(filename, line_no)
         map_file, map_line = LineCache::map_file_line(filename, line_no)
@@ -115,12 +117,11 @@ class Trepan
     def source_location_info
       filename  = @frame.location.method.active_path
       canonic_filename = 
-        # if (0 == filename.index('(eval')) && frame.prev &&
-        #     (eval_str = Trepan::Frame.eval_string(frame.prev))
-        #   'eval ' + safe_repr(eval_str, 15)
-        # else
+        if @frame.eval?
+          'eval ' + safe_repr(@frame.eval_string.gsub("\n", ';').inspect, 20)
+        else
           canonic_file(filename)
-        # end
+        end
       loc = "#{canonic_filename}:#{@frame.location.line}"
       return loc
     end 
