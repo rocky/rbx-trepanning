@@ -47,6 +47,7 @@ class Trepan
     attr_accessor :prompt          # String print before requesting input
     attr_reader   :settings        # Hash[:symbol] of command
                                    # processor settings
+    attr_reader   :step_bp
 
     # The following are used in to force stopping at a different line
     # number. FIXME: could generalize to a position object.
@@ -261,7 +262,7 @@ class Trepan
           if @return_to_program
             after_cmdloop
             if @step_count >= 0 
-              step_bp = step_over_by(1)
+              @step_bp = step_over_by(1)
               ## This is debug code to show that there seems to be 
               ## a bug in rubinius where a breakpoint set at a return IP
               ## isn't getting honored. see tmp/step-bug.rc
@@ -273,9 +274,8 @@ class Trepan
               #   end
               # end
               dbgr.listen('step' == @return_to_program)
-              # We remove the temporary stepping breakpoint no matter what
-              step_bp.remove! if step_bp
             else
+              @step_bp = nil
               dbgr.listen
             end
             skip_command = before_cmdloop
