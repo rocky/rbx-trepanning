@@ -2,6 +2,7 @@
 class Trepan
   class CmdProcessor
     # Command processor hooks.
+    attr_reader   :autodis_hook
     attr_reader   :autoirb_hook
     attr_reader   :autolist_hook
     attr_reader   :debug_dbgr_hook
@@ -79,9 +80,13 @@ class Trepan
 
       display_cmd = commands['display']
       @display_hook   = ['display', 
-                         Proc.new{|*args| display_cmd.run(['display']) if 
-                           display_cmd}]
-      
+                         Proc.new{|*args| display_cmd.run(['display']) if display_cmd}]
+
+      # FIXME: generalize for any command run 
+      dis_cmd = commands['disassemble']
+      @autodis_hook  = ['autodis', 
+                         Proc.new{|*args| dis_cmd.run(['disassemble']) if dis_cmd}]
+
       list_cmd = commands['list']
       @autolist_hook  = ['autolist', 
                          Proc.new{|*args| list_cmd.run(['list']) if list_cmd}]

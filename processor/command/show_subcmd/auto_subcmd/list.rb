@@ -17,10 +17,10 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   require_relative '../../../subcmd'
-  name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show')
+
+  dbgr, show_cmd = MockDebugger::setup('show', false)
   testcmdMgr     = Trepan::Subcmd.new(show_cmd)
   auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.processor, 
                                                        show_cmd)
