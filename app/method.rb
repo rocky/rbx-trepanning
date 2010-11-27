@@ -25,9 +25,7 @@ module Trepanning
     end
     module_function :locate_line_in_cm
 
-    ## As of Nov 6. 2010 the following method in Rubinius needs
-    ## adjusting.
-
+    ## FIXME: Try using Routine in Rubinius now.
     ##
     # Locates the CompiledMethod and instruction address (IP) of the
     # first instruction on the specified line. This method recursively
@@ -139,7 +137,6 @@ module Rubinius
         end
         i += 2
       end
-
       -1
     end
   end

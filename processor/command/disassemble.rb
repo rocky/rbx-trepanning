@@ -22,11 +22,34 @@ argument is 'all', the entire method is shown as bytecode.
 
   def disassemble_method(meth)
     frame_ip = (@proc.frame.method == meth) ? @proc.frame.ip : nil
+    lines = meth.lines
+    next_line_ip = 0
+    next_i = 1
     meth.decode.each do |insn|
-      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, 
-                                               @proc.frame.ip,
-                                               meth)
-      msg "#{prefix} #{insn}"
+      show_line = 
+        if insn.ip >= next_line_ip
+          next_line_ip = lines.at(next_i+1)
+          line_no = lines.at(next_i)
+          next_i += 2
+          true
+        else
+          false
+        end
+          
+      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, frame_ip, meth)
+      str = "#{prefix} #{insn}"
+      if show_line
+        str += 
+          if insn.instance_variable_get('@comment')
+            ' '
+          elsif str[-1..-1] !~/\s/
+            '    '
+          else
+            ''
+          end
+        str += "# line: #{line_no}"  
+      end
+      msg str
     end
   end
 
