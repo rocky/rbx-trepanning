@@ -291,13 +291,12 @@ class Trepan
         return nil, canonic_file(arg), 1 
       end
 
-      # # How about a method name with an instruction sequence?
-      # iseq = object_iseq(arg)
-      # if iseq && iseq.source_container[0] == 'file'
-      #   filename = iseq.source_container[1]
-      #   line_no = iseq.offsetlines.values.flatten.min
-      #   return arg, ['file', canonic_file(filename)], line_no
-      # end
+      # How about a method name with an instruction sequence?
+      meth = parse_method(arg)
+      if meth
+        cm = meth.executable
+        return arg, canonic_file(cm.active_path), cm.lines[1]
+      end
 
       if show_errmsg
         unless (allow_offset && arg.size > 0 && arg[0].downcase == 'o')
@@ -308,6 +307,22 @@ class Trepan
       return nil, nil, nil
     end
     
+    def parse_method(meth_str)
+      # For meth_str = "foo", try via method("foo".to_sym)
+      str = "method(#{meth_str.inspect}.to_sym)"
+      meth = debug_eval_no_errmsg(str)
+      return meth if meth
+      last_dot = meth_str.rindex('.')
+      if last_dot
+        # For meth_str = "a.b.foo",
+        # try via a.b.method("foo".to_sym)
+        try_eval = "#{meth_str[0..last_dot]}method" + 
+          "(#{meth_str[last_dot+1..-1].inspect}.to_sym)"
+        meth = debug_eval_no_errmsg(try_eval)
+      end
+      return meth
+    end
+
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
       ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)

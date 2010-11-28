@@ -27,22 +27,6 @@ Examples:
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
 
-  def get_cm(meth_str)
-    # For meth_str = "foo", try via method("foo".to_sym)
-    str = "method(#{meth_str.inspect}.to_sym)"
-    cm = @proc.debug_eval_no_errmsg(str)
-    return cm if cm
-    last_dot = meth_str.rindex('.')
-    if last_dot
-      # For meth_str = "a.b.foo",
-      # try via a.b.method("foo".to_sym)
-      try_eval = "#{meth_str[0..last_dot]}method" + 
-        "(#{meth_str[last_dot+1..-1].inspect}.to_sym)"
-      cm = @proc.debug_eval_no_errmsg(try_eval)
-    end
-    return cm
-  end
-
   def disassemble_method(cm)
     frame_ip = (@proc.frame.method == cm) ? @proc.frame.ip : nil
     lines = cm.lines
@@ -84,7 +68,7 @@ Examples:
       msg "Bytecode for #{@proc.frame.location.describe}"
       disassemble_method(current_method)
     else
-      cm = get_cm(args[1])
+      cm = @proc.parse_method(args[1])
       if cm
         # FIXME: first msg is a section command.
         msg "Bytecode for method #{args[1]}"

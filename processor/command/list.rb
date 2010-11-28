@@ -10,6 +10,7 @@ class Trepan::Command::ListCommand < Trepan::Command
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME}[>] [FIRST [NUM]]
+#{NAME}[>] LOCATION [NUM]
 
 #{NAME} source code. 
 
@@ -28,6 +29,15 @@ setting. Use 'set listsize' or 'show listsize' to see or set the
 value.
 
 \"#{NAME} -\" shows lines before a previous listing. 
+
+A LOCATION is a either 
+  - number, e.g. 5, 
+  - a function, e.g. join or os.path.join
+  - a module, e.g. os or os.path
+  - a filename, colon, and a number, e.g. foo.rb:5,  
+  - or a module name and a number, e.g,. os.path:5.  
+  - a '.' for the current line number
+  - a '-' for the lines before the current line number
 
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number.  When there two numbers are
@@ -49,10 +59,12 @@ Some examples:
 #{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
 #{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
 #{NAME} foo.rb:5 2   # Same as above
+#{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
 #{NAME} .            # List lines centered from where we currently are stopped
 #{NAME} . 3          # List 3 lines starting from where we currently are stopped
                      # if . > 3. Otherwise we list from . to 3.
 #{NAME} -            # List lines previous to those just shown
+
     HELP
 
     ALIASES       = %W(l #{NAME}> l>)
@@ -181,6 +193,19 @@ Some examples:
 
     # We now have range information. Do the listing.
     max_line = LineCache::size(cached_item)
+
+    # FIXME: join with line_at of location.rb
+    unless max_line && file
+      # Try using search directories (set with command "directory")
+      if file[0..0] != File::SEPARATOR
+        try_filename = @proc.resolve_file_with_dir(file) 
+        if try_filename && 
+            max_line = LineCache::size(try_filename)
+          LineCache::remap_file(file, try_filename)
+        end
+      end
+    end
+
     unless max_line 
       errmsg('File "%s" not found.' % file)
       return
@@ -240,10 +265,6 @@ if __FILE__ == $0
   run_cmd(cmd, %W(#{cmd.name} tmpdir.rb 10))
   run_cmd(cmd, %W(#{cmd.name} tmpdir.rb))
   
-  # cmd.proc.frame = sys._getframe()
-  # cmd.proc.setup()
-  # cmd.run([cmd.name])
-  
   run_cmd(cmd, %W(cmd.name .))
   run_cmd(cmd, %W(cmd.name 30))
   
@@ -269,24 +290,7 @@ if __FILE__ == $0
   
   # Start line finish line 
   run_cmd(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
-  
-  # puts '--' * 10
-  # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '4'])
-  # puts '--' * 10
-  # cmd.run([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
-  # cmd.run([cmd.name, 'os.path:5'])
-  
-  # require 'thread_frame'
-  # tf = RubyVM::ThreadFrame.current
-  # cmd.proc.frame_setup(tf)
-  # brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
-  # brkpt_cmd.run(['break'])
-  # line = __LINE__
-  # run_cmd(cmd, [cmd.name, __LINE__.to_s])
-  
-  # disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
-  # disable_cmd.run(['disable', '1'])
-  
-  # run_cmd(cmd, ['list', line.to_s])
-  # run_cmd(cmd, %W(cmd.name parse_list_cmd))
+
+  # Method name
+  run_cmd(cmd, %W(#{cmd.name} cmd.run))
 end
