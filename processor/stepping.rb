@@ -69,7 +69,7 @@ class Trepan
         end
       end
 
-##      ips.each {|ip| p ['+++1', ip]}
+      msg "temp ips: #{ips.inspect}" if settings[:debugstep]
       ips.each do |ip|
         bp = Trepanning::Breakpoint.for_ip(meth, ip, opts)
         bp.scoped!(@frame.scope)

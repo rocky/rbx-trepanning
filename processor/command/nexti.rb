@@ -2,6 +2,7 @@ require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 require_relative '../stepping'
 require_relative '../../app/breakpoint'
+require_relative '../../app/iseq'
 
 class Trepan::Command::NextInstructionCommand < Trepan::Command
   ALIASES      = %w(ni)
@@ -39,7 +40,7 @@ See also 'continue', 'step', and 'next' commands.
     
     if next_ip >= exec.iseq.size
       @proc.step_to_parent
-    elsif @proc.is_a_goto(exec, @proc.frame.ip)
+    elsif Trepanning::ISeq.goto_op?(exec, @proc.frame.ip)
       @proc.set_breakpoints_between(exec, @proc.frame.ip, next_ip)
     else
       line = exec.line_from_ip(next_ip)

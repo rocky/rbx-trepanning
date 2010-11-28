@@ -263,8 +263,7 @@ class Trepan
             after_cmdloop
             if @step_count >= 0 
               @step_bp = step_over_by(1)
-##               puts "++++"
-##              run_command('disassemble')
+              run_command('disassemble') if settings[:debugstep]
               dbgr.listen('step' == @return_to_program)
             else
               @step_bp = nil

@@ -20,12 +20,12 @@ argument is 'all', the entire method is shown as bytecode.
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
 
-  def disassemble_method(meth)
-    frame_ip = (@proc.frame.method == meth) ? @proc.frame.ip : nil
-    lines = meth.lines
+  def disassemble_method(cm)
+    frame_ip = (@proc.frame.method == cm) ? @proc.frame.ip : nil
+    lines = cm.lines
     next_line_ip = 0
     next_i = 1
-    meth.decode.each do |insn|
+    cm.decode.each do |insn|
       show_line = 
         if insn.ip >= next_line_ip
           next_line_ip = lines.at(next_i+1)
@@ -36,7 +36,7 @@ argument is 'all', the entire method is shown as bytecode.
           false
         end
           
-      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, frame_ip, meth)
+      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
       str = "#{prefix} #{insn}"
       if show_line
         str += 
@@ -63,11 +63,11 @@ argument is 'all', the entire method is shown as bytecode.
     else
       str = "method(#{args[1].inspect}.to_sym)"
       puts str
-      meth = @proc.debug_eval_no_errmsg(str)
-      if meth
+      cm = @proc.debug_eval_no_errmsg(str)
+      if cm
         # FIXME: first msg is a section command.
         msg "Bytecode for method #{args[1]}"
-        disassemble_method(meth.executable)
+        disassemble_method(cm.executable)
       else
         errmsg "Method #{args[1]} not found"
       end
