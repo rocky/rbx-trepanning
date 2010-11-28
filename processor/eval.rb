@@ -94,4 +94,3 @@ if __FILE__ == $0
   puts cmdp.debug_eval('x+')
   puts cmdp.debug_eval('y = 1; x+', 4)
 end
-

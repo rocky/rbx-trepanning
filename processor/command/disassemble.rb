@@ -9,16 +9,39 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
   HELP         = <<-HELP
 #{NAME} [all|method]
 
-Disassembles Rubinius VM instructins. By default, the bytecode for the
+Disassembles Rubinius VM instructions. By default, the bytecode for the
 current line is disassembled only.
 
 If a method name is given, disassemble just that method. If the
 argument is 'all', the entire method is shown as bytecode.
 
+Examples:
+   #{NAME}              # dissasemble VM for current line
+   #{NAME} all          # disassemble entire current method
+   #{NAME} [1,2].max    # disassemble max method of Array
+   #{NAME} Object.is_a? # disassemble Object.is_a?
+   #{NAME} is_a?        # same as above (probably)
+
     HELP
 
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
+
+  def get_cm(meth_str)
+    # For meth_str = "foo", try via method("foo".to_sym)
+    str = "method(#{meth_str.inspect}.to_sym)"
+    cm = @proc.debug_eval_no_errmsg(str)
+    return cm if cm
+    last_dot = meth_str.rindex('.')
+    if last_dot
+      # For meth_str = "a.b.foo",
+      # try via a.b.method("foo".to_sym)
+      try_eval = "#{meth_str[0..last_dot]}method" + 
+        "(#{meth_str[last_dot+1..-1].inspect}.to_sym)"
+      cm = @proc.debug_eval_no_errmsg(try_eval)
+    end
+    return cm
+  end
 
   def disassemble_method(cm)
     frame_ip = (@proc.frame.method == cm) ? @proc.frame.ip : nil
@@ -61,9 +84,7 @@ argument is 'all', the entire method is shown as bytecode.
       msg "Bytecode for #{@proc.frame.location.describe}"
       disassemble_method(current_method)
     else
-      str = "method(#{args[1].inspect}.to_sym)"
-      puts str
-      cm = @proc.debug_eval_no_errmsg(str)
+      cm = get_cm(args[1])
       if cm
         # FIXME: first msg is a section command.
         msg "Bytecode for method #{args[1]}"
@@ -84,6 +105,13 @@ if __FILE__ == $0
     puts '=' * 40
     puts "#{cmd.name} all"
     cmd.run([cmd.name, 'all'])
+    puts '=' * 40
+    p cmd.proc.frame.location.describe
+    cmd.run([cmd.name, 'foo'])
+    puts '=' * 40
+    # require_relative '../../lib/trepanning'
+    # debugger
+    cmd.run([cmd.name, 'self.setup'])
   end
   foo(cmd)
 end
