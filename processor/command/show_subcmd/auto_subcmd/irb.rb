@@ -9,7 +9,7 @@ class Trepan::SubSubcommand::ShowAutoIrb < Trepan::ShowBoolSubSubcommand
     HELP = "Show if IRB is invoked on debugger stops"
     MIN_ABBREV = 'ir'.size
     NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %w(show auto irb)
+    PREFIX     = %W(show auto #{NAME})
   end
 
 end
@@ -17,20 +17,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-
-  # FIXME: DRY the below code
-  dbgr, show_cmd = MockDebugger::setup('show', false)
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.processor, 
-                                                       show_cmd)
-
-  # FIXME: remove the 'join' below
-  cmd_name       = Trepan::SubSubcommand::ShowAutoIrb::PREFIX.join('')
-  autox_cmd      = Trepan::SubSubcommand::ShowAutoIrb.new(show_cmd.proc, 
-                                                          auto_cmd,
-                                                          cmd_name)
-  autox_cmd.run([])
-  # # name = File.basename(__FILE__, '.rb')
-  # # autox_cmd.summary_help(name)
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowIrb,
+                                   Trepan::SubSubcommand::ShowAutoIrb)
 end

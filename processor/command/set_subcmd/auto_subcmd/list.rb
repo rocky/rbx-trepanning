@@ -26,27 +26,9 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-  require_relative '../../../hook'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, set_cmd = MockDebugger::setup('set')
-  testcmdMgr    = Trepan::Subcmd.new(set_cmd)
-  auto_cmd      = Trepan::SubSubcommand::SetAuto.new(dbgr.processor, 
-                                                     set_cmd)
-  # FIXME: remove the 'join' below
-  cmd_name      = Trepan::Subcommand::SetAutoList::PREFIX.join('')
-  autox_cmd     = Trepan::SubSubcommand::SetAutoList.new(set_cmd.proc, 
-                                                         auto_cmd,
-                                                         cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-  set_cmd.proc.hook_initialize(set_cmd.proc.commands)
-  subcmd_name = Trepan::Subcommand::SetAutoList::PREFIX[1..-1].join('')
-  autox_cmd.run([subcmd_name])
-  autox_cmd.run([subcmd_name, 'off'])
-  puts '-' * 10
-  puts autox_cmd.save_command
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::SetAuto,
+                                   Trepan::SubSubcommand::SetAutoList)
+  cmd.run([cmd.name, 'off'])
+  cmd.run([cmd.name, 'on'])
 end

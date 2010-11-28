@@ -8,7 +8,7 @@ class Trepan::SubSubcommand::ShowAutoList < Trepan::ShowBoolSubSubcommand
     HELP = "Show running a 'list' command each time we enter the debugger"
     MIN_ABBREV   = 'l'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show auto list)
+    PREFIX       = %W(show auto #{NAME})
   end
 
 end
@@ -16,22 +16,7 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
-
-  # FIXME: DRY the below code
-
-  dbgr, show_cmd = MockDebugger::setup('show', false)
-  testcmdMgr     = Trepan::Subcmd.new(show_cmd)
-  auto_cmd       = Trepan::SubSubcommand::ShowAuto.new(dbgr.processor, 
-                                                       show_cmd)
-
-  # FIXME: remove the 'join' below
-  cmd_name       = Trepan::SubSubcommand::ShowAutoList::PREFIX.join('')
-  autox_cmd      = Trepan::SubSubcommand::ShowAutoList.new(show_cmd.proc, auto_cmd,
-                                                           cmd_name)
-  # require_relative '../../../../lib/trepanning'
-  # dbgr = Trepan.new(:set_restart => true)
-  # dbgr.debugger
-  autox_cmd.run([])
-
+  require_relative '../auto'
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowAuto,
+                                   Trepan::SubSubcommand::ShowAutoList)
 end
