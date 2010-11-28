@@ -129,29 +129,6 @@ class Trepan
       end
     end
 
-    # # Return the instruction sequence associated with string
-    # # OBJECT_STRING or nil if no instruction sequence
-    # def object_iseq(object_string)
-    #   iseqs = find_iseqs(ISEQS__, object_string)
-    #   # FIXME: do something if there is more than one.
-    #   if iseqs.size == 1
-    #      iseqs[-1]
-    #   elsif debug_eval_no_errmsg("#{object_string}.respond_to?('iseq')")
-    #     debug_eval_no_errmsg("#{object_string}.iseq")
-    #   else
-    #     parts = object_string.split(/[.]/)
-    #     string = 
-    #       if parts.size < 2 
-    #         "method(\"#{object_string}\").iseq"
-    #       else
-    #         parts[0..-2].join('.')+".method(\"#{parts[-1]}\").iseq"
-    #       end
-    #     debug_eval_no_errmsg(string)
-    #   end
-    # rescue
-    #   nil
-    # end
-
     # Parse a breakpoint position. On success return
     #   - the class name or nil if we return a CompiledMethod class
     #   - the method the position is in - a CompiledMethod or a String

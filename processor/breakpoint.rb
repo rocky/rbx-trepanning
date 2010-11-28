@@ -41,33 +41,33 @@ class Trepan
       bp
     end
     
-    def set_breakpoint_method(descriptor, method, line=nil, ip=nil,
-                              opts={:event => 'brkpt',
-                                :temp => false})
-      exec = if method.kind_of?(Rubinius::CompiledMethod)
-               method
-             else 
-               method.executable
-             end
-      
-      unless exec.kind_of?(Rubinius::CompiledMethod)
-        errmsg "Unsupported method type: #{exec.class}"
+    def set_breakpoint_method(descriptor, meth, line=nil, ip=nil,
+                              opts={:event => 'brkpt',:temp => false})
+      cm =  
+        if meth.kind_of?(Method) || meth.kind_of?(UnboundMethod)
+          meth.executable 
+        else
+          meth
+        end
+        
+      unless cm.kind_of?(Rubinius::CompiledMethod)
+        errmsg "Unsupported method type: #{cm.class}"
         return
       end
 
       if line
-        ip = exec.first_ip_on_line(line)
+        ip = cm.first_ip_on_line(line)
         
         if ip == -1
-          errmsg "Unknown line '#{line}' in method '#{method.name}'"
+          errmsg "Unknown line '#{line}' in method '#{cm.name}'"
           return nil
         end
       elsif !ip
-        line = exec.first_line
+        line = cm.first_line
         ip = 0
       end
 
-      bp = @brkpts.add(descriptor, exec, ip, line, @brkpts.max+1, opts)
+      bp = @brkpts.add(descriptor, cm, ip, line, @brkpts.max+1, opts)
       bp.activate
       msg("Set %sbreakpoint #{bp.id}: #{bp.location}" % 
           (opts[:temp] ? 'temporary ' : ''))
