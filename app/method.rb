@@ -56,9 +56,9 @@ module Trepanning
     end
     module_function :locate_line
 
-    def lines_of_method(meth)
+    def lines_of_method(cm)
       lines = []
-      meth.lines.each_with_index do |l, i|
+      cm.lines.each_with_index do |l, i|
         lines << l if (i&1 == 1)
       end
       return lines
@@ -67,9 +67,9 @@ module Trepanning
 
     # Return true if ip is the start of some instruction in meth.
     # FIXME: be more stringent.
-    def valid_ip?(meth, ip)
-      size = meth.lines.size
-      ip >= 0 && ip < meth.lines[size-1]
+    def valid_ip?(cm, ip)
+      size = cm.lines.size
+      ip >= 0 && ip < cm.lines[size-1]
     end
     module_function :valid_ip?
 
@@ -78,34 +78,34 @@ module Trepanning
     # the top and we can't find +line+ that way, then we
     # reverse the search from the top and search down. This will add
     # all siblings of ancestors of +meth+.
-    def find_method_with_line(meth, line)
-      unless meth.kind_of?(Rubinius::CompiledMethod)
+    def find_method_with_line(cm, line)
+      unless cm.kind_of?(Rubinius::CompiledMethod)
         return nil
       end
       
-      lines = lines_of_method(meth)
-      ## p ['++++1', meth, lines]
-      return meth if lines.member?(line) 
-      scope = meth.scope
+      lines = lines_of_method(cm)
+      ## p ['++++1', cm, lines]
+      return cm if lines.member?(line) 
+      scope = cm.scope
       return nil unless scope.current_script
-      meth  = scope.current_script.compiled_method
-      lines = lines_of_method(meth)
-      ## p ['++++2', meth, lines]
+      cm  = scope.current_script.compiled_method
+      lines = lines_of_method(cm)
+      ## p ['++++2', cm, lines]
       until lines.member?(line) do
         child = scope
         scope = scope.parent
         unless scope
           # child is the top-most scope. Search down from here.
-          meth = child.current_script.compiled_method
-          pair = locate_line(line, meth)
-          ## pair = meth.locate_line(line)
+          cm = child.current_script.compiled_method
+          pair = locate_line(line, cm)
+          ## pair = cm.locate_line(line)
           return pair ? pair[0] : nil
         end
-        meth = scope.current_script.compiled_method
-        lines = lines_of_method(meth)
-        ## p ['++++3', meth, lines]
+        cm = scope.current_script.compiled_method
+        lines = lines_of_method(cm)
+        ## p ['++++3', cm, lines]
       end
-      return meth
+      return cm
     end
     module_function :find_method_with_line
   end
@@ -149,18 +149,18 @@ if __FILE__ == $0
 
   line = __LINE__
   def find_line(line) # :nodoc
-    meth = Rubinius::VM.backtrace(0)[0].method
-    p lines_of_method(meth)
-    p find_method_with_line(meth, line)
+    cm = Rubinius::VM.backtrace(0)[0].method
+    p lines_of_method(cm)
+    p find_method_with_line(cm, line)
   end
 
-  meth = Rubinius::VM.backtrace(0)[0].method
-  p lines_of_method(meth)
+  cm = Rubinius::VM.backtrace(0)[0].method
+  p lines_of_method(cm)
   find_line(line)
-  p find_method_with_line(meth, line+2)
-  ip = locate_line( __LINE__, meth)[1]
+  p find_method_with_line(cm, line+2)
+  ip = locate_line( __LINE__, cm)[1]
   puts "Line #{__LINE__} has ip #{ip}" 
   [-1, 0, 10, ip, 10000].each do |i|
-    puts "IP #{i} is %svalid" % (valid_ip?(meth, i) ? '' : 'not ')
+    puts "IP #{i} is %svalid" % (valid_ip?(cm, i) ? '' : 'not ')
   end
 end
