@@ -16,12 +16,11 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
-  require_relative '../../../subcmd'
   name = File.basename(__FILE__, '.rb')
 
   # FIXME: DRY the below code
   dbgr, show_cmd  = MockDebugger::setup('show')
-  debug_cmd       = Trepan::SubSubcommand::ShowDebug.new(dbgr.core.processor, 
+  debug_cmd       = Trepan::SubSubcommand::ShowDebug.new(dbgr.processor, 
                                                          show_cmd)
 
   # FIXME: remove the 'join' below
