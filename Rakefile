@@ -39,6 +39,13 @@ require 'rbconfig'
 RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
                       RbConfig::CONFIG['RUBY_INSTALL_NAME'])
 
+def run_standalone_ruby_files(list)
+  puts '*' * 40
+  list.each do |ruby_file|
+    system(RUBY_PATH, ruby_file)
+  end
+end
+
 def run_standalone_ruby_file(directory)
   puts ('*' * 10) + ' ' + directory + ' ' + ('*' * 10)
   Dir.chdir(directory) do
@@ -90,11 +97,6 @@ task :test do
   raise "Test failures" unless exceptions.empty?
 end
 
-desc "Run each unit test in standalone mode."
-task :'check:unit' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
-end
-
 desc "Run each Ruby app file in standalone mode."
 task :'check:app' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} app)))
@@ -103,6 +105,28 @@ end
 desc "Run each command in standalone mode."
 task :'check:commands' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor command)))
+end
+
+desc "Run each of the sub-sub commands in standalone mode."
+task :'check:sub:commands' do
+  p "#{ROOT_DIR}/processor/command/*_subcmd/*_subcmd/*.rb"
+  Dir.glob("#{ROOT_DIR}/processor/command/*_subcmd").each do |sub_dir|
+    run_standalone_ruby_file(sub_dir)
+  end
+end
+
+desc "Run each processor Ruby file in standalone mode."
+task :'check:processor' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor)))
+end
+
+task :'check:functional' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
+end
+
+desc "Run each unit test in standalone mode."
+task :'check:unit' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
 end
 
 desc "Generate the gemspec"
