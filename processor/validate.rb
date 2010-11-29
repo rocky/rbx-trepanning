@@ -130,7 +130,7 @@ class Trepan
     end
 
     # Parse a breakpoint position. On success return
-    #   - the class name or nil if we return a CompiledMethod class
+    #   - a string "description" 
     #   - the method the position is in - a CompiledMethod or a String
     #   - the line - a Fixnum
     #   - whether the position is an instance or not
@@ -155,33 +155,39 @@ class Trepan
         end
         return [args.join(' '), '.', '__script__', line, ip]
       elsif args.size == 1
-        m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:]([oO])?(\d+))?/.match(args[0])
-        if m
-          if m[4]
-            return [m[0], m[1], m[2], m[3], nil, m[5] ? m[5].to_i : nil]
-          else
-            return [m[0], m[1], m[2], m[3], (m[4] ? m[4].to_i : nil), nil]
-          end
+        meth = parse_method(args[0])
+        if meth
+          cm = meth.executable
+          return [args[0], nil, true, cm, cm.lines[1], cm.lines[0]]
         else
-          ip, line = line_or_ip(args[0])
-          unless line || ip
-            errmsg ("Expecting a line or an IP offset number")
-            return nil 
-          end
-          if line
-            meth = find_method_with_line(frame.method, line)
-            unless meth
-              errmsg "Cannot find method location for line #{line}"
+          m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:]([oO])?(\d+))?/.match(args[0])
+          if m
+            if m[4]
+              return [m[0], m[1], m[2], m[3], nil, m[5] ? m[5].to_i : nil]
+            else
+              return [m[0], m[1], m[2], m[3], (m[4] ? m[4].to_i : nil), nil]
+            end
+          else
+            ip, line = line_or_ip(args[0])
+            unless line || ip
+              errmsg ("Expecting a line or an IP offset number")
               return nil 
             end
-          elsif valid_ip?(frame.method, ip)
-            return [args.join(' '), meth.class, '#', frame.method, nil, ip]
-          else
-            errmsg 'Cannot parse breakpoint location'
-            return nil
+            if line
+              meth = find_method_with_line(frame.method, line)
+              unless meth
+                errmsg "Cannot find method location for line #{line}"
+                return nil 
+              end
+            elsif valid_ip?(frame.method, ip)
+              return [args.join(' '), meth.class, '#', frame.method, nil, ip]
+            else
+              errmsg 'Cannot parse breakpoint location'
+              return nil
+            end
+            
+            return ["#{meth.describe}", nil, '#', meth, line, nil]
           end
-          
-          return ["#{meth.describe}", nil, '#', meth, line, nil]
         end
       end
       errmsg 'Cannot parse breakpoint location'

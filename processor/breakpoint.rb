@@ -52,7 +52,7 @@ class Trepan
         
       unless cm.kind_of?(Rubinius::CompiledMethod)
         errmsg "Unsupported method type: #{cm.class}"
-        return
+        return nil
       end
 
       if line
@@ -69,7 +69,7 @@ class Trepan
 
       bp = @brkpts.add(descriptor, cm, ip, line, @brkpts.max+1, opts)
       bp.activate
-      msg("Set %sbreakpoint #{bp.id}: #{bp.location}" % 
+      msg("Set %sbreakpoint #{bp.id}: #{meth.name}() at #{bp.location}" % 
           (opts[:temp] ? 'temporary ' : ''))
       return bp
     end
