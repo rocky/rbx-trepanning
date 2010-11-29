@@ -5,8 +5,9 @@ require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetHidelevel < Trepan::Subcommand
   unless defined?(HELP)
-    HELP = "
-set hidelevel [NUM]
+    NAME         = File.basename(__FILE__, '.rb')
+    HELP         = <<-EOH
+set #{NAME} [NUM]
 
 Hide this many stack frames from the bottom (or least-recent) frame.
 
@@ -22,19 +23,19 @@ would be otherwise be, empty then we show all entries, or take NUM to
 be 0.
 
 Examples:
-   set hidelevel     # Use the default value and hide 'uninteresting' ones
-   set hidelevel 0   # Show all stack entries, even from loading the program
+   set #{NAME}     # Use the default value and hide 'uninteresting' ones
+   set #{NAME} 0   # Show all stack entries, even from loading the program
                      # or initial stack entries the debugger created to 
                      # debug the program.
-   set hidelevel 1   # Hide only the bottom-most or least-recent stack frame.
+   set #{NAME} 1   # Hide only the bottom-most or least-recent stack frame.
 
 See also 'backtrace' and 'show hidelevel'. 
-."
+.
+    EOH
 
     IN_LIST      = true
     MIN_ABBREV   = 'hide'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set hidelevel)
+    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set the number of bottom frames to hide."
   end
 
@@ -48,6 +49,7 @@ See also 'backtrace' and 'show hidelevel'.
     @proc.hidelevels[@current_thread] = nil
     @proc.settings[:hidelevel] = val
     @proc.set_hide_level
+    @proc.run_command('show hidelevel')
   end
 
 end
@@ -55,15 +57,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Trepan::Subcommand::SetHidelevel.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  subcommand.run_show_bool
-  subcommand.summary_help(name)
-  puts
-  puts '-' * 20
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::SetHidelevel, false)
+  prefix = cmd.my_const('PREFIX')
+  cmd.run(prefix + %w(10))
+  cmd.run(prefix)
 end

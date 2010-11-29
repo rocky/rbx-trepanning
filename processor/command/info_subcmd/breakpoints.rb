@@ -2,7 +2,7 @@ require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
-    HELP         = <<EOH
+    HELP         = <<-EOH
 info breakpoints [num1 ...] [verbose]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are

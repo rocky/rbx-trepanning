@@ -5,8 +5,9 @@ require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
   unless defined?(HELP)
-    HELP = "
-set different [on|off|nostack]
+    NAME         = File.basename(__FILE__, '.rb')
+    HELP         = <<-EOH
+set #{NAME} [on|off|nostack]
 
 Set to make sure 'next/step' move to a new position.
 
@@ -29,12 +30,12 @@ a given line. Also you can use 'next', but that also stepping into
 functions on different lines to also be skipped.
 
 See also 'step', 'next' which have suffixes '+' and '-' which
-override this setting."
+override this setting.
+    EOH
 
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
-    NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(set different)
+    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 
@@ -53,15 +54,8 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('set')
-  subcommand = Trepan::Subcommand::SetDifferent.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
-
-  subcommand.run_show_bool
-  subcommand.summary_help(subcommand.name)
-  puts
-  puts '-' * 20
-  puts subcommand.save_command
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::SetDifferent)
+  prefix = cmd.my_const('PREFIX')
+  cmd.run(prefix + ['off'])
+  puts cmd.save_command
 end

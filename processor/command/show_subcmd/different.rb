@@ -7,8 +7,8 @@ class Trepan::Subcommand::ShowDifferent < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     HELP         = "Show status of 'set different'"
     MIN_ABBREV   = 'dif'.size
-    PREFIX       = %w(show different)
     NAME         = File.basename(__FILE__, '.rb')
+    PREFIX       = %W(show #{NAME})
   end
 
   def run(args)
@@ -18,24 +18,10 @@ class Trepan::Subcommand::ShowDifferent < Trepan::ShowBoolSubcommand
       super
     end
   end
-
-
 end
 
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('show')
-  subcommand = Trepan::Subcommand::ShowDifferent.new(cmd)
-
-  subcommand.run(cmd.name)
-  [true, false].each do |val|
-    subcommand.proc.settings[:different] = val
-    subcommand.run(cmd.name)
-  end
-  subcommand.summary_help(cmd.name)
-  puts
-  puts '-' * 20
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::ShowDifferent)
 end

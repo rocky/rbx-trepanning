@@ -5,9 +5,9 @@ require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowArgs < Trepan::Subcommand
   unless defined?(HELP)
+    NAME         = File.basename(__FILE__, '.rb')
     HELP = 'Show argument list to give program when it is restarted'
     MIN_ABBREV   = 'ar'.size
-    NAME         = File.basename(__FILE__, '.rb')
     PREFIX       = %W(show #{NAME})
   end
 
@@ -22,10 +22,5 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  cmd_ary          = Trepan::Subcommand::ShowArgs::PREFIX
-  dbgr, parent_cmd = MockDebugger::setup(cmd_ary[0], false)
-  cmd              = Trepan::Subcommand::ShowArgs.new(parent_cmd)
-  cmd.run([])
-  cmd.summary_help(cmd.name)
-  puts
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::ShowArgs)
 end
