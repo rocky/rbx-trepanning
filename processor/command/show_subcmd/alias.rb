@@ -39,6 +39,5 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
   cmd = MockDebugger::sub_setup(Trepan::Subcommand::ShowAlias)
-  prefix = cmd.my_const('PREFIX')
-  cmd.run(prefix + %w(u foo))
+  cmd.run(cmd.prefix + %w(u foo))
 end

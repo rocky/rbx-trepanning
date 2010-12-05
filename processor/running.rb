@@ -5,9 +5,15 @@ require 'set'
 class Trepan
   class CmdProcessor
 
-    attr_accessor :ignore_methods  # Hash[Method inspect string] ->
-                                   # String action. Methods we don't
-                                   # want to ever stop in.
+    attr_accessor :ignore_file_re  # Hash[file_re] -> String
+                                   # action. File re's we don't want
+                                   # to stop while stepping. Like
+                                   # ignore_methods. Skipping kernel methods
+                                   # is handled this way.
+    attr_accessor :ignore_methods  # Hash[CompiledMethod] -> String:
+                                   # action. Methods we don't want to
+                                   # ever stop while stepping. action
+                                   # is 'step' or 'next'.
     attr_accessor :stop_condition  # String or nil. When not nil
                                    # this has to eval non-nil
                                    # in order to stop.
@@ -102,6 +108,7 @@ class Trepan
     end
 
     def running_initialize
+      @ignore_file_re  = {}
       @ignore_methods  = {}
 
       @step_count      = 0
@@ -127,6 +134,13 @@ class Trepan
       #   msg "step_count  : #{@step_count}" 
       #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
       # end
+
+      @ignore_file_re.each_pair do |file_re, action|
+        if frame.location.active_path =~ file_re
+          @return_to_program = val
+          return true
+        end
+      end
 
       ms = frame.method.scope
       @ignore_methods.each do |m, val|
