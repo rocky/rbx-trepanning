@@ -24,7 +24,7 @@ module FnTestHelper
 
   unless defined?(TREPAN_PROMPT)
     TREPAN_PROMPT = /^\(trepanx\): /
-    TREPAN_LOC    = /.. \(.+:\d+\)/
+    TREPAN_LOC    = /.. \(.+:\d+( @\d+)?\)/
   end
 
   # Return the caller's line number
@@ -67,11 +67,11 @@ module FnTestHelper
 
     # Remove debugger location lines. 
     # For example: 
-    #   -- (/src/external-vcs/trepan/tmp/gcd.rb:4)
+    #   -- (/src/external-vcs/trepan/tmp/gcd.rb:4 @21)
     # becomes:
     #   -- 
     a2 = a.map do |s|
-      s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+\)\n/, '').chomp : s.chomp
+      s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+( @\d+)?\)\n/, '').chomp : s.chomp
     end
 
     # Canonicalize breakpoint messages. 

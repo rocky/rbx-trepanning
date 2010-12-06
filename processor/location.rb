@@ -95,8 +95,9 @@ class Trepan
 
       loc = source_location_info
       loc, @line_no, text = loc_and_text(loc)
+      ip_str = frame.method ? " @#{frame.ip}" : ''
 
-      msg "#{ev} (#{loc})"
+      msg "#{ev} (#{loc}#{ip_str})"
 
       # if %w(return c-return).member?(@core.event)
       #   retval = Trepan::Frame.value_returned(@frame, @core.event)
