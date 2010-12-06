@@ -117,8 +117,6 @@ class Trepan
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
-
-      # FIXME: run start file and start commands.
     end
 
     def canonic_container(container)
@@ -225,8 +223,6 @@ class Trepan
         @last_pos = [@frame.location, @stack_size, @current_thread, @event] 
       else
         if stepping_skip? # || @stack_size <= @hide_level
-          msg("---skipping #{@return_to_program}, count: #{@step_count}---") if 
-            settings[:debugskip]
           step(@return_to_program, @step_count)
           return true
         elsif @event == 'start'

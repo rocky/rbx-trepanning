@@ -5,6 +5,7 @@ require 'set'
 class Trepan
   class CmdProcessor
 
+
     attr_accessor :ignore_file_re  # Hash[file_re] -> String
                                    # action. File re's we don't want
                                    # to stop while stepping. Like
@@ -36,6 +37,10 @@ class Trepan
     def continue(how_to_continue)
       @next_thread     = nil
       @step_count      = -1    # No more event stepping
+      if 'step-finish' == how_to_continue
+        step_to_return_or_yield
+        how_to_continue = 'step'
+      end
       @return_to_program = how_to_continue
     end
 
@@ -50,6 +55,12 @@ class Trepan
       # # Try high-speed (run-time-assisted) method
       # @frame.trace_off   = true  # No more tracing in this frame
       # @frame.return_stop = true  # don't need to 
+    end
+
+    def step_finish
+      step_to_return_or_yield
+      continue('step')
+      @next_thread       = @current_thread
     end
 
     # # Does whatever needs to be done to set to "next" program
@@ -122,22 +133,21 @@ class Trepan
     # and return true if the step count is 0 and other conditions
     # like the @settings[:different] are met.
     def stepping_skip?
-      # @settings[:debugskip] = true
+
+      debug_loc = "#{frame.location.describe} #{frame.line}" if  
+        @settings[:debugskip]
+
       if @step_count < 0  
         # We may eventually stop for some other reason, but it's not
         # because we were stepping here.
+        msg "skip: step_count < 0 #{debug_loc}" if @settings[:debugskip]
         return false 
       end
 
-      # if @settings[:debugskip]
-      #   msg "diff: #{@different_pos}, event: #{@event}" 
-      #   msg "step_count  : #{@step_count}" 
-      #   msg "next_thread : #{@next_thread.inspect}, thread: #{@current_thread}" 
-      # end
-
       @ignore_file_re.each_pair do |file_re, action|
-        if frame.location.active_path =~ file_re
-          @return_to_program = val
+        if frame.location.method.active_path =~ file_re
+          @return_to_program = action
+          msg "skip re: #{debug_loc}" if @settings[:debugskip]
           return true
         end
       end
@@ -150,6 +160,7 @@ class Trepan
           next
         end
         if ms == m.scope
+          msg "skip ignore method: #{debug_loc}" if @settings[:debugskip]
           @return_to_program = val
           return true
         end
@@ -157,6 +168,7 @@ class Trepan
 
       # Only skip on these kinds of events
       unless %w(step-call line).include?(@event)
+        msg "skip non-line: #{@event} #{debug_loc}" if @settings[:debugskip]
         return false
       end
 
@@ -195,10 +207,11 @@ class Trepan
       #   msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
       #        "new: #{new_pos}, different #{@different_pos.inspect}") if 
       #     @settings[:'debugskip']
+
       skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
                   !condition_met)
-      msg("skip_val: #{skip_val}, count #{@step_count}") if 
-        @settings[:debugskip]
+
+      msg("skip_val: #{skip_val}, #{debug_loc}") if @settings[:debugskip]
 
       @last_pos = new_pos
 

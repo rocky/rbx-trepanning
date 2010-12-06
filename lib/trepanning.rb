@@ -121,10 +121,14 @@ class Trepan
       if @settings[:skip_loader] == :Xdebug
         ['continue Rubinius::CodeLoader#load_script',
          'continue 67',
+         'set kernelstep off', 
          'step', 'set hidelevel -1'
         ]
       else
-        ['next', 'next', 'step', 'set hidelevel -1']
+        ['next', 'next', 
+         'set kernelstep off', 
+         'set hidelevel -1',
+         'step', ]
       end
 
     input = Trepan::StringArrayInput.open(cmds)
