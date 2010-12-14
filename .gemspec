@@ -27,7 +27,7 @@ FILES = FileList[
 Gem::Specification.new do |spec|
   spec.add_dependency('columnize')
   spec.add_dependency('rbx-require-relative')
-  spec.add_dependency('rbx-linecache', '~>0.43.git')
+  spec.add_dependency('rbx-linecache', '~>0.44')
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
@@ -47,7 +47,7 @@ EOF
   spec.homepage     = 'http://wiki.github.com/rocky/rbx-trepanning'
   spec.name         = 'rbx-trepanning'
   spec.license      = 'MIT'
-  spec.platform     = Gem::Platform::RUBY
+  spec.platform     = Gem::Platform::new ['universal', 'rubinius']
   spec.require_path = 'lib'
   spec.required_ruby_version = '~> 1.8.7'
   spec.summary      = 'Trepan Ruby Debugger for Rubinius 1.1'

@@ -28,7 +28,7 @@ Examples:
   SHORT_HELP   = 'Show the bytecode for the current method'
 
   def disassemble_method(cm)
-    frame_ip = (@proc.frame.method == cm) ? @proc.frame.ip : nil
+    frame_ip = (@proc.frame.method == cm) ? @proc.frame.next_ip : nil
     lines = cm.lines
     next_line_ip = 0
     next_i = 1

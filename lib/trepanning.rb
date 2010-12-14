@@ -340,7 +340,7 @@ class Trepan
   end
 
   def decode_one
-    ip = @current_frame.ip
+    ip = @current_frame.next_ip
 
     meth = @current_frame.method
     decoder = Rubinius::InstructionDecoder.new(meth.iseq)

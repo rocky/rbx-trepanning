@@ -1,10 +1,9 @@
 #!/usr/bin/env rake
-# -*- Ruby -*-
 # Are we rubinius? We'll test by checking the specific function we need.
 raise RuntimeError, 'This package is for rubinius only!' unless
   Object.constants.include?('Rubinius') && 
   Rubinius.constants.include?('VM') && 
-  Rubinius::VM.respond_to?(:backtrace)
+  %w(1.1.1 1.2).member?(Rubinius::VERSION)
 
 require 'rubygems'
 require 'rake/gempackagetask'
@@ -24,7 +23,8 @@ task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
     sh "gem build .gemspec"
     FileUtils.mkdir_p 'pkg'
-    FileUtils.mv "#{gemspec.name}-#{gemspec.version}.gem", 'pkg'
+    FileUtils.mv("#{gemspec.name}-#{gemspec.version}-universal-rubinius.gem", 
+                 'pkg')
   end
 end
 

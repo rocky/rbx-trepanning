@@ -95,7 +95,7 @@ class Trepan
 
       loc = source_location_info
       loc, @line_no, text = loc_and_text(loc)
-      ip_str = frame.method ? " @#{frame.ip}" : ''
+      ip_str = frame.method ? " @#{frame.next_ip}" : ''
 
       msg "#{ev} (#{loc}#{ip_str})"
 

@@ -20,7 +20,7 @@ class Trepan::Subcommand::InfoProgram < Trepan::Subcommand
     m += 
       if frame.method
         "PC offset %d of method: %s" %
-          [frame.ip, frame.method.name]
+          [frame.next_ip, frame.method.name]
       else
         ## '.'
       end

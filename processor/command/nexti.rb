@@ -34,14 +34,14 @@ See also 'continue', 'step', and 'next' commands.
     end
     
     exec = current_method
-    insn = Rubinius::InstructionSet[exec.iseq[@proc.frame.ip]]
+    insn = Rubinius::InstructionSet[exec.iseq[@proc.frame.next_ip]]
     
-    next_ip = @proc.frame.ip + insn.width
+    next_ip = @proc.frame.next_ip + insn.width
     
     if next_ip >= exec.iseq.size
       @proc.step_to_parent
-    elsif Trepanning::ISeq.goto_op?(exec, @proc.frame.ip)
-      @proc.set_breakpoints_between(exec, @proc.frame.ip, next_ip)
+    elsif Trepanning::ISeq.goto_op?(exec, @proc.frame.next_ip)
+      @proc.set_breakpoints_between(exec, @proc.frame.next_ip, next_ip)
     else
       line = exec.line_from_ip(next_ip)
       

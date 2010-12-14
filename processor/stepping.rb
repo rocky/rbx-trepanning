@@ -13,13 +13,13 @@ class Trepan
       
       meth = f.method
       possible_line = f.line + step
-      fin_ip = meth.first_ip_on_line_after(possible_line, f.ip)
+      fin_ip = meth.first_ip_on_line_after(possible_line, f.next_ip)
       
       if fin_ip <= -1
         return step_to_parent('line')
       end
 
-      set_breakpoints_between(meth, f.ip, fin_ip)
+      set_breakpoints_between(meth, f.next_ip, fin_ip)
     end
     
     def step_to_return_or_yield
@@ -33,7 +33,7 @@ class Trepan
       ip = -1
       fin_ip = meth.lines.last
       
-      set_breakpoints_on_return_between(meth, f.ip, fin_ip)
+      set_breakpoints_on_return_between(meth, f.next_ip, fin_ip)
     end
 
     def step_to_parent(event='return')

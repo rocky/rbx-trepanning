@@ -23,11 +23,10 @@ class Trepan
 
       partial.each do |ins|
         inst = Rubinius::CompiledMethod::Instruction.new(ins, meth, ip)
-        prefix = Trepanning::ISeq::disasm_prefix(ip, frame.ip, meth)
+        prefix = Trepanning::ISeq::disasm_prefix(ip, frame.next_ip, meth)
         msg "#{prefix} #{inst}"
         ip += ins.size
       end
     end
   end
 end
-  

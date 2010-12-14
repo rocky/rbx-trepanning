@@ -64,6 +64,10 @@ class Trepan
       @location.ip
     end
 
+    def next_ip
+      @location.next_ip
+    end
+
     def line
       @location.line
     end

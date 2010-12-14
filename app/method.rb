@@ -113,6 +113,13 @@ module Trepanning
 end
 
 module Rubinius
+
+  class Location
+    def next_ip
+      ip_on_current? ? ip : ip + 1
+    end
+  end
+
   class CompiledMethod < Executable
     ##
     # Returns the address (IP) of the first instruction in this
