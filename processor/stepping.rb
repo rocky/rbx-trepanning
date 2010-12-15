@@ -38,7 +38,10 @@ class Trepan
 
     def step_to_parent(event='return')
       f = parent_frame
-      return nil unless f
+      unless f
+        errmsg "Unable to find parent frame to step to next"
+        return nil 
+      end
       meth = f.method
       ip   = f.ip
 
