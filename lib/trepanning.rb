@@ -121,12 +121,12 @@ class Trepan
       if @settings[:skip_loader] == :Xdebug
         ['continue Rubinius::CodeLoader#load_script',
          'continue 67',
-         'set kernelstep on',   # eventually would like 'on'
+         # 'set kernelstep off',   # eventually would like 'on'
          'step', 'set hidelevel -1'
         ]
       else
         ['next', 'next', 
-         'set kernelstep on',  # eventually would like 'on'
+         # 'set kernelstep off',  # eventually would like 'on'
          'set hidelevel -1',
          'step', ]
       end

@@ -15,17 +15,18 @@ FILES = FileList[
   'THANKS',
   'app/*',
   'bin/*',
-  'data/*',
   'interface/*',
   'io/*',
   'lib/*',
   'processor/**/*.rb',
+  'test/data/**/*.cmd',
+  'test/data/**/*.right',
   'test/**/*.rb',
 ]                        
 
-
 Gem::Specification.new do |spec|
   spec.add_dependency('columnize')
+  spec.add_dependency('diff-lcs') # For testing only
   spec.add_dependency('rbx-require-relative')
   spec.add_dependency('rbx-linecache', '~>0.44')
   spec.authors      = ['R. Bernstein']
