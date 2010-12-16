@@ -44,6 +44,7 @@ def run_debugger(testname, ruby_file, opts={})
     end
   
   system(cmd)
+  return false unless 0 == $?.exitstatus 
   if opts[:do_diff]
     from_file  = rightfile
     # fromdate  = time.ctime(os.stat(fromfile).st_mtime)
@@ -55,7 +56,7 @@ def run_debugger(testname, ruby_file, opts={})
     # Seems to be a bug in LCS in that it will return a diff even if two
     # files are the same.
     return true if from_lines == to_lines
-
+    
     sdiffs = Diff::LCS.sdiff(from_lines, to_lines)
     
     if sdiffs.empty?
@@ -68,7 +69,7 @@ def run_debugger(testname, ruby_file, opts={})
     end
     return sdiffs.empty?
   else
-    return $?.exitstatus == 0
+    return true  # We already tested for false above
   end
 end
     
