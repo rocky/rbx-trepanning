@@ -134,7 +134,7 @@ class Trepan
     # like the @settings[:different] are met.
     def stepping_skip?
 
-      debug_loc = "#{frame.location.describe} #{frame.line}" if  
+      debug_loc = "#{frame.vm_location.describe} #{frame.line}" if  
         @settings[:debugskip]
 
       if @step_count < 0  
@@ -145,7 +145,7 @@ class Trepan
       end
 
       @ignore_file_re.each_pair do |file_re, action|
-        if frame.location.method.active_path =~ file_re
+        if frame.vm_location.method.active_path =~ file_re
           @return_to_program = action
           msg "skip re: #{debug_loc}" if @settings[:debugskip]
           return true
@@ -181,12 +181,12 @@ class Trepan
 
 
       # Decide whether this step is skippable.
-      skip_val = false
+      should_skip = false
 
       if @settings[:debugskip]
         msg("last: #{@last_pos.inspect}, ")
         msg("new:  #{new_pos.inspect}")
-        msg("skip: #{skip_val.inspect}, event: #{@event}")
+        msg("skip: #{should_skip.inspect}, event: #{@event}")
       end
 
       @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
@@ -208,22 +208,22 @@ class Trepan
       #        "new: #{new_pos}, different #{@different_pos.inspect}") if 
       #     @settings[:'debugskip']
 
-      skip_val = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
+      should_skip = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
                   !condition_met)
 
-      msg("skip_val: #{skip_val}, #{debug_loc}") if @settings[:debugskip]
+      msg("should_skip: #{should_skip}, #{debug_loc}") if @settings[:debugskip]
 
       @last_pos = new_pos
 
-      unless skip_val
+      unless should_skip
         # Set up the default values for the
         # next time we consider step skipping.
         @different_pos = @settings[:different]
         # @stop_events   = nil
       end
 
-      @return_to_program = 'step' if skip_val && !@return_to_program
-      return skip_val
+      @return_to_program = 'step' if should_skip && !@return_to_program
+      return should_skip
     end
 
   end

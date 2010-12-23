@@ -25,15 +25,15 @@ module MockDebugger
 
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
-    attr_reader :cmd_argstr, :cmd_name, :locations, :current_frame, 
+    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
                 :debugee_thread
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Trepanning::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new]
-      @locations            = Rubinius::VM.backtrace(1, true)
-      @current_frame        = Trepan::Frame.new(self, 0, @locations[0])
+      @vm_locations         = Rubinius::VM.backtrace(1, true)
+      @current_frame        = Trepan::Frame.new(self, 0, @vm_locations[0])
       @debugee_thread       = Thread.current
       @frames               = []
       @restart_argv         = Rubinius::OS_STARTUP_DIR
@@ -47,7 +47,7 @@ module MockDebugger
     end
 
     def frame(num)
-      @frames[num] ||= Trepan::Frame.new(self, num, @locations[num])
+      @frames[num] ||= Trepan::Frame.new(self, num, @vm_locations[num])
     end
   end
 

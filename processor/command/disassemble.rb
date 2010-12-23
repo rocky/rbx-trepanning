@@ -65,7 +65,7 @@ Examples:
       @proc.show_bytecode
     elsif 'all' == args[1]
       # FIXME: first msg is a section command.
-      msg "Bytecode for #{@proc.frame.location.describe}"
+      msg "Bytecode for #{@proc.frame.vm_location.describe}"
       disassemble_method(current_method)
     else
       cm = @proc.parse_method(args[1])
@@ -90,7 +90,7 @@ if __FILE__ == $0
     puts "#{cmd.name} all"
     cmd.run([cmd.name, 'all'])
     puts '=' * 40
-    p cmd.proc.frame.location.describe
+    p cmd.proc.frame.vm_location.describe
     cmd.run([cmd.name, 'foo'])
     puts '=' * 40
     # require_relative '../../lib/trepanning'

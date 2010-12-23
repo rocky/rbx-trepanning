@@ -140,7 +140,7 @@ class Trepan
 
 
   attr_reader :variables, :current_frame, :breakpoints
-  attr_reader :locations, :history_io, :debugee_thread
+  attr_reader :vm_locations, :history_io, :debugee_thread
 
   def self.global(settings={})
     @global ||= new(settings)
@@ -234,7 +234,7 @@ class Trepan
       end
 
       # Wait for someone to stop
-      @breakpoint, @debugee_thread, @channel, @locations = 
+      @breakpoint, @debugee_thread, @channel, @vm_locations = 
         @local_channel.receive
 
       # Uncache all frames since we stopped at a new place
@@ -245,7 +245,7 @@ class Trepan
       if @breakpoint
         # Some breakpoints are frame specific. Check for this.  hit!
         # also removes the breakpoint if it was temporary and hit.
-        break if @breakpoint.hit!(@locations.first.variables)
+        break if @breakpoint.hit!(@vm_locations.first.variables)
       else
         @processor.step_bp.remove! if @processor.step_bp
         break
@@ -269,7 +269,7 @@ class Trepan
   end
 
   def frame(num)
-    @frames[num] ||= Frame.new(self, num, @locations[num])
+    @frames[num] ||= Frame.new(self, num, @vm_locations[num])
   end
 
   def set_frame(num)
@@ -279,7 +279,7 @@ class Trepan
   def each_frame(start=0)
     start = start.number if start.kind_of?(Frame)
 
-    start.upto(@locations.size-1) do |idx|
+    start.upto(@vm_locations.size-1) do |idx|
       yield frame(idx)
     end
   end

@@ -161,7 +161,7 @@ Some examples:
     last = first + listsize - 1 unless last
 
     if @proc.frame.eval?
-      script = @proc.frame.location.static_scope.script 
+      script = @proc.frame.vm_location.static_scope.script 
       LineCache::cache(script)
     else
       LineCache::cache(file)
@@ -233,7 +233,7 @@ Some examples:
         line.chomp!
         s = '%3d' % lineno
         s = s + ' ' if s.size < 4 
-        s += (@proc.frame && lineno == @proc.frame.location.line) ? '->' : '  '
+        s += (@proc.frame && lineno == @proc.frame.vm_location.line) ? '->' : '  '
         # && container == frame.source_container) 
         msg(s + "\t" + line)
         @proc.line_no = lineno

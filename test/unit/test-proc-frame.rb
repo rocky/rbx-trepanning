@@ -53,10 +53,10 @@ class TestCmdProcessorFrame < Test::Unit::TestCase
 
     ## FIXME: look over and reinstate this code...
     # setup
-    # @proc.top_frame  = @proc.frame = @dbgr.locations[0]
+    # @proc.top_frame  = @proc.frame = @dbgr.vm_locations[0]
     # @proc.adjust_frame(0, true)
 
-    # @dbgr.locations.size-1.times do 
+    # @dbgr.vm_locations.size-1.times do 
     #   frame_index = @proc.frame_index
     #   @proc.adjust_frame(1, false) 
     #   assert_equal(0, $errors.size)

@@ -1,23 +1,22 @@
 # Frame code from reference debugger.
 class Trepan
   class Frame
-    def initialize(debugger, number, loc)
+    def initialize(debugger, number, vm_location)
       @debugger = debugger
       @number = number
-      @location = loc
+      @vm_location = vm_location
     end
 
-    attr_reader :number, :location
+    attr_reader :number, :vm_location
 
     def run(code, filename=nil)
       eval(code, self.binding, filename)
     end
 
     def binding
-      @binding ||= Binding.setup(
-                     @location.variables,
-                     @location.method,
-                     @location.static_scope)
+      @binding ||= Binding.setup(@vm_location.variables,
+                                 @vm_location.method,
+                                 @vm_location.static_scope)
     end
 
     def describe(opts = {})
@@ -32,7 +31,7 @@ class Trepan
         arg_str = ""
       end
 
-      loc = @location
+      loc = @vm_location
 
       if loc.is_block
         if arg_str.empty?
@@ -57,19 +56,19 @@ class Trepan
     end
 
     def file
-      @location.file
+      @vm_location.file
     end
 
     def ip
-      @location.ip
+      @vm_location.ip
     end
 
     def next_ip
-      @location.next_ip
+      @vm_location.next_ip
     end
 
     def line
-      @location.line
+      @vm_location.line
     end
 
     def local_variables
@@ -77,21 +76,21 @@ class Trepan
     end
 
     def method
-      @location.method
+      @vm_location.method
     end
 
     def scope
-      @location.variables
+      @vm_location.variables
     end
 
     def eval?
-      static = @location.static_scope
+      static = @vm_location.static_scope
       static && static.script && static.script.eval_source
     end
 
     def eval_string
       return nil unless eval?
-      static = @location.static_scope
+      static = @vm_location.static_scope
       static.script.eval_source
     end
 

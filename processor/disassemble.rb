@@ -4,7 +4,7 @@ require_relative '../app/iseq'
 class Trepan
   class CmdProcessor
 
-    def show_bytecode(line=@frame.location.line)
+    def show_bytecode(line=@frame.vm_location.line)
       meth = @frame.method
       start = meth.first_ip_on_line(line)
       fin = meth.first_ip_on_line(line+1)

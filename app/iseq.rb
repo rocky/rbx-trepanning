@@ -82,8 +82,8 @@ module Trepanning
 end
 if __FILE__ == $0
   include Trepanning::ISeq
-  locations = Rubinius::VM.backtrace(0, true)
-  call_loc = locations[1]
+  vm_locations = Rubinius::VM.backtrace(0, true)
+  call_loc = vm_locations[1]
   cm = call_loc.method
   puts cm.decode
   ips = yield_or_return_between(cm, cm.lines.first, cm.lines.last)

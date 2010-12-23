@@ -24,10 +24,10 @@ class TestProcEval < Test::Unit::TestCase
 
     @cmdproc.instance_variable_set('@settings', {:stack_trace_on_error => true})
     # x = 1
-    # locations = Rubinius::VM.backtrace(0, true)
-    # @dbgr.instance_variable_set('@locations_frame', locations)
+    # vm_locations = Rubinius::VM.backtrace(0, true)
+    # @dbgr.instance_variable_set('@vm_locations', vm_locations)
     # @cmdproc.instance_variable_set('@current_frame', 
-    #                                Trepan::Frame.new(self, 0, locations[0]))
+    #                                Trepan::Frame.new(self, 0, vm_locations[0]))
     # @cmdproc.instance_variable_set('@settings', {:stack_trace_on_error => true})
     # assert_equal('1', @cmdproc.debug_eval('x = "#{x}"'))
     # x = 2

@@ -51,10 +51,10 @@ class Trepan
     end
 
     def loc_and_text(loc)
-      location = @frame.location
-      filename = location.method.active_path
-      line_no  = location.line
-      static   = location.static_scope
+      vm_location = @frame.vm_location
+      filename = vm_location.method.active_path
+      line_no  = vm_location.line
+      static   = vm_location.static_scope
 
       if @frame.eval?
         file = LineCache::map_script(static.script)
@@ -91,7 +91,7 @@ class Trepan
                     (EVENT2ICON[@event] || @event)
                   end
 
-      @line_no  = @frame.location.line
+      @line_no  = @frame.vm_location.line
 
       loc = source_location_info
       loc, @line_no, text = loc_and_text(loc)
@@ -113,14 +113,14 @@ class Trepan
     end
 
     def source_location_info
-      filename  = @frame.location.method.active_path
+      filename  = @frame.vm_location.method.active_path
       canonic_filename = 
         if @frame.eval?
           'eval ' + safe_repr(@frame.eval_string.gsub("\n", ';').inspect, 20)
         else
           canonic_file(filename)
         end
-      loc = "#{canonic_filename}:#{@frame.location.line}"
+      loc = "#{canonic_filename}:#{@frame.vm_location.line}"
       return loc
     end 
 
