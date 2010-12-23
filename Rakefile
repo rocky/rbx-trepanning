@@ -1,6 +1,6 @@
 #!/usr/bin/env rake
-# Are we rubinius? We'll test by checking the specific function we need.
-raise RuntimeError, 'This package is for rubinius only!' unless
+# Are we Rubinius? We'll test by checking the specific function we need.
+raise RuntimeError, 'This package is for Rubinius 1.2 or 1.2.1dev only!' unless
   Object.constants.include?('Rubinius') && 
   Rubinius.constants.include?('VM') && 
   %w(1.2 1.2.1dev).member?(Rubinius::VERSION)

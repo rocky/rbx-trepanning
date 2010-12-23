@@ -32,11 +32,13 @@ Gem::Specification.new do |spec|
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
-A modular, testable, Ruby debugger using some of the best ideas from ruby-debug, other debuggers, and Ruby Rails. 
+A modular, testable, Ruby debugger using some of good ideas from
+ruby-debug, other debuggers, and Ruby Rails.
 
-Some of the core debugger concepts have been rethought. As a result, some of this may be experimental.
+Some of the core debugger concepts have been rethought. As a result,
+some of this may be experimental.
 
-This version works only with a patched version of Ruby 1.9.2 and rb-threadframe.
+This version works only Rubinus 1.2 or higher.
 EOF
   ## spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'
@@ -51,7 +53,7 @@ EOF
   spec.platform     = Gem::Platform::new ['universal', 'rubinius']
   spec.require_path = 'lib'
   spec.required_ruby_version = '~> 1.8.7'
-  spec.summary      = 'Trepan Ruby Debugger for Rubinius 1.1'
+  spec.summary      = 'Trepan Ruby Debugger for Rubinius 1.2 and higher'
   spec.version      = Trepan::VERSION
 
   # Make the readme file the start page for the generated html
