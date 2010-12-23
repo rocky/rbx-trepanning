@@ -60,6 +60,7 @@ Examples:
     end
   end
 
+  # Run command. 
   def run(args)
     if 1 == args.size
       @proc.show_bytecode
@@ -81,6 +82,7 @@ Examples:
 end
 
 if __FILE__ == $0
+  # Demo it.
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
   def foo(cmd)
