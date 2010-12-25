@@ -1,28 +1,35 @@
-A debugger for Rubinius 1.1
+A debugger for Rubinius 1.2.x
 
-Right now this debugger is beta code. To install you'll need to install
-columnize (from gemcutter.org) and rbx-linecache, the rubinius branch 
+bc.  [sudo] gem install rbx-trepanning
 
-bc. 
-    $ gem install columnize
-    $ gem install rbx-require-relative
-    ...
-    $ svn co http://rocky-hacks.rubyforge.org/svn/linecache/branches/rubinius rbx-linecache
-    $ cd rbx-lineache
-    $ rake install # add "sudo" if needed
+should get you going.
 
 There is a "google group mailing list":http://groups.google.com/group/ruby-debugger for Ruby debuggers.
 
-If rbx-trepanning is installed, here is the preferred way to run:
+To run initially: 
+
+bc. 
+   $ trepanx my-ruby-program.rb
+
+Or to call from inside your code: 
 
 bc.  require 'trepanning' 
- Trepan.debug # Don't stop here...
+ debugger # Don't stop here...
  work # but stop here.
 
-or if you haven't mucked around with $0 and ARGV, you might try:
+If you want an immediate stop:
 
-bc.  Trepan.debug(:set_restart=>true)
+bc.  debugger(:immediate=>true)
 
-which informs the debugger on how to restart the program (via the restart command) using the values of ARGV and $0 at the time Trepan.debug was called.
+Finally, if you put in your .trepanx
+
+bc.  Rubinius::Loader.debugger = proc { 
+  require '/home/rocky-rvm/.rvm/src/rbx-trepanning/lib/trepanning.rb'; 
+  Trepan.start(:skip_loader => :Xdebug) 
+}
+
+Then you can use the -Xdebug option the Ruby, e.g.
+
+bc. rbx -Xdebug my-ruby-program.rb
 
 There is extensive on-line help. Run "help" inside the debugger.

@@ -19,7 +19,7 @@ require_relative '../io/null_output'
 #
 
 class Trepan
-  VERSION = '0.0.1.dev'
+  VERSION = '0.0.1'
 
   attr_accessor :breakpoint   # Breakpoint. The current breakpoint we are
                               # stopped at or nil if none.
