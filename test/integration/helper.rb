@@ -35,10 +35,10 @@ def run_debugger(testname, ruby_file, opts={})
 
   cmd = 
     if opts[:xdebug]
-    "%s -Xdebug '%s' %s >%s <%s" %
+    "%s -Xdebug '%s' %s >%s 2>&1 <%s" %
         [Trepanning::ruby_path, programfile, opts[:args], outfile, cmdfile]
     else
-      "%s %s --nx --command %s %s '%s' %s >%s" %
+      "%s %s --nx --command %s %s '%s' %s >%s 2>&1" %
         [Trepanning::ruby_path, dbgr_path, cmdfile, opts[:dbgr], 
          programfile, opts[:args], outfile]
     end
