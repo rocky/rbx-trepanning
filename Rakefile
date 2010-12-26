@@ -23,8 +23,8 @@ task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
     sh "gem build .gemspec"
     FileUtils.mkdir_p 'pkg'
-    FileUtils.mv("#{gemspec.name}-#{gemspec.version}-universal-rubinius.gem", 
-                 'pkg')
+    FileUtils.mv("#{gemspec.name}-#{gemspec.version}-universal-rubinius-1.2.gem", 
+                 "pkg/#{gemspec.name}-#{gemspec.version}-universal-rubinius-1.2.gem")
   end
 end
 
