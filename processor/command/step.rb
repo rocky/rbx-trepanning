@@ -55,7 +55,7 @@ See also the commands:
         return cmd.run([replace_cmd] + args[2..-1])
       else
         step_str = args[1]
-        opts = @proc.parse_next_step_suffix(step_str)
+        opts = @proc.parse_next_step_suffix(args[0])
         count_opts = {
           :msg_on_error => 
           "The #{NAME} command argument must eval to an integer. Got: %s" % 

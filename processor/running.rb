@@ -34,14 +34,14 @@ class Trepan
     # # execution.
     # # FIXME: turn line_number into a condition.
 
-    def continue(how_to_continue)
+    def continue(return_to_program)
       @next_thread     = nil
       @step_count      = -1    # No more event stepping
-      if 'step-finish' == how_to_continue
+      if 'step-finish' == return_to_program
         step_to_return_or_yield
-        how_to_continue = 'step'
+        return_to_program = 'step'
       end
-      @return_to_program = how_to_continue
+      @return_to_program = return_to_program
     end
 
     # Does whatever setup needs to be done to set to ignore stepping
@@ -51,6 +51,8 @@ class Trepan
       step_to_return_or_yield
       continue('finish')
       @next_thread       = @current_thread
+
+      @step_count = 2 if 'nostack' == opts[:different_pos]
 
       # # Try high-speed (run-time-assisted) method
       # @frame.trace_off   = true  # No more tracing in this frame
@@ -72,8 +74,8 @@ class Trepan
 
     # Does whatever needs to be done to set to step program
     # execution.
-    def step(how_to_continue, step_count=1, opts={}, condition=nil)
-      continue(how_to_continue)
+    def step(return_to_program, step_count=1, opts={}, condition=nil)
+      continue(return_to_program)
       @step_count = step_count
       @different_pos   = opts[:different_pos] if 
         opts.keys.member?(:different_pos)
@@ -167,7 +169,7 @@ class Trepan
       end
 
       # Only skip on these kinds of events
-      unless %w(step-call line).include?(@event)
+      unless %w(step-call line return).include?(@event)
         msg "skip non-line: #{@event} #{debug_loc}" if @settings[:debugskip]
         return false
       end
@@ -187,6 +189,7 @@ class Trepan
         msg("last: #{@last_pos.inspect}, ")
         msg("new:  #{new_pos.inspect}")
         msg("skip: #{should_skip.inspect}, event: #{@event}")
+        msg("@step_count: #{@step_count}")
       end
 
       @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
@@ -222,7 +225,8 @@ class Trepan
         # @stop_events   = nil
       end
 
-      @return_to_program = 'step' if should_skip && !@return_to_program
+      @return_to_program = 'step' if should_skip && 
+        (!@return_to_program || 'finish' == @return_to_program)
       return should_skip
     end
 

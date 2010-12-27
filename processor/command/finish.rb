@@ -8,25 +8,27 @@ class Trepan::Command::FinishCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [levels]
+#{NAME}
+#{NAME}+
 
-Continue execution until leaving the current function. 
-Sometimes this is called 'step out'.
+Continue execution until leaving the current method.  Sometimes this
+is called 'step out'.
 
-When `levels' is specified, that many frame levels need to be
-popped. The default is 1.  Note that 'yield' and exceptions raised my
-reduce the number of stack frames. Also, if a thread is switched, we
-stop ignoring levels.
+Normally, stopping occurs just before the return on or yield out of a
+method. However sometimes one wants go to the calling method or place
+just beyond the current method.For this, suffix the command or an
+alias of it with a plus sign. The disadvantange of this is that you
+will no longer be in the scope of the method and so you won't be able
+to see variables of that method.
 
-'next>' is similar in that it stops at a return, but it doesn't
-guarantee the stack level is the same as or less than the current
-one. 
+Examples:
+  #{NAME}
+  #{NAME}+ 
 
-See the break command if you want to stop at a particular point in a
-program. In general, '#{NAME}', 'step' and 'next' may slow a program down
-while 'break' will have less overhead.
+See also commands:
+'continue', 'break', 'next', 'nexti', 'step' for other ways to continue.
     HELP
-    ALIASES      = %w(fin)
+    ALIASES      = %w(fin finish+ fin+)
     CATEGORY     = 'running'
     # execution_set = ['Running']
     MAX_ARGS     = 1   # Need at most this many. 
@@ -36,19 +38,19 @@ while 'break' will have less overhead.
 
   # This method runs the command
   def run(args) # :nodoc
-    opts = {}
+    opts = @proc.parse_next_step_suffix(args[0])
     if args.size == 1
       # Form is: "finish" which means "finish 1"
       level_count = 0
     else
       count_str = args[1]
-      opts = {
+      count_opts = {
         :msg_on_error => 
         "The '#{NAME}' command argument must eval to an integer. Got: %s" % 
         count_str,
         :min_value => 1
       }
-      count = @proc.get_an_int(count_str, opts)
+      count = @proc.get_an_int(count_str, count_opts)
       return unless count
       # step 1 is core.level_count = 0 or "stop next event"
       level_count = count - 1  
