@@ -25,7 +25,12 @@ class TestCmdProcessorLocation < Test::Unit::TestCase
   def test_line_at
     @proc.settings[:directory] = ''
     assert_equal(nil, @proc.resolve_file_with_dir(@file))
-    assert_equal(nil, @proc.line_at(@file, __LINE__))
+    if File.expand_path(Dir.pwd) == File.expand_path(File.dirname(__FILE__))
+      line = @proc.line_at(@file, __LINE__)
+      assert_match(/line = @proc.line_at/, line)
+    else
+      assert_equal(nil, @proc.line_at(@file, __LINE__))
+    end
     dir = @proc.settings[:directory] = File.dirname(__FILE__)
     assert_equal(File.join(dir, @file), 
                  @proc.resolve_file_with_dir('test-proc-location.rb'))

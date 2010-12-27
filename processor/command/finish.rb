@@ -64,11 +64,11 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  [%W(#{cmd.name} 1), %w(fin 2-1), %w(n foo)].each do |c|
-    cmd.proc.leave_cmd_loop = false
-    result = cmd.run(c)
-    puts 'Run result: %s' % result
-    puts 'leave_cmd_loop: %s' % cmd.proc.leave_cmd_loop
+  [%W(#{cmd.name}), %w(fin 2-1), %w(n foo)].each do |c|
+    cmd.proc.instance_variable_set('@return_to_program', false)
+    cmd.run(c)
+    puts 'return_to_program: %s' % cmd.proc.instance_variable_get('@return_to_program')
+    puts 'step_count: %s' % cmd.proc.instance_variable_get('@step_count')
   end
   [%w(fin), [cmd.name]].each do |c|
     cmd.proc.leave_cmd_loop = false

@@ -15,9 +15,9 @@ class Trepan
       possible_line = f.line + step
       next_ip = f.next_ip == f.ip ? f.next_ip + 1 : f.next_ip
       # BUGGY: remove after writing a decent test case for this.
-      # See beginning of rbx-require/require_relative's Rakefile.
-      # fin_ip = meth.first_ip_on_line_after(possible_line, f.next_ip)
-      fin_ip = meth.first_ip_on_line_after(possible_line, next_ip)
+      # See beginning of rbx-require/require_relative.
+      fin_ip = meth.first_ip_on_line_after(possible_line, f.next_ip)
+      # fin_ip = meth.first_ip_on_line_after(possible_line, next_ip)
       
       if fin_ip <= -1
         return step_to_parent('line')
