@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require_relative 'cmd-helper'
 require_relative '../../processor/command/alias'

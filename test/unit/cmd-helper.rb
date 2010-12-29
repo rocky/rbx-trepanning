@@ -1,3 +1,4 @@
+require 'test/unit'
 require 'rubygems'; require 'require_relative'
 # require_relative '../../app/core'
 require_relative '../../processor/mock'
