@@ -1,3 +1,852 @@
+2010-12-30  brainopia <ravwar@gmail.com>
+
+	* processor/command/up.rb: Remove unneeded require with explicit
+	location
+
+2010-12-28  rocky <rockyb@rubyforge.org>
+
+	* test/unit/cmd-helper.rb, test/unit/mock-helper.rb,
+	test/unit/test-cmd-alias.rb, test/unit/test-cmd-break.rb,
+	test/unit/test-cmd-exit.rb, test/unit/test-cmd-finish.rb,
+	test/unit/test-cmd-help.rb, test/unit/test-cmd-kill.rb,
+	test/unit/test-cmd-step.rb, test/unit/test-proc-eval.rb,
+	test/unit/test-proc-main.rb: DRY code just a little more.
+
+2010-12-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb: list.rb: help text corrections.
+
+2010-12-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/finish.rb, processor/command/step.rb,
+	processor/main.rb, processor/running.rb: Add finish+ to step one in
+	calling method rather than stop before method return.
+
+2010-12-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/finish.rb, processor/command/step.rb,
+	processor/stepping.rb, test/unit/test-cmd-finish.rb,
+	test/unit/test-cmd-step.rb, test/unit/test-proc-location.rb: 
+	step.rb: Add "step into" "step over" and "step out" as alternates
+	for "step", "next", and "finish" Add standalone and unit tests for
+	step and finish.
+
+2010-12-26  rocky <rockyb@rubyforge.org>
+
+	* processor/stepping.rb, test/integration/helper.rb,
+	test/integration/test-quit.rb: stepping.rb: Address another bug in
+	stepping from the begging of a file.  test-quit.rb: Simple check of
+	.rbxrc for calling Trepan.start helper.rb: redirect stderr to stdout
+
+2010-12-26  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, NEWS, Rakefile, lib/trepanning.rb,
+	processor/command/step.rb: Repackage so gem will find on rubinius
+	1.2.
+
+2010-12-25  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Oops... wrong require
+
+2010-12-25  rocky <rockyb@rubyforge.org>
+
+	* NEWS, README.textile, lib/trepanning.rb: Update README.textile
+	which was horribly out of date for something so new.
+
+2010-12-24  rocky <rockyb@rubyforge.org>
+
+	* THANKS: Fix some of my usual spelling and grammar mistakes.
+
+2010-12-23  rocky <rockyb@rubyforge.org>
+
+	* : commit b1d2605001d04ff6672c1c567fe887a2485a2b1b Author: rocky
+	<rockyb@rubyforge.org> Date:   Thu Dec 23 11:46:30 2010 -0500
+
+2010-12-23  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/frame.rb, app/iseq.rb, lib/trepanning.rb,
+	processor/command/disassemble.rb, processor/command/frame.rb,
+	processor/command/list.rb, processor/disassemble.rb,
+	processor/frame.rb, processor/location.rb, processor/main.rb,
+	processor/mock.rb, processor/running.rb,
+	test/unit/test-proc-eval.rb, test/unit/test-proc-frame.rb: location
+	-> vm_location where location is of type Rubinius::Location.
+
+2010-12-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/submgr.rb,
+	processor/command/disassemble.rb, processor/command/irb.rb,
+	processor/command/kill.rb: Sync with rb-trepanning.
+
+2010-12-15  rocky <rockyb@rubyforge.org>
+
+	* test/integration/helper.rb: Check $?.exitstatus after running
+	debugger.
+
+2010-12-15  rocky <rockyb@rubyforge.org>
+
+	* test/data/quit-Xdebug.right, test/integration/helper.rb,
+	test/integration/test-quit.rb: Add minimal -Xdebug integration test
+
+2010-12-15  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, app/options.rb, lib/trepanning.rb,
+	test/data/.gitignore, test/data/enable.right,
+	test/data/fname-with-blank.cmd, test/data/fname-with-blank.right,
+	test/data/quit.cmd, test/data/quit.right, test/example/.gitignore,
+	test/example/fname with blank.rb, test/example/gcd-xx.rb,
+	test/example/gcd.rb, test/example/gcd1.rb, test/example/null.rb,
+	test/example/thread1.rb, test/integration/.gitignore,
+	test/integration/file-diff.rb, test/integration/helper.rb,
+	test/integration/test-fname-with-blank.rb,
+	test/integration/test-quit.rb: Start integration tests. Wasn't
+	packaging test/data/. Turn on "set kernelstep off" for now.
+
+2010-12-15  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb: Turn of kernelstep for now and leave that for
+	the user to turn on.  When things go wrong, we need this on. So
+	until everything is more robust leave out.
+
+2010-12-14  rocky <rockyb@rubyforge.org>
+
+	* processor/stepping.rb: Give error message if we can't step to
+	parent.
+
+2010-12-14  rocky <rockyb@rubyforge.org>
+
+	* NEWS, THANKS: Cleaning up in preparation for release.
+
+2010-12-14  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, app/frame.rb, app/method.rb,
+	lib/trepanning.rb, processor/command/disassemble.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/nexti.rb, processor/disassemble.rb,
+	processor/location.rb, processor/stepping.rb: Adapt to recent ip
+	changes - need to use next_ip rather than ip sometimes.  Rakefile:
+	Require newer linecache and Rubinius; make gem Rubinius specific.
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* processor/location.rb, test/functional/fn_helper.rb: Add IP when
+	showing location.
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/set_subcmd/basename.rb,
+	processor/command/set_subcmd/kernelstep.rb,
+	processor/command/show_subcmd/basename.rb,
+	processor/command/show_subcmd/kernelstep.rb, processor/main.rb,
+	processor/running.rb: "set kernelstep on/off": filter out stepping
+	into the kernel.
+
+2010-12-05  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subcmd.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/alias.rb, processor/running.rb: add
+	subcmd#prefix to DRY demo code more. Start ignore_file_re to ignore
+	kernel fns.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* Rakefile: Add rake tasts to run standalone in bulk.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/breakpoints.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/set_subcmd/trace.rb,
+	processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/args.rb,
+	processor/command/show_subcmd/different.rb, processor/mock.rb: DRY
+	subcommand standalone code.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* processor/breakpoint.rb, processor/validate.rb: Method parsing
+	from "list" and "disassemble" command reused in "breakpoint" and
+	"continue".
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* processor/breakpoint.rb, processor/validate.rb: Small changes.
+
+2010-11-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/disassemble.rb, processor/command/list.rb,
+	processor/validate.rb: Allow method names in the "list" command.
+
+2010-11-28  rvm <rocky@gnu.org>
+
+	* processor/command/disassemble.rb, processor/eval.rb: Handle method
+	names with '.' in disassembly. e.g. Object.is_a? or [1,2].max
+
+2010-11-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/auto_subcmd/dis.rb,
+	processor/command/set_subcmd/auto_subcmd/eval.rb,
+	processor/command/set_subcmd/auto_subcmd/irb.rb,
+	processor/command/set_subcmd/auto_subcmd/list.rb,
+	processor/command/set_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/command/set_subcmd/debug_subcmd/step.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/auto_subcmd/list.rb,
+	processor/command/show_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/show_subcmd/debug_subcmd/skip.rb,
+	processor/command/show_subcmd/debug_subcmd/step.rb,
+	processor/mock.rb: Start much-needed DRY of subsubcommand standalone
+	code. Another half remain to be shortened.
+
+2010-11-27  rvm <rocky@gnu.org>
+
+	* processor/command/show_subcmd/debug_subcmd/skip.rb,
+	processor/command/show_subcmd/debug_subcmd/step.rb: Last bugfixes
+	before we *really* DRY this redundant code.
+
+2010-11-27  rvm <rocky@gnu.org>
+
+	* app/method.rb: meth->cm
+
+2010-11-27  rvm <rocky@gnu.org>
+
+	* app/iseq.rb, processor/command/disassemble.rb,
+	processor/command/nexti.rb,
+	processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/command/set_subcmd/debug_subcmd/step.rb,
+	processor/command/show_subcmd/debug_subcmd/step.rb,
+	processor/main.rb, processor/stepping.rb: Fix bug in nexti.rb. Add
+	set/show debug step. More standalone code. Start great rewrite
+	method/meth -> cm.
+
+2010-11-27  rvm <rocky@gnu.org>
+
+	* app/method.rb, processor/command/disassemble.rb: Show lines
+	numbers in method disassembly.
+
+2010-11-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/auto_subcmd/dis.rb,
+	processor/command/show_subcmd/auto_subcmd/dis.rb,
+	processor/command/show_subcmd/auto_subcmd/eval.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/auto_subcmd/list.rb,
+	processor/hook.rb, processor/main.rb, processor/stepping.rb: Add
+	"auto dis" which might be short-lived. Uncomment and fix some of the
+	standalone code for subcommands.
+
+2010-11-27  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/location.rb: Small changes.
+
+2010-11-21  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb: Add Kernel.debugger
+
+2010-11-21  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-next-bug.rb: Code function may be less
+	puzzling, not that it really matters.
+
+2010-11-21  rocky <rockyb@rubyforge.org>
+
+	* app/method.rb, app/run.rb, processor/command/disassemble.rb,
+	processor/command/next.rb, processor/main.rb, processor/running.rb,
+	processor/stepping.rb, test/functional/test-next-bug.rb: Fix bug in
+	'next' when a line has discontinuous ips. Fix broken bin/trepanx due
+	to interface change in ignored_methods. Allow disassembly of methods
+	in "disassemble" command.
+
+2010-11-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/continue.rb, processor/location.rb: continue.rb:
+	forgotting to update a call for an interface change => brokenness.
+
+2010-11-20  rocky <rockyb@rubyforge.org>
+
+	* : commit a8f1ffc2c3c2d3c4417ffb9c931af78ad7b6c0c8 Author: rocky
+	<rockyb@rubyforge.org> Date:   Sat Nov 20 21:08:40 2010 -0500
+
+2010-11-19  rvm <rocky@gnu.org>
+
+	* lib/trepanning.rb, processor/main.rb, processor/stepping.rb,
+	test/functional/test-step2.rb: Fix bug where stepping from of a
+	return doesn't stop on outside frame.
+
+2010-11-19  rocky <rockyb@rubyforge.org>
+
+	* app/iseq.rb, lib/trepanning.rb, processor/command/disassemble.rb,
+	processor/command/up.rb, processor/disassemble.rb,
+	processor/frame.rb, processor/main.rb, processor/running.rb,
+	processor/stepping.rb, processor/validate.rb,
+	test/functional/test-finish.rb, test/unit/test-app-iseq.rb: Towards
+	handing step across return. Nicer disassembly single statements.
+	Fixed method filtering iseq.c: go_between: now understands that a
+	return breaks the flow too lib/trepannig.rb: add initialize routine
+	to ignored list of filtered fns command/disassemble.rb: reorganize
+	so we can handle disassemble of individual methods command/up.rb:
+	fix comment processor/disassemble.rb: use
+	 Rubinius::CompiledMethod::Instruction to shorten code and get
+	comments in output frame.rb: common routine to get parent frame.
+	processor/running.rb: remove bug in method filter test.
+	processor/stepping.rb: better generalization of related breakpoint
+	handling.
+
+2010-11-17  rocky <rockyb@rubyforge.org>
+
+	* app/method.rb, app/validate.rb, processor/breakpoint.rb,
+	processor/command/break.rb, processor/command/continue.rb,
+	processor/validate.rb, test/functional/test-tbreak.rb,
+	test/unit/test-app-method.rb, test/unit/test-app-validate.rb: Can
+	now set breakpoints on IPs. Fix status and setting of some temporary
+	breakpoints.
+
+2010-11-16  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, processor/command/list.rb, processor/location.rb,
+	processor/validate.rb, test/functional/test-break-name.rb: Use
+	script caching recently added to linecache for eval-like things.  As
+	a result, "list" now works.  validate: bug in regexp was not
+	catching !,? or = at the end.
+
+2010-11-15  rvm <rocky@gnu.org>
+
+	* app/frame.rb, processor/location.rb: We pick up the eval_string
+	now. Thanks again, evan! (More could be done to cache info as a
+	file.)
+
+2010-11-14  rvm <rocky@gnu.org>
+
+	* processor/breakpoint.rb: Remove extraneous comment.
+
+2010-11-14  rvm <rocky@gnu.org>
+
+	* processor/breakpoint.rb, processor/main.rb: Delete temporary
+	breakpoints after hitting them.
+
+2010-11-14  rvm <rocky@gnu.org>
+
+	* app/irb.rb, app/iseq.rb, processor/command/disassemble.rb,
+	processor/command/info_subcmd/program.rb, processor/disassemble.rb,
+	test/unit/test-app-iseq.rb: Tag disassemble output with IP location
+	and breakpoints set.
+
+2010-11-13  rvm <rocky@gnu.org>
+
+	* app/util.rb, lib/trepanning.rb,
+	processor/command/set_subcmd/hidelevel.rb, processor/frame.rb: 
+	Hiding levels below "main" for -Xdebug and trepanx better.  util.rb:
+	Don't need dollar_0 routine anymore.  set_subcmd/hidelevel.rb:
+	recalculate level on resetting.
+
+2010-11-12  rvm <rocky@gnu.org>
+
+	* app/default.rb, processor/command/restart.rb,
+	processor/command/show_subcmd/args.rb, processor/mock.rb: Synch with
+	rb-trepannning
+
+2010-11-11  rvm <rocky@gnu.org>
+
+	* app/method.rb, test/unit/test-app-method.rb: Add locate_line test.
+	Some other small changes.
+
+2010-11-10  rvm <rocky@gnu.org>
+
+	* app/iseq.rb, processor/running.rb, processor/stepping.rb,
+	test/unit/test-app-iseq.rb: "finish" should include "yield" ops in
+	addition to "return" ops.
+
+2010-11-09  rvm <rocky@gnu.org>
+
+	* data/irbrc: One more small name change.
+
+2010-11-09  rvm <rocky@gnu.org>
+
+	* data/irbrc, processor/command/irb.rb: trepan -> trepanx
+
+2010-11-09  rvm <rocky@gnu.org>
+
+	* data/irbrc, processor/command/set_subcmd/trace_subcmd/.gitignore,
+	processor/command/show_subcmd/trace_subcmd/.gitignore: Monkeypatch
+	in the proper way.
+
+2010-11-09  rocky <rockyb@rubyforge.org>
+
+	* app/default.rb, app/run.rb, bin/trepanx, lib/trepanning.rb,
+	processor/command/restart.rb,
+	processor/command/show_subcmd/args.rb, processor/location.rb,
+	processor/mock.rb, test/unit/test-app-run.rb: Greatly simplify
+	restart code and it's now more reliable thanks to the addition of
+	Rubinuis::OS_ARGV and Rubinius::OS_STARTUP_DIR. Thanks, Evan!
+
+2010-11-08  rocky <rockyb@rubyforge.org>
+
+	* app/default.rb, app/run.rb, lib/trepanning.rb: Generalize
+	standalone hack so and include -Xdebug.
+
+2010-11-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/backtrace.rb: Wasn't starting from top if we had
+	adjusted the frame.  Add position indicator in backtrace and make it
+	look more like trepan (and gdb).
+
+2010-11-08  rvm <rocky@gnu.org>
+
+	* app/method.rb, app/run.rb, interface/script.rb, io/base_io.rb,
+	io/null_output.rb, processor/command/set_subcmd/max.rb,
+	processor/command/set_subcmd/max_subcmd/list.rb,
+	processor/command/set_subcmd/substitute.rb,
+	processor/command/set_subcmd/trace.rb,
+	processor/command/set_subcmd/trace_subcmd/.gitignore,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/max.rb,
+	processor/command/show_subcmd/max_subcmd/list.rb,
+	processor/command/show_subcmd/trace.rb,
+	processor/command/show_subcmd/trace_subcmd/.gitignore,
+	processor/command/show_subcmd/trace_subcmd/print.rb,
+	processor/command/source.rb, processor/frame.rb: bin/trepanx now
+	stops in user script rather than the loader.  It does this by rather
+	hacky means, but it's the best I can find for now.  Added a null
+	output routine and the -q (silence) option on the source command.
+
+2010-11-08  rvm <rocky@gnu.org>
+
+	* processor/command/finish.rb, processor/command/list.rb: list.rb:
+	make it I hope more rational.  finish.rb: some cut-and-past typos.
+
+2010-11-07  rvm <rocky@gnu.org>
+
+	* processor/frame.rb, test/functional/fn_helper.rb,
+	test/functional/test-list.rb: Fix bug in handling "list" command
+	after changing frames.
+
+2010-11-07  rvm <rocky@gnu.org>
+
+	* : commit de520fc0cd97e910e70ee6db496a0fc13344a815 Author: rvm
+	<rocky@gnu.org> Date:   Sun Nov 7 10:09:00 2010 -0500
+
+2010-11-06  rocky <rockyb@rubyforge.org>
+
+	* app/method.rb, test/functional/test-break.rb: Work on setting
+	breakpoints via line numbers.
+
+2010-11-06  rvm <rocky@gnu.org>
+
+	* app/breakpoint.rb, lib/trepanning.rb,
+	processor/command/continue.rb, test/functional/fn_helper.rb,
+	test/functional/test-tbreak.rb: Had broken temporary breakpoints.
+	Add now a tbreak test.
+
+2010-11-06  rvm <rocky@gnu.org>
+
+	* lib/trepanning.rb, processor/command/finish.rb,
+	processor/main.rb, processor/running.rb: Code clean up due to
+	differen handling of stepping breakpoints.
+
+2010-11-06  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/frame.rb, lib/trepanning.rb,
+	processor/command/nexti.rb, processor/stepping.rb,
+	test/functional/test-finish.rb, test/functional/test-next.rb: Allow
+	breakpoints to be scoped. Fixes bugs in handling recursive "next"
+	and "finish".  Based on Rubinius commit # 3a1c111. See issue
+	Rubinius issue #558
+
+2010-11-06  rocky <rockyb@rubyforge.org>
+
+	* processor/breakpoint.rb, processor/command/continue.rb,
+	processor/main.rb: Start "continue" with a target. Temp breakpoints
+	are borked though.
+
+2010-11-05  rocky <rockyb@rubyforge.org>
+
+	* app/run.rb, lib/trepanning.rb, processor/command/list.rb,
+	processor/running.rb: Work more on ignoring methods we don't want to
+	stop in.
+
+2010-11-05  rocky <rockyb@rubyforge.org>
+
+	* app/run.rb, processor/mock.rb, processor/running.rb: Skip over
+	debug_program method (used in standalone).
+
+2010-11-05  rocky <rockyb@rubyforge.org>
+
+	* processor/location.rb, test/unit/test-proc-location.rb: Fix bug in
+	not picking up remapped files the first time around.
+
+2010-11-05  rocky <rockyb@rubyforge.org>
+
+	* processor/command/next.rb, processor/command/step.rb,
+	processor/main.rb, processor/running.rb,
+	test/unit/test-bin-trepan.rb, test/unit/test-bin-trepanx.rb: "set
+	different" now works properly.
+
+2010-11-04  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/hidelevel.rb, processor/default.rb,
+	processor/frame.rb: Some small bugs and keep in sync with
+	rb-trepanning.
+
+2010-11-04  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, bin/trepan, bin/trepanx: bin/trepan -> bin/trepanx
+
+2010-11-04  rvm <rocky@gnu.org>
+
+	* app/run.rb, processor/command/base/subcmd.rb,
+	processor/command/set_subcmd/debug_subcmd/stack.rb,
+	processor/command/set_subcmd/different.rb,
+	processor/command/set_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/debug_subcmd/stack.rb,
+	processor/command/show_subcmd/different.rb,
+	processor/command/show_subcmd/hidelevel.rb,
+	processor/command/show_subcmd/max_subcmd/list.rb,
+	processor/command/show_subcmd/max_subcmd/stack.rb,
+	processor/command/show_subcmd/max_subcmd/string.rb,
+	processor/command/show_subcmd/max_subcmd/width.rb,
+	processor/default.rb, processor/frame.rb, processor/validate.rb: 
+	Replace "set debug stack" with more general "set hidelevel".  Fix up
+	some standalone code running. Use SubSubcommand where appropriate.
+
+2010-11-04  rvm <rocky@gnu.org>
+
+	* lib/trepanning.rb, processor/main.rb,
+	test/functional/test-finish.rb, test/functional/test-next.rb,
+	test/functional/test-step.rb: start now stops by default at
+	*following* steppable statement. If you want to stop at the "start"
+	location, use Trepan.start{:immediate => true}
+
+2010-11-03  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/info_subcmd/program.rb,
+	processor/main.rb, test/functional/test-finish.rb: Nil breakpoint
+	means "stepping call" event.
+
+2010-11-01  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-finish.rb, test/functional/test-next.rb: 
+	First test of "finish" command. Todo: Looks like it's buggy when we
+	have recursive functions.
+
+2010-10-21  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, test/unit/test-app-util.rb: Try elision of long
+	strings in the middle of the string.
+
+2010-10-21  rocky <rockyb@rubyforge.org>
+
+	* app/brkptmgr.rb, app/method.rb, app/run.rb, lib/trepanning.rb,
+	processor/breakpoint.rb, processor/command/break.rb,
+	processor/command/disassemble.rb, processor/validate.rb,
+	test/functional/test-next.rb: Fix bug in breakpoint numbering. Fix
+	bug in restart when running bin/trepan breakpoint allows forms
+	nothing (current line) line as well as previous forms.
+	app/brkptmgr.rb: max should start off 0.  app/method.rb: routines
+	for working with compiled methods app/run.rb: use dbgr passed in.
+	            Don't smash restart_args, via set_restart, allow opts to be passed
+	in lib/trepanning merge dbussink's fix in rbx-head to reference
+	debugger command/disassemble.rb: had tropped off section header for
+	"all" processor/validate.rb: common routine to parse a breakpoint
+	position.
+
+2010-10-19  rvm <rocky@gnu.org>
+
+	* test/functional/test-next.rb: Add 'next' functional test.
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, lib/trepanning.rb, processor/frame.rb,
+	processor/main.rb, processor/running.rb: Rakefile: add functional
+	testing lib/trepanning.rb: honor input and output interfaces when
+	passed processor/frame.rb: RDoc appeasement processor/main.rb:
+	Change commen so it makes more sense when viewed in RDoc
+	processor/running.rb: remove debug output.
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-step.rb: First functional test of single
+	stepping. WOOT!
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* test/functional/.gitignore, test/functional/fn_helper.rb,
+	test/functional/test-fn_helper.rb: Baby steps toward adding
+	functional test: test the test helper.  Some RDoc appeasements.
+
+2010-10-19  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, processor/breakpoint.rb,
+	processor/command/finish.rb, processor/running.rb,
+	processor/stepping.rb: Add finish (step out) command.
+	app/breakpoint.rb: generalize paired breakpoints to more than two
+	which is needed for finish.  processor/breakpoint.rb: fix bugs
+	caused by refactoring
+
+2010-10-18  rvm <rocky@gnu.org>
+
+	* app/iseq.rb, processor/stepping.rb, test/unit/test-app-iseq.rb: 
+	Extract, test, and fix more instruction sequence routines.
+
+2010-10-18  rvm <rocky@gnu.org>
+
+	* app/iseq.rb, processor/command/set_subcmd/debug_subcmd/skip.rb,
+	processor/command/show_subcmd/debug_subcmd/skip.rb,
+	processor/main.rb, processor/mock.rb, processor/stepping.rb,
+	test/unit/test-cmd-alias.rb, test/unit/test-proc-eval.rb,
+	test/unit/test-proc-main.rb: Add set/show debug skip. Start moving
+	out instruction sequence code to module.
+
+2010-10-18  rvm <rocky@gnu.org>
+
+	* app/run.rb, lib/trepanning.rb, processor/command/disassemble.rb,
+	processor/frame.rb, processor/main.rb, processor/running.rb,
+	processor/stepping.rb: Hide level only if it makes sense. Start work
+	on finish. (Not complete).  Fix But in stepping test.
+
+2010-10-17  rvm <rocky@gnu.org>
+
+	* processor/command/next.rb, processor/command/step.rb,
+	processor/main.rb, processor/running.rb: Next/step <count> now
+	works.
+
+2010-10-17  rvm <rocky@gnu.org>
+
+	* processor/command/continue.rb, processor/command/next.rb,
+	processor/command/nexti.rb, processor/command/step.rb,
+	processor/main.rb, processor/running.rb, processor/stepping.rb: Move
+	return-to-program control into main.rb. Facilitates handling step
+	filtering.
+
+2010-10-17  rvm <rocky@gnu.org>
+
+	* processor/command/next.rb, processor/command/step.rb,
+	processor/main.rb, processor/stepping.rb: Move stepping code to
+	Trepan::CmdProcessor in file processor/stepping.rb
+
+2010-10-16  rvm <rocky@gnu.org>
+
+	* processor/mock.rb, test/unit/test-cmd-help.rb: Reinstate expect
+	message on assert
+
+2010-10-16  rvm <rocky@gnu.org>
+
+	* processor/command/alias.rb, processor/command/list.rb,
+	processor/command/pr.rb, processor/command/show.rb: DRY code with
+	respect to Mock setup. less hard-coding of command names via #{NAME}
+
+2010-10-16  rvm <rocky@gnu.org>
+
+	* : commit 3309874e7bfd623ce4c93e08812ee343f4f98d16 Author: rvm
+	<rocky@gnu.org> Date:   Sat Oct 16 10:16:11 2010 -0400
+
+2010-10-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/pr.rb: Add print/eval with truncated output for
+	long strings.
+
+2010-10-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/show_subcmd/debug_subcmd/dbgr.rb,
+	processor/command/step.rb, processor/main.rb, processor/running.rb,
+	test/unit/test-base-subcmd.rb: running.rb, step.rb: More work trying
+	to put into a normal command loop.  Add "set debug dbgr". Add test
+	of base commands.
+
+2010-10-14  rvm <rocky@gnu.org>
+
+	* lib/trepanning.rb, processor/breakpoint.rb, processor/main.rb,
+	processor/running.rb: Add Trepan.breakpoint instance variable. Start
+	to get step count and stuff in place for step filtering.
+
+2010-10-13  rvm <rocky@gnu.org>
+
+	* app/irb.rb, data/.gitignore, data/irbrc,
+	processor/command/irb.rb,
+	processor/command/set_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb, processor/mock.rb: 
+	Add debugger 'irb' command and set/show autoirb.
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* processor/hook.rb: Add set/show debug dbgr.
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/auto.rb,
+	processor/command/set_subcmd/debug.rb,
+	processor/command/set_subcmd/debug_subcmd/.gitignore,
+	processor/command/set_subcmd/debug_subcmd/stack.rb,
+	processor/command/show_subcmd/args.rb,
+	processor/command/show_subcmd/debug.rb,
+	processor/command/show_subcmd/debug_subcmd/.gitignore,
+	processor/command/show_subcmd/debug_subcmd/stack.rb,
+	processor/command/show_subcmd/max.rb: Add set/show debug stack - to
+	hide/show least-recent boilerplate frames that are generally not a
+	programmer's concern.
+
+2010-10-13  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, processor/command/backtrace.rb, processor/frame.rb,
+	test/unit/test-app-util.rb, test/unit/test-proc-frame.rb: Start
+	hiding boilerplate start-up frames. set debug stack (which has not
+	been put in yet) will let you see these frames.
+
+2010-10-12  rocky <rockyb@rubyforge.org>
+
+	* processor/mock.rb, test/unit/cmd-helper.rb,
+	test/unit/test-cmd-break.rb: First breakpoint unit test. Yay!
+
+2010-10-12  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb, processor/mock.rb, processor/validate.rb,
+	test/unit/test-proc-frame.rb: Reinstate most of the processor/frame
+	unit test from rb-trepanning.
+
+2010-10-12  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/frame.rb, processor/main.rb: Small
+	frame code cleanups.
+
+2010-10-12  rvm <rocky@gnu.org>
+
+	* app/brkptmgr.rb, app/frame.rb, lib/trepanning.rb,
+	processor/breakpoint.rb, processor/command/break.rb: Address
+	breakpoints broken in last breakpoint reorganization.
+
+2010-10-12  rvm <rocky@gnu.org>
+
+	* processor/command/continue.rb, processor/command/next.rb,
+	processor/command/nexti.rb, processor/command/step.rb,
+	processor/main.rb, processor/running.rb: Start to get control over
+	what happens before and after returning to debugged program. This
+	will be needed to handle filtering stops (used for example when
+	running the debugger from the outset) and recording events in an
+	event buffer.
+
+2010-10-11  rvm <rocky@gnu.org>
+
+	* lib/trepanning.rb, processor/frame.rb, processor/main.rb: 
+	processor/frame.rb: show location in usual format, not the backtrace
+	format processor/main.rb: reinstate code with print_loatio
+	lib/trepanning.rb: spelling correction in comment.
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/disassemble.rb,
+	processor/disassemble.rb, processor/frame.rb,
+	processor/location.rb, processor/main.rb: Move some disassembly code
+	from lib/trepanning.rb to processor/disassemble.rb
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* Makefile, processor/Makefile: Add boilerplate Makefile's
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-unit-exit.rb: How did this get in there?
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/breakpoints.rb,
+	test/unit/test-cmd-exit.rb: Add unit test for exit.  Add help for
+	"info breakpoints". Copied from rb-trepanning - Not quite accurate
+	yet.
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* processor/command/source.rb: Small things to sync up with
+	rb-trepanning
+
+2010-10-08  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/brkptmgr.rb, lib/trepanning.rb,
+	processor/command/break.rb, processor/command/next.rb,
+	processor/command/nexti.rb, processor/command/tbreak.rb,
+	test/unit/test-app-brkpt.rb, test/unit/test-app-brkptmgr.rb: Small
+	things to sync up with rb-trepanning
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb: Add current-line indicator.
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/breakpoint.rb, app/brkptmgr.rb, lib/trepanning.rb,
+	processor/command/info.rb,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/tbreak.rb, test/unit/test-app-brkptmgr.rb: More
+	better tests of breakpoint manager. There is some breakage remaining
+	though.  info_subcmd/breakpoints.rb: work on this. Again there's
+	some breakage from the bp manager merge Rakefile: add task
+	check:app. Correct check:command.
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/location.rb: Show location in same
+	format as 1.9.2 debugger (and other gdb-like debuggers).
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* lib/trepanning.rb, processor/command/info_subcmd/program.rb,
+	processor/command/next.rb, processor/command/nexti.rb,
+	processor/location.rb, processor/main.rb: lib/trepanning.rb,
+	nexti.rb, next.rb: make event names match rb-trepanning. Use string
+	not symbol.  location.rb: Reinstate print_location.
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, lib/trepanning.rb, processor/command/break.rb,
+	processor/command/info_subcmd/program.rb,
+	processor/command/next.rb, processor/command/nexti.rb: Start to add
+	stopped event types.
+
+2010-10-07  rocky <rockyb@rubyforge.org>
+
+	* app/brkptmgr.rb, lib/trepanning.rb, processor/breakpoint.rb,
+	processor/command/break.rb, processor/command/next.rb: Move
+	set-breakpoint_method from lib/trepanning.rb into
+	processor/breakpoint.rb brktmgr.rb: add rest of demo code
+	lib/trepanning.rb: Don't need @breakpoints anymore. Use
+	@processor.brkpts next.rb: typo.
+
+2010-10-05  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, lib/trepanning.rb, test/unit/test-app-brkpt.rb: 
+	breakpoint.rb: respect setting id value when passed. Add some demo
+	code.  Add unit test for app/breakpoint.rb
+
+2010-10-04  rocky <rockyb@rubyforge.org>
+
+	* app/brkptmgr.rb: Start Breakpoint manager.
+
+2010-10-04  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, lib/trepanning.rb, processor/command/next.rb,
+	processor/command/nexti.rb: Baby step towards merging breakpoint
+	handling with rb-trepanning.
+
+2010-09-29  rocky <rockyb@rubyforge.org>
+
+	* processor/command/set_subcmd/substitute.rb,
+	processor/command/set_subcmd/substitute_subcmd/.gitignore,
+	processor/command/set_subcmd/substitute_subcmd/path.rb: Add "set
+	substitute ppath" command.
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/file.rb: Add "info file".
+
+2010-09-27  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, processor/location.rb: Track rbx-linecache change which
+	was tracking a change from linecache-tf...
+
 2010-09-27  rocky <rockyb@rubyforge.org>
 
 	* README.textile: README tyhpo
@@ -105,9 +954,8 @@
 
 	* .gemspec, AUTHORS, Rakefile, THANKS, app/options.rb, app/run.rb,
 	bin/.gitignore, bin/trepan, processor/command/break.rb: Add code to
-	invoke from outset. Complete with debugger options. Needs
-	improvement to skip over the crap before main.__script__ starts.
-	Numerous other small changes.
+	invoke from outset. Complete with debugger options.  Needs
+	improvement to skip over the crap before main.__script__ starts.  Numerous other small changes.
 
 2010-09-25  rocky <rockyb@rubyforge.org>
 
@@ -152,12 +1000,11 @@
 	processor/command/delete.rb, processor/command/source.rb,
 	processor/frame.rb, processor/main.rb, test/unit/cmd-helper.rb,
 	test/unit/test-unit-exit.rb: debugger.rb : remove show_ip option.
-	Goes in processor. 	      bang on breakpoint code. move some to
+		      Goes in processor.  bang on breakpoint code. move some to
 	processor/breakpoint.rb processor/breakpoint.rb: more error checking
-	info  app/frame.rb: describe() pass in options - add show IP
-	parameter.               remove duplicate ip location
-	app/breakpoint.rb: change IP location indicator from + to @. Is this
-	right? base/cmd.rb: run_code() was wrong.  Other misc bugs fixed.
+	info app/frame.rb: describe() pass in options - add show IP parameter.                remove duplicate ip location app/breakpoint.rb: change
+	IP location indicator from + to @. Is this right? base/cmd.rb:
+	run_code() was wrong.  Other misc bugs fixed.
 
 2010-09-24  rocky <rockyb@rubyforge.org>
 
@@ -191,7 +1038,7 @@
 	processor/command/show_subcmd/max_subcmd/width.rb,
 	processor/default.rb, processor/eval.rb, processor/main.rb: Add max
 	set/show subcommands "info program" processor eval now sets filename
-	and we now store breakpoint ids. prompt is more inline with other
+	and we now store breakpoint ids.  prompt is more inline with other
 	debuggers :-(
 
 2010-09-23  rocky <rockyb@rubyforge.org>
@@ -226,7 +1073,7 @@
 	processor/command/set_subcmd/different.rb,
 	processor/command/show_subcmd/different.rb, processor/default.rb,
 	processor/mock.rb, processor/subcmd.rb: Finish up last of commands
-	to be converted from reference debugger. Add some of routines from
+	to be converted from reference debugger.  Add some of routines from
 	trepan for 1.9.2.
 
 2010-09-23  rocky <rockyb@rubyforge.org>
@@ -338,8 +1185,8 @@
 	processor/mock.rb, test/unit/.gitignore, test/unit/cmd-helper.rb,
 	test/unit/test-cmd-help.rb, test/unit/test-cmd-kill.rb,
 	test/unit/test-io-input.rb, test/unit/test-proc-load_cmds.rb: Get
-	command loading boilerplate. Help is there now. Interface added. And
-	even some of the unit tests!
+	command loading boilerplate. Help is there now. Interface added.
+	And even some of the unit tests!
 
 2010-09-21  rocky <rockyb@rubyforge.org>
 
@@ -360,7 +1207,7 @@
 	debugger/command/set.rb, debugger/command/show.rb,
 	debugger/command/step.rb, debugger/command/tb.rb,
 	debugger/commands.rb, debugger/display.rb, debugger/frame.rb: Put
-	all commands in the 'command' directory. Add temporary hack to keep
+	all commands in the 'command' directory.  Add temporary hack to keep
 	Command.command singleton array from growing on running each
 	debugger command.
 
