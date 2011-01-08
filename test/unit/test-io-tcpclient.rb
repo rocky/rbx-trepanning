@@ -2,39 +2,35 @@
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
 
-# Unit test for io/tcpserver.rb
+# Unit test for io/tcpclient.rb
 require_relative '../../io/tcpfns'
-require_relative '../../io/tcpserver'
+require_relative '../../io/tcpclient'
 
-class TestTCPDbgServer < Test::Unit::TestCase
+class TestTCPDbgClient < Test::Unit::TestCase
 
   include Trepanning::TCPPacking
 
   def test_basic
-    server = Trepan::TCPDbgServer.new(STDIN, 
-                                      { :open => false,
+    client = Trepan::TCPDbgClient.new({ :open => false,
                                         :port => 1027,
                                         :host => 'localhost'
                                       })
-    server.open
     threads = []
-    msgs = %w(one two three)
+    msgs = %w(four five six)
     Thread.new do
-      msgs.each do |msg|
-        begin
-          line = server.read_msg.chomp
-          assert_equal(msg, line)
-        rescue EOFError
-          puts 'Got EOF'
-          break
-        end
+      server = TCPServer.new('localhost', 1027)
+      session = server.accept
+      while 'quit' != (line = session.gets)
+        session.puts line 
       end
+      session.close
     end
     threads << Thread.new do 
-      t = TCPSocket.new('localhost', 1027)
+      client.open
       msgs.each do |msg|
         begin
-          t.puts(pack_msg(msg))
+          client.writeline(msg)
+          assert_equal msg, client.read_msg.chomp
         rescue EOFError
           puts "Got EOF"
           break
@@ -43,9 +39,8 @@ class TestTCPDbgServer < Test::Unit::TestCase
           break
         end
       end
-      t.close
+      client.close
     end
     threads.each {|t| t.join }
-    server.close
   end
 end
