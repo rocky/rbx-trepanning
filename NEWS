@@ -1,2 +1,8 @@
+Jan 1, 2011  (0.0.3)
+- Add finish+
+- Add "step into" "step over" and "step out" as alternates
+  for "step", "next", and "finish"
+- Remove extraneous debug command.
+
 Dec 25, 26, 2010  (0.0.1, & 0.0.2)
 First general release. Port of trepanning debugger for Ruby 1.9.2.

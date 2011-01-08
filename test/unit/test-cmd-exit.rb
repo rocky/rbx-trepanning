@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
-require_relative '../../processor/mock'
+require_relative './mock-helper'
 require_relative '../../processor/command/exit'
 
 class TestCommandExit < Test::Unit::TestCase
-
+  include MockUnitHelper
   def setup
     @name      = File.basename(__FILE__, '.rb').split(/-/)[2]
-    @dbg, @cmd = MockDebugger::setup(@name, false)
+    common_setup(@name)
   end
 
   def test_basic
