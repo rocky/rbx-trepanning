@@ -6,10 +6,9 @@ require 'rubygems'; require 'require_relative'
 require_relative 'base_intf'
 require_relative 'comcodes'
 require_relative '../io/input'
+require_relative '../io/tcpserver'
 
-# Mtcpserver  = import_relative('tcpserver', '..io', 'pydbgr')
 # Mfifoserver = import_relative('fifoserver', '..io', 'pydbgr')
-# Mmisc       = import_relative('misc', '..', 'pydbgr')
 
 # Interface for debugging a program but having user control
 # reside outside of the debugged process, possibly on another
@@ -36,7 +35,7 @@ class Trepan::ServerInterface < Trepan::Interface
         # if 'FIFO' == server_type
         #     FIFOServer.new
         # else
-        #     TCPServer.new
+        Trepan::TCPDbgServer.new
         # end
       end
     # For Compatability 
@@ -52,6 +51,7 @@ class Trepan::ServerInterface < Trepan::Interface
   
   # Called when a dangerous action is about to be done to make sure
   # it's okay. `prompt' is printed; user response is returned.
+  # FIXME: make common routine for this and user.rb
   def confirm(prompt, default)
     while true
       begin
@@ -60,33 +60,26 @@ class Trepan::ServerInterface < Trepan::Interface
       rescue EOFError
         return default
       end
-      if %w(y yes).member?(reply)
+      if YES.member?(reply)
         return true
-      elsif %w(n no).member?(reply)
+      elsif NO.member?(reply)
         return false
       else
-        msg("Please answer y or n.")
+        msg "Please answer 'yes' or 'no'. Try again."
       end
     end
     return default
   end
   
-  # Common routine for reporting debugger error messages.
-  def errmsg(str, prefix="** ")
-    msg("%s%s" % [prefix, str])
-  end
-  
   # print exit annotation
   def finalize(last_wishes=QUIT)
-    if self.is_connected()
-      self.inout.writeline(last_wishes)
-    end
+    @inout.writeline(last_wishes) if connected?
     close
   end
   
-  # Return True if we are connected
-  def is_connected
-    'connected' == @inout.state
+  # Return true if we are connected
+  def connected?
+    :connected == @inout.state
   end
     
   # used to write to a debugger that is connected to this
@@ -109,12 +102,12 @@ class Trepan::ServerInterface < Trepan::Interface
     @inout.read_dat
   end
   
-  def readline( prompt, add_to_history=true)
+  def readline(prompt, add_to_history=true)
     if prompt
       write_prompt(prompt)
     end
     coded_line = @inout.read_msg()
-    @read_ctrl = coded_line[0]
+    @read_ctrl = coded_line[0..0]
     coded_line[1..-1]
   end
   

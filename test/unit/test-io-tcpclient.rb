@@ -16,7 +16,6 @@ class TestTCPDbgClient < Test::Unit::TestCase
                                         :host => 'localhost'
                                       })
     threads = []
-    msgs = %w(four five six)
     Thread.new do
       server = TCPServer.new('localhost', 1027)
       session = server.accept
@@ -27,6 +26,7 @@ class TestTCPDbgClient < Test::Unit::TestCase
     end
     threads << Thread.new do 
       client.open
+      msgs = %w(four five six)
       msgs.each do |msg|
         begin
           client.writeline(msg)

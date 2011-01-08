@@ -27,12 +27,11 @@ class Trepan::UserInterface < Trepan::Interface
              end
   end
 
-  # Closes both input and output
-
   # Called when a dangerous action is about to be done, to make
   # sure it's okay. Expect a yes/no answer to `prompt' which is printed,
   # suffixed with a question mark and the default value.  The user
   # response converted to a boolean is returned.
+  # FIXME: make common routine for this and server.rb
   def confirm(prompt, default)
     default_str = default ? 'Y/n' : 'N/y'
     while true do

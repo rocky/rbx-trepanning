@@ -11,8 +11,7 @@ class TestTCPDbgServer < Test::Unit::TestCase
   include Trepanning::TCPPacking
 
   def test_basic
-    server = Trepan::TCPDbgServer.new(STDIN, 
-                                      { :open => false,
+    server = Trepan::TCPDbgServer.new({ :open => false,
                                         :port => 1027,
                                         :host => 'localhost'
                                       })

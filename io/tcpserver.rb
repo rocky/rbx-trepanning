@@ -23,15 +23,15 @@ class Trepan
                          # Python has: 'posix' == os.name 
     }
 
+    attr_reader :state
 
-    def initialize(input, opts={})
+    def initialize(opts={})
       @opts    = DEFAULT_INIT_OPTS.merge(opts)
       @session = nil
       @buf     = ''    # Read buffer
       @state   = :disconnected
       @port    = nil   # Current port in use
       @host    = nil   # current host in use
-      @input = input
       open(@opts) if @opts[:open]
     end
 
@@ -74,10 +74,9 @@ class Trepan
     # writeline, no newline is added to the end to `str'. Also
     # msg doesn't have to be a string.
     def write(msg)
-      p ["+++2", msg, @state]
       wait_for_connect() unless @state == :connected
       # FIXME: do we have to check the size of msg and split output? 
-      @session.put(pack_msg(msg))
+      @session.puts(pack_msg(msg))
     end
 
     def writeline(msg)
@@ -90,8 +89,7 @@ end
 # Demo
 if __FILE__ == $0
   include Trepanning::TCPPacking
-  server = Trepan::TCPDbgServer.new(STDIN, 
-                                    { :open => false,
+  server = Trepan::TCPDbgServer.new({ :open => false,
                                       :port => 1027,
                                       :host => 'localhost'
                                     })
