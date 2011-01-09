@@ -19,8 +19,6 @@ require_relative '../io/null_output'
 #
 
 class Trepan
-  VERSION = '0.0.3'
-
   attr_accessor :breakpoint   # Breakpoint. The current breakpoint we are
                               # stopped at or nil if none.
   attr_accessor :intf         # Array. The way the outside world

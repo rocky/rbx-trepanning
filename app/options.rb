@@ -30,7 +30,7 @@ module Trepanning
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
 
-  Trepanning::VERSION = '0.0.1.git' unless defined?(Trepanning::VERSION)
+  Trepanning::VERSION = '0.0.4.dev' unless defined?(Trepanning::VERSION)
   Trepanning::PROGRAM = 'trepan' unless defined?(Trepanning::PROGRAM)
 
   def show_version
@@ -90,6 +90,10 @@ EOB
           stderr.puts "Debugger command file #{profile} is not readable. --restore option ignored."
         end
       end
+      opts.on('--server',
+              "Set up for out-of-process debugging") do
+        options[:server] = true
+      end
       opts.on_tail("--help", "Show this message") do
         options[:help] = true
         stdout.puts opts
@@ -111,13 +115,13 @@ if __FILE__ == $0
     options = copy_default_options
     opts    = setup_options(options)
     rest    = opts.parse o
-    puts options
+    p options
     puts '=' * 10
   end
   rest = opts.parse! ARGV
-  puts opts.to_s
+  puts opts
   puts '=' * 10
-  puts options
+  p options
   puts '=' * 10
-  puts Trepanning::DEFAULT_CMDLINE_SETTINGS
+  p Trepanning::DEFAULT_CMDLINE_SETTINGS
 end

@@ -19,7 +19,7 @@ module Trepanning
     :restart_argv    => Rubinius::OS_ARGV,
                                # Command run when "restart" is given.
     :restore_profile => nil,   # Profile used to set/restore debugger state
-    :skip_loader     => false  # If run via -Xdebug or trepanx
+    :skip_loader     => false, # If run via -Xdebug or trepanx
                                # command-line we need this to skip
                                # over some initial Rubinius loader
                                # commands.
@@ -30,6 +30,7 @@ module Trepanning
     :cmdfiles => [],  # Initialization command files to run
     :nx       => false, # Don't run user startup file (e.g. .trepanxrc)
     :output   => nil,
+    :server   => false  # Out-of-process debugging?
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)
 
   DEFAULT_DEBUG_STR_SETTINGS = {

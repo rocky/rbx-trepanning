@@ -3,8 +3,8 @@
 require 'rake'
 require 'rubygems' unless 
   Object.const_defined?(:Gem)
-require File.dirname(__FILE__) + "/lib/trepanning" unless 
-  Object.const_defined?(:'Trepan')
+require File.dirname(__FILE__) + "/app/options" unless 
+  Object.const_defined?(:'Trepanning')
 
 FILES = FileList[
   'README.textile',
@@ -54,10 +54,10 @@ EOF
   spec.require_path = 'lib'
   spec.required_ruby_version = '~> 1.8.7'
   spec.summary      = 'Trepan Ruby Debugger for Rubinius 1.2 and higher'
-  spec.version      = Trepan::VERSION
+  spec.version      = Trepanning::VERSION
 
   # Make the readme file the start page for the generated html
   ## spec.rdoc_options += %w(--main README)
-  spec.rdoc_options += ['--title', "Trepan #{Trepan::VERSION} Documentation"]
+  spec.rdoc_options += ['--title', "Trepan #{Trepanning::VERSION} Documentation"]
 
 end
