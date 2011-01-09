@@ -17,7 +17,7 @@ module Trepanning
     while true
       begin
         control_code, line = intf.read_remote
-      rescue EOFError
+      rescue EOFError, Errno::EPIPE
         puts "Remote debugged process closed connection"
         break
       end
@@ -26,12 +26,21 @@ module Trepanning
       when PRINT
         print line
       when CONFIRM_TRUE
-        intf.confirm(line, true)
+        response = intf.confirm(line, true)
+        intf.write_remote(CONFIRM_REPLY, response ? 'Y' : 'N')
       when CONFIRM_FALSE
-        intf.confirm(line, false)
+        response = intf.confirm(line, true)
+        intf.write_remote(CONFIRM_REPLY, response ? 'Y' : 'N')
       when PROMPT
+        # require 'trepanning'
+        # debugger
         command = intf.read_command(line)
-        intf.write_remote(COMMAND, command)
+        begin 
+          intf.write_remote(COMMAND, command)
+        rescue Errno::EPIPE
+          puts "Remote debugged process died"
+          break
+        end
       when QUIT
         break
       when RESTART

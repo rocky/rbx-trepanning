@@ -44,6 +44,10 @@ See also "kill".'
       return
     end
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
+
+    # FIXME: funnel to sort of more general finalize routine
+    @proc.dbgr.intf[-1].close
+
     # No graceful way to stop threads...
     # A little harsh, but for now let's go with this.
     exit! exitrc

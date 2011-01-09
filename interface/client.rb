@@ -46,6 +46,10 @@ class Trepan::ClientInterface < Trepan::Interface
       end
   end
 
+  def confirm(prompt, default)
+    @user.confirm(prompt, default)
+  end
+
   def read_command(prompt='')
     @user.read_command(prompt)
   end
@@ -53,7 +57,10 @@ class Trepan::ClientInterface < Trepan::Interface
   # Send a message back to the server (in contrast to the local user
   # output channel).
   def read_remote
-    coded_line = @inout.read_msg
+    coded_line = nil
+    until coded_line
+      coded_line = @inout.read_msg
+    end
     control = coded_line[0..0]
     remote_line = coded_line[1..-1]
     [control, remote_line]

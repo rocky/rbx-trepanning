@@ -58,6 +58,10 @@ class Trepan
       close
     end
 
+    def input_eof?
+      @input.eof?
+    end
+
     # Return true if interface is interactive.
     def interactive?
       # Default false and making subclasses figure out how to determine

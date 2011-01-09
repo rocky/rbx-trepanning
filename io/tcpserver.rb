@@ -76,7 +76,7 @@ class Trepan
     def write(msg)
       wait_for_connect() unless @state == :connected
       # FIXME: do we have to check the size of msg and split output? 
-      @session.puts(pack_msg(msg))
+      @session.print(pack_msg(msg))
     end
 
     def writeline(msg)

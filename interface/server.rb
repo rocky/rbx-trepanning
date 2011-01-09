@@ -46,7 +46,10 @@ class Trepan::ServerInterface < Trepan::Interface
   
   # Closes both input and output
   def close
-    @inout.close if @inout
+    if @inout
+      @inout.write(QUIT + 'bye')
+      @inout.close 
+    end
   end
   
   # Called when a dangerous action is about to be done to make sure
@@ -56,7 +59,7 @@ class Trepan::ServerInterface < Trepan::Interface
     while true
       begin
         write_confirm(prompt, default)
-        reply = self.readline('').strip().lower()
+        reply = readline(nil).strip.downcase
       rescue EOFError
         return default
       end
@@ -71,17 +74,21 @@ class Trepan::ServerInterface < Trepan::Interface
     return default
   end
   
+  # Return true if we are connected
+  def connected?
+    :connected == @inout.state
+  end
+    
   # print exit annotation
   def finalize(last_wishes=QUIT)
     @inout.writeline(last_wishes) if connected?
     close
   end
   
-  # Return true if we are connected
-  def connected?
-    :connected == @inout.state
+  def input_eof?
+    false
   end
-    
+
   # used to write to a debugger that is connected to this
   # server; `str' written will have a newline added to it
   def msg(msg)
@@ -117,7 +124,7 @@ class Trepan::ServerInterface < Trepan::Interface
   end
   
   def write_prompt(prompt)
-    return @inout.writeline(PROMPT + prompt)
+    @inout.write(PROMPT + prompt)
   end
   
   def write_confirm(prompt, default)
@@ -126,7 +133,7 @@ class Trepan::ServerInterface < Trepan::Interface
     else
       code = CONFIRM_FALSE
     end
-    @inout.writeline(code + prompt)
+    @inout.write(code + prompt)
   end
 end
     

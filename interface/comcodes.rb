@@ -10,6 +10,7 @@ module Trepanning
     COMMAND       = 'C'
     CONFIRM_TRUE  = 'Y'
     CONFIRM_FALSE = 'N'
+    CONFIRM_REPLY = '?'
     QUIT          = 'q'
     PROMPT        = 'p'
     RESTART       = 'r'

@@ -178,8 +178,8 @@ class Trepan
     def process_command_and_quit?()
       intf_size = @dbgr.intf.size
       intf  = @dbgr.intf[-1]
-      return true if intf.input.eof? && intf_size == 1
-      while intf_size > 1 || !(intf.respond_to?(:eof?) && intf.input.eof?)
+      return true if intf.input_eof? && intf_size == 1
+      while intf_size > 1 || !intf.input_eof?
         begin
           @current_command = read_command().strip
           if @current_command.empty? 
@@ -191,9 +191,9 @@ class Trepan
           end
           next if @current_command[0..0] == '#' # Skip comment lines
           break
-        rescue IOError, Errno::EPIPE
+        rescue IOError,  Errno::EPIPE => e
           if intf_size > 1
-            @dbgr.intf.pop 
+            @dbgr.intf.pop
             intf_size = @dbgr.intf.size
             intf = @dbgr.intf[-1]
             @last_command = nil
