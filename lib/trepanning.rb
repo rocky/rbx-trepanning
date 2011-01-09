@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'readline'
 require 'compiler/iseq'
 
@@ -10,6 +12,8 @@ require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'
 require_relative '../app/display'        # FIXME: remove
 require_relative '../interface/user'     # user interface (includes I/O)
+require_relative '../interface/client'   # client interface (remote debugging)
+require_relative '../interface/server'   # server interface (remote debugging)
 require_relative '../io/null_output'
   
 #
@@ -33,11 +37,6 @@ class Trepan
   attr_reader   :deferred_breakpoints
   attr_reader   :processor
 
-  # Used to try and show the source for the kernel. Should
-  # mostly work, but it's a hack.
-  DBGR_DIR = File.dirname(RequireRelative.abs_file)
-  ROOT_DIR = File.expand_path(File.join(DBGR_DIR, "/.."))
-
   include Trepan::Display  # FIXME: remove
 
   # Create a new debugger object. The debugger starts up a thread
@@ -54,43 +53,27 @@ class Trepan
 
     @processor = CmdProcessor.new(self)
 
-    @intf     = [Trepan::UserInterface.new(@input, @output)]
+    @intf = 
+      if @settings[:server]
+        puts 'starting debugger in out-of-process mode' 
+        [Trepan::ServerInterface.new]
+      elsif @settings[:client]
+        [Trepan::ClientInterface.new]
+      else
+        [Trepan::UserInterface.new(@input, @output)]
+      end
+
     @settings[:cmdfiles].each do |cmdfile|
       add_command_file(cmdfile)
     end if @settings.member?(:cmdfiles)
     Dir.chdir(@settings[:initial_dir]) if @settings[:initial_dir]
     @restart_argv = @settings[:restart_argv]
 
-    ## FIXME: put in fn
-    @processor.dbgr = self
-    ## m = Rubinius::Loader.method(:debugger).executable.inspect
-    meth = Rubinius::VM.backtrace(0)[0].method
-    @processor.ignore_methods[meth] = 'next'
-    @processor.ignore_methods[method(:debugger)] = 'step'
-
-    @thread = nil
-    @frames = []
     ## FIXME: Delete these and use the ones in processor/default instead.
     @variables = {
       :show_bytecode => false,
       :highlight => false
     }
-
-    @loaded_hook = proc { |file|
-      check_deferred_breakpoints
-    }
-
-    @added_hook = proc { |mod, name, exec|
-      check_deferred_breakpoints
-    }
-
-    # Use a few Rubinius specific hooks to trigger checking
-    # for deferred breakpoints.
-
-    Rubinius::CodeLoader.loaded_hook.add @loaded_hook
-    Rubinius.add_method_hook.add @added_hook
-
-    @deferred_breakpoints = []
 
     @history_path = File.expand_path("~/.trepanx")
 
@@ -105,7 +88,33 @@ class Trepan
 
     @history_io.sync = true
 
-    @root_dir = ROOT_DIR
+    @processor.dbgr = self
+    @deferred_breakpoints = []
+    @thread = nil
+    @frames = []
+
+    unless @settings[:client]
+      ## FIXME: put in fn
+      ## m = Rubinius::Loader.method(:debugger).executable.inspect
+      meth = Rubinius::VM.backtrace(0)[0].method
+      @processor.ignore_methods[meth] = 'next'
+      @processor.ignore_methods[method(:debugger)] = 'step'
+
+      @loaded_hook = proc { |file|
+        check_deferred_breakpoints
+      }
+      
+      @added_hook = proc { |mod, name, exec|
+        check_deferred_breakpoints
+      }
+
+      # Use a few Rubinius-specific hooks to trigger checking
+      # for deferred breakpoints.
+      
+      Rubinius::CodeLoader.loaded_hook.add @loaded_hook
+      Rubinius.add_method_hook.add @added_hook
+      
+    end
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
@@ -393,4 +402,11 @@ module Kernel
     Trepan.start(settings)
   end
   alias breakpoint debugger unless respond_to?(:breakpoint)
+end
+
+if __FILE__ == $0
+  if ARGV.size > 0
+    debugger
+    x = 1
+  end
 end

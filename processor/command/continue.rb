@@ -5,20 +5,21 @@ require_relative '../stepping'
 class Trepan::Command::ContinueCommand < Trepan::Command
   NAME         = File.basename(__FILE__, '.rb')
   HELP         = <<-HELP
-#{NAME} [breakpoint position]
+#{NAME} [breakpoint-position]
 
 Leave the debugger loop and continue execution. Subsequent entry to
 the debugger however may occur via breakpoints or explicit calls, or
 exceptions.
 
-If a parameter is given, a temporary breakpoint is set at that position
+If a parameter is given, a one-time breakpoint is set at that position
 before continuing. 
 
 Examples:
    #{NAME}
    #{NAME} 10    # continue to line 10
+   #{NAME} Array#map # beginning of next Array#map call
 
-See also 'step', 'next', and 'nexti' commands.
+See also 'step', 'next', 'finish', and 'nexti' commands.
       HELP
   ALIASES      = %w(c cont)
   CATEGORY     = 'running'

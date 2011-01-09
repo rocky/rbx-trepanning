@@ -18,13 +18,14 @@ require_relative 'comcodes'
 class Trepan::ClientInterface < Trepan::Interface
 
   DEFAULT_INIT_CONNECTION_OPTS = {
-    :io => 'TCP'
+    :open => true,
+    :io   => :tcp
   }
 
   def initialize(inp=nil, out=nil, inout=nil, user_opts={}, 
                  connection_opts={})
 
-    @opts = DEFAULT_INIT_CONNECTION_OPTS.merge(connection_opts)
+    @connection_opts = DEFAULT_INIT_CONNECTION_OPTS.merge(connection_opts)
 
     @user = Trepan::UserInterface.new(inp, out, user_opts)
     
@@ -32,17 +33,21 @@ class Trepan::ClientInterface < Trepan::Interface
       if inout
         inout 
       else
-        # @server_type = @opts[:io]
+        # @server_type = @connection_opts[:io]
         # if 'FIFO' == self.server_type
-        #   Mfifoclient.FIFOClient(opts=connection_opts)
-        # elsif 'TCP' == self.server_type
-        Trepan::TCPDbgClient.new(connection_opts)
+        #   Mfifoclient.FIFOClient(opts=@connection_opts)
+        # elsif :tcp == self.server_type
+        Trepan::TCPDbgClient.new(@connection_opts)
         # else
         #   errmsg("Expecting server type TCP or FIFO. Got: %s." %
         #          self.server_type)
         #   return
         # end
       end
+  end
+
+  def read_command(prompt='')
+    @user.read_command(prompt)
   end
 
   # Send a message back to the server (in contrast to the local user

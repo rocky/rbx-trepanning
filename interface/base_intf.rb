@@ -82,8 +82,10 @@ class Trepan
       @output.write(msg)
     end
 
-    def read_command( prompt)
-      raise RuntimeError, Trepan::NotImplementedMessage
+    def read_command(prompt='')
+      line = readline(prompt)
+      # FIXME: Do something with history?
+      return line
     end
 
     def readline(prompt='')

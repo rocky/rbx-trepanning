@@ -55,12 +55,20 @@ module Trepanning
 #{show_version}
 Usage: #{PROGRAM} [options] <script.rb> -- <script.rb parameters>
 EOB
+      opts.on('--client',
+              "Connect to out-of-process program") do
+        if options[:server]
+          stderr.puts "--server option previously given. --client option ignored."
+        else
+          options[:client] = true
+        end
+      end
       opts.on('--command FILE', String, 
               "Execute debugger commnds from FILE") do |cmdfile| 
         if File.readable?(cmdfile)
           options[:cmdfiles] << cmdfile
         elsif File.exists?(cmdfile)
-            stderr.puts "Command file '#{cmdfile}' is not readable."
+            stderr.puts "Command file '#{cmdfile}' is not readable. Option ignored."
         else
           stderr.puts "Command file '#{cmdfile}' does not exist."
         end
@@ -92,7 +100,11 @@ EOB
       end
       opts.on('--server',
               "Set up for out-of-process debugging") do
-        options[:server] = true
+        if options[:client]
+          stderr.puts "--client option previously given. --server option ignored."
+        else
+          options[:server] = true
+        end
       end
       opts.on_tail("--help", "Show this message") do
         options[:help] = true

@@ -57,12 +57,6 @@ class Trepan::UserInterface < Trepan::Interface
   end
 
   def interactive? ; @input.interactive? end
-
-  def read_command(prompt='')
-    line = readline(prompt)
-    # FIXME: Do something with history?
-    return line
-  end
 end
 
 # Demo

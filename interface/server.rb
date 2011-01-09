@@ -39,8 +39,8 @@ class Trepan::ServerInterface < Trepan::Interface
         # end
       end
     # For Compatability 
-    @output = inout
-    @input  = inout
+    @output = @inout
+    @input  = @inout
     @interactive = true # Or at least so we think initially
   end
   

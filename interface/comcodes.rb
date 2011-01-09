@@ -3,8 +3,11 @@
 
 # Communication status codes
 module Trepanning
+  # Most of these go from debugged process to front-end
+  # client interface. COMMAND goes the other way.
   module RemoteCommunication
     PRINT         = '.'
+    COMMAND       = 'C'
     CONFIRM_TRUE  = 'Y'
     CONFIRM_FALSE = 'N'
     QUIT          = 'q'

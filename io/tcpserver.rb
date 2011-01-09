@@ -27,7 +27,7 @@ class Trepan
 
     def initialize(opts={})
       @opts    = DEFAULT_INIT_OPTS.merge(opts)
-      @session = nil
+      @input = @output = @session = nil
       @buf     = ''    # Read buffer
       @state   = :disconnected
       @port    = nil   # Current port in use
@@ -66,7 +66,7 @@ class Trepan
     end
 
     def wait_for_connect
-      @session = @server.accept
+      @input = @output = @session = @server.accept
       @state = :connected
     end
     
