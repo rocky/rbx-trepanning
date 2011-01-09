@@ -9,6 +9,8 @@ class Trepan::Command::DirectoryCommand < Trepan::Command
     MAX_ARGS     = 1  # Need at most this many
     NAME         = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
+#{NAME} [DIR]
+
 Add directory DIR to beginning of search path for source files.
 DIR can also be $cwd for the current working directory, or $cdir for the
 directory in which the debugged file start.
@@ -16,7 +18,12 @@ With no argument, reset the search path to $cdir:$cwd, the default.
 
 This command may be useful for debugging into Rubinius methods such as
 kernel/common/module.rb if have the source code somewhere.
+
+Examples:
+   #{NAME} ~/.rvm/src/rbx-head  # Adds an rvm-like directory to path
+   #{NAME} # reset to $cdir:$cwd
       HELP
+
     SHORT_HELP  = 
       'Add directory DIR to beginning of search path for source files'
   end
@@ -24,7 +31,8 @@ kernel/common/module.rb if have the source code somewhere.
   # This method runs the command
   def run(args) # :nodoc
     if args.size > 1
-      settings[:directory] = "#{args[1]}:#{settings[:directory]}"
+      path = File.expand_path(args[1])
+      settings[:directory] = "#{path}:#{settings[:directory]}"
       msg "Source directories searched: #{settings[:directory]}"
     else
       if confirm('Reintialize source path to empty?', false)

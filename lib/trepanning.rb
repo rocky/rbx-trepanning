@@ -48,8 +48,8 @@ class Trepan
   def initialize(settings={})
     @breakpoint = nil
     @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
-    @input  ||= @settings[:input]
-    @output ||= @settings[:output]
+    @input  = @settings[:input] || STDIN
+    @output = @settings[:output] || STDOUT
 
     @processor = CmdProcessor.new(self)
 
@@ -63,9 +63,7 @@ class Trepan
         [Trepan::UserInterface.new(@input, @output)]
       end
 
-    @settings[:cmdfiles].each do |cmdfile|
-      add_command_file(cmdfile)
-    end if @settings.member?(:cmdfiles)
+    process_cmdfile_setting(@settings)
     Dir.chdir(@settings[:initial_dir]) if @settings[:initial_dir]
     @restart_argv = @settings[:restart_argv]
 
@@ -177,6 +175,8 @@ class Trepan
       @processor.hidelevels[@thread] = @settings[:hide_level]
     end
 
+    process_cmdfile_setting(settings)
+
     # Feed info to the debugger thread!
     locs = Rubinius::VM.backtrace(@settings[:offset] + 1, true)
 
@@ -196,23 +196,24 @@ class Trepan
     Thread.current.set_debugger_thread @thread
     self
   end
+  # ruby-debug compatibility
+  alias debugger start
 
   def stop(settings = {})
     # Nothing for now...
   end
 
-  def add_command_file(cmdfile, stderr=$stderr)
+  def add_command_file(cmdfile, opts={}, stderr=$stderr)
     unless File.readable?(cmdfile)
       if File.exists?(cmdfile)
         stderr.puts "Command file '#{cmdfile}' is not readable."
         return
       else
         stderr.puts "Command file '#{cmdfile}' does not exist."
-        stderr.puts caller
         return
       end
     end
-    @intf << Trepan::ScriptInterface.new(cmdfile, @output)
+    @intf << Trepan::ScriptInterface.new(cmdfile, @output, opts)
   end
 
   def add_startup_files()
@@ -224,6 +225,18 @@ class Trepan
       add_command_file(full_initfile_path) if File.readable?(full_initfile_path)
       seen[full_initfile_path] = true
     end
+  end
+
+  def process_cmdfile_setting(settings)
+    settings[:cmdfiles].each do |item|
+      cmdfile, opts = 
+        if item.kind_of?(Array)
+          item
+        else
+          [item, {}]
+        end
+      add_command_file(cmdfile, opts)
+    end if settings.member?(:cmdfiles)
   end
 
   # Stop and wait for a debuggee thread to send us info about
