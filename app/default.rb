@@ -16,6 +16,12 @@ module Trepanning
     :nx              => false, # Don't run user startup file (e.g. .trepanxrc)
     :offset          => 0,     # skipping back +offset+ frames. This lets you start
                                # the debugger straight into callers method.
+
+    # Default values used only when 'server' or 'client'
+    # (out-of-process debugging)
+    :port            => 1027,
+    :host            => 'localhost', 
+
     :restart_argv    => Rubinius::OS_ARGV,
                                # Command run when "restart" is given.
     :restore_profile => nil,   # Profile used to set/restore debugger state

@@ -91,6 +91,18 @@ EOB
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
         end
       end
+      opts.on("--host NAME", String, 
+              "Host or IP used in TCP connections for --server or --client. " + 
+              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
+        |name_or_ip| 
+        options[:host] = name_or_ip
+      end
+      opts.on("--port NUMBER", Integer, 
+              "Port number used in TCP connections for --server or --client. " + 
+              "Default is #{DEFAULT_SETTINGS[:port]}.") do 
+        |num| 
+        options[:port] = num
+      end
       opts.on("--restore PROFILE", String, 
               "Restore debugger state using PROFILE") do |profile|
         if File.readable?(profile)

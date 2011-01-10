@@ -4,6 +4,7 @@
 
 require 'socket'
 require 'rubygems'; require 'require_relative'
+require_relative '../app/default' # For host and port
 require_relative 'base_io'
 require_relative 'tcpfns'
 
@@ -16,8 +17,8 @@ class Trepan
     DEFAULT_INIT_OPTS = {:open => true}
     
     SERVER_SOCKET_OPTS = {
-      :host    => 'localhost', # Symbolic name
-      :port    => 1027,  # Arbitrary non-privileged port
+      :host    => Trepanning::DEFAULT_SETTINGS[:host],
+      :port    => Trepanning::DEFAULT_SETTINGS[:port], # A non-privileged port
       :timeout => 5,     # FIXME: not used
       :reuse   => true,  # FIXME: not used. Allow port to be resued on close?
                          # Python has: 'posix' == os.name 
@@ -114,7 +115,7 @@ if __FILE__ == $0
         begin
           print "input? "
           line = STDIN.gets
-          break if line.chomp == 'quit'
+          break if !line || line.chomp == 'quit'
           t.puts(pack_msg(line))
         rescue EOFError
           puts "Got EOF"
