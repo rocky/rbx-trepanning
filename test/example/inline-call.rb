@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# GCD. We assume positive numbers
 require 'rubygems'; require 'require_relative'
 require_relative '../../lib/trepanning.rb'
 DATA_DIR = File.join(File.dirname(RequireRelative::abs_file), %w(.. data))
@@ -7,7 +6,7 @@ cmdfile = File.join(DATA_DIR, 'inline-call.cmd')
 $dbgr = Trepan.new(:nx => true, :cmdfiles => [cmdfile])
 # GCD. We assume positive numbers
 def gcd(a, b)
-  $dbgr.start()
+  $dbgr.debugger
   # Make: a <= b
   if a > b
     a, b = [b, a]

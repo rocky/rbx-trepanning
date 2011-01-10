@@ -37,6 +37,9 @@ def run_debugger(testname, ruby_file, opts={})
     if opts[:xdebug]
     "%s -Xdebug '%s' %s >%s 2>&1 <%s" %
         [Trepanning::ruby_path, programfile, opts[:args], outfile, cmdfile]
+    elsif opts[:standalone]
+      "%s %s %s >%s 2>&1" %
+        [Trepanning::ruby_path, programfile, opts[:args], outfile]
     else
       "%s %s --nx --command %s %s '%s' %s >%s 2>&1" %
         [Trepanning::ruby_path, dbgr_path, cmdfile, opts[:dbgr], 
@@ -46,18 +49,15 @@ def run_debugger(testname, ruby_file, opts={})
   system(cmd)
   return false unless 0 == $?.exitstatus 
   if opts[:do_diff]
-    from_file  = rightfile
-    # fromdate  = time.ctime(os.stat(fromfile).st_mtime)
-    from_lines = File.open(from_file).readlines()
-    to_file    = outfile
-    # todate    = time.ctime(os.stat(tofile).st_mtime)
-    to_lines   = File.open(to_file).readlines()
+    expected_lines = File.open(rightfile).readlines()
+    got_lines      = File.open(outfile).readlines()
+    opts[:filter].call(got_lines, expected_lines) if opts[:filter]
     
     # Seems to be a bug in LCS in that it will return a diff even if two
     # files are the same.
-    return true if from_lines == to_lines
+    return true if expected_lines == got_lines
     
-    sdiffs = Diff::LCS.sdiff(from_lines, to_lines)
+    sdiffs = Diff::LCS.sdiff(expected_lines, got_lines)
     
     if sdiffs.empty?
       FileUtils.rm(outfile)
