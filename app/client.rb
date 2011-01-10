@@ -8,10 +8,12 @@ module Trepanning
   include Trepanning::RemoteCommunication
   def start_client(options)
     puts "Client option given"
-    dbgr = Trepan.new(:cmdfiles    => [],
+    dbgr = Trepan.new(:client      => true,
+                      :cmdfiles    => [],
                       :initial_dir => options[:chdir],
                       :nx          => true,
-                      :client      => true
+                      :host        => options[:host],
+                      :port        => options[:port]
                       )
     intf = dbgr.intf[-1]
     while true

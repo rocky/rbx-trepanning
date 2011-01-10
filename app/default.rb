@@ -38,6 +38,8 @@ module Trepanning
     :client   => false, # Attach to out-of-process program?
     :nx       => false, # Don't run user startup file (e.g. .trepanxrc)
     :output   => nil,
+    :port     => 1027,
+    :host     => 'localhost', 
     :server   => false, # Out-of-process debugging?
     # Note that at most one of :server or :client can be true.
   } unless defined?(DEFAULT_CMDLINE_SETTINGS)

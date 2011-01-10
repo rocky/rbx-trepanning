@@ -23,19 +23,19 @@ class Trepan::ServerInterface < Trepan::Interface
 
   def initialize(inout=nil, out=nil, connection_opts={})
 
-    @opts = DEFAULT_INIT_CONNECTION_OPTS.merge(connection_opts)
+    @connection_opts = DEFAULT_INIT_CONNECTION_OPTS.merge(connection_opts)
 
     at_exit { finalize }
     @inout = 
       if inout
         inout
       else
-        server_type = @opts[:io]
+        server_type = @connection_opts[:io]
         # FIXME: complete this.
         # if 'FIFO' == server_type
         #     FIFOServer.new
         # else
-        Trepan::TCPDbgServer.new
+        Trepan::TCPDbgServer.new(@connection_opts)
         # end
       end
     # For Compatability 

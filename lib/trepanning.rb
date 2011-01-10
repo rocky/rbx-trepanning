@@ -55,10 +55,17 @@ class Trepan
 
     @intf = 
       if @settings[:server]
-        puts 'starting debugger in out-of-process mode' 
-        [Trepan::ServerInterface.new]
+        opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
+        opts[:port] = @settings[:port] if @settings[:port]
+        opts[:host] = @settings[:host] if @settings[:host]
+        puts("starting debugger in out-of-process mode port at " +
+             "#{opts[:host]}:#{opts[:port]}")
+        [Trepan::ServerInterface.new(nil, nil, opts)]
       elsif @settings[:client]
-        [Trepan::ClientInterface.new]
+        opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
+        opts[:port] = @settings[:port] if @settings[:port]
+        opts[:host] = @settings[:host] if @settings[:host]
+        [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
         [Trepan::UserInterface.new(@input, @output)]
       end
