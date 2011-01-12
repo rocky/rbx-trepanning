@@ -71,7 +71,12 @@ class Trepan
       end
 
     process_cmdfile_setting(@settings)
-    Dir.chdir(@settings[:initial_dir]) if @settings[:initial_dir]
+    if @settings[:initial_dir]
+      Dir.chdir(@settings[:initial_dir])
+    else
+      @settings[:initial_dir] = Dir.pwd
+    end
+    @initial_dir  = @settings[:initial_dir]
     @restart_argv = @settings[:restart_argv]
 
     ## FIXME: Delete these and use the ones in processor/default instead.

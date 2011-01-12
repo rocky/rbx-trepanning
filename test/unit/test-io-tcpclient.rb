@@ -25,12 +25,19 @@ class TestTCPDbgClient < Test::Unit::TestCase
       session.close
     end
     threads << Thread.new do 
-      client.open
-      msgs = %w(four five six)
-      msgs.each do |msg|
+      3.times do 
         begin
-          client.writeline(msg)
-          assert_equal msg, client.read_msg.chomp
+          client.open
+        rescue IOError
+        end
+        break
+      end
+      assert client
+      msgs = %w(four five six)
+      msgs.each do |mess|
+        begin
+          client.writeline(mess)
+          assert_equal mess, client.read_msg.chomp
         rescue EOFError
           puts "Got EOF"
           break

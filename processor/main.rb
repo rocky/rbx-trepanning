@@ -191,7 +191,7 @@ class Trepan
           end
           next if @current_command[0..0] == '#' # Skip comment lines
           break
-        rescue IOError,  Errno::EPIPE => e
+        rescue IOError, Errno::EPIPE => e
           if intf_size > 1
             @dbgr.intf.pop
             intf_size = @dbgr.intf.size
