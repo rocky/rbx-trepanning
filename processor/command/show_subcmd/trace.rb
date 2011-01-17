@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subsubcmd'
 require_relative '../base/subsubmgr'
@@ -18,12 +18,11 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  dbgr, cmd = MockDebugger::setup('set', false)
-  parent_cmd = cmds['show']
+  parent_cmd = File.dirname(__FILE__)[0...-('_subcmd'.size)]
+  dbgr, cmd = MockDebugger::setup(parent_cmd, false)
   command = Trepan::SubSubcommand::ShowTrace.new(dbgr.processor, 
-                                                 parent_cmd)
-
+                                                 cmds[parent_cmd])
   name = File.basename(__FILE__, '.rb')
-  cmd_args = ['show', name]
+  cmd_args = [parent_cmd, name]
   command.run(cmd_args)
 end

@@ -84,7 +84,6 @@ class Trepan
     ## FIXME: Delete these and use the ones in processor/default instead.
     @variables = {
       :show_bytecode => false,
-      :highlight => false
     }
 
     @history_path = File.expand_path("~/.trepanx")
