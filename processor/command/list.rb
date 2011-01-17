@@ -223,9 +223,12 @@ Some examples:
     end
 
     begin
+      opts = {
+        :reload_on_change => @proc.reload_on_change,
+        :output => @proc.settings[:terminal]
+      }
       first.upto(last).each do |lineno|
-        line = LineCache::getline(cached_item, lineno,
-                                  @proc.reload_on_change)
+        line = LineCache::getline(cached_item, lineno, opts)
         unless line
           msg('[EOF]')
           break

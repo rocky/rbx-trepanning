@@ -34,14 +34,17 @@ class Trepan
     def line_at(filename, line_number)
       # We use linecache first to give precidence to user-remapped
       # file names
-      line = LineCache::getline(filename, line_number, @reload_on_change)
+      opts = {
+        :reload_on_change => @reload_on_change,
+        :output => @settings[:terminal]
+      }
+      line = LineCache::getline(filename, line_number, opts)
       unless line
         # Try using search directories (set with command "directory")
         if filename[0..0] != File::SEPARATOR
           try_filename = resolve_file_with_dir(filename) 
           if try_filename && 
-              line = LineCache::getline(try_filename, line_number, 
-                                        @reload_on_change)
+              line = LineCache::getline(try_filename, line_number, opts) 
             LineCache::remap_file(filename, try_filename)
           end
         end
@@ -51,6 +54,10 @@ class Trepan
     end
 
     def loc_and_text(loc)
+      opts = {
+        :reload_on_change => @reload_on_change,
+        :output => @settings[:terminal]
+      }
       vm_location = @frame.vm_location
       filename = vm_location.method.active_path
       line_no  = vm_location.line
@@ -58,7 +65,7 @@ class Trepan
 
       if @frame.eval?
         file = LineCache::map_script(static.script)
-        text = LineCache::getline(static.script, line_no)
+        text = LineCache::getline(static.script, line_no, opts)
         loc += " remapped #{canonic_file(file)}:#{line_no}"
       else
         text = line_at(filename, line_no)

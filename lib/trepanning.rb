@@ -51,7 +51,9 @@ class Trepan
     @input  = @settings[:input] || STDIN
     @output = @settings[:output] || STDOUT
 
-    @processor = CmdProcessor.new(self)
+    cmdproc_settings = {:terminal => @settings[:terminal]}
+
+    @processor = CmdProcessor.new(self, cmdproc_settings)
 
     @intf = 
       if @settings[:server]
