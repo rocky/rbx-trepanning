@@ -10,7 +10,12 @@ class Trepan::Subcommand::ShowKernelstep < Trepan::Subcommand
 
     IN_LIST      = true
     MIN_ABBREV   = 'kern'.size
-    PREFIX       = %W(set #{NAME})
+
+    # FIXME: DRY setting NAME and PREFIX
+    NAME       = File.basename(__FILE__, '.rb')
+    dirname    = File.basename(File.dirname(File.expand_path(__FILE__)))
+    PREFIX     = %W(#{dirname[0...-'_subcmd'.size]}
+                    #{NAME})
 
     # Specific to this class
     KERNEL_METHOD_FILE_RE    = /^kernel\//

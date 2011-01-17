@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+require 'rubygems'; require 'require_relative'
+require_relative '../base/subsubcmd'
+require_relative '../base/subsubmgr'
+
+class Trepan::Subcommand::ShowTerminal < Trepan::ShowBoolSubcommand
+  unless defined?(HELP)
+    HELP   = 'Show whether we use terminal highlighting'
+    NAME   = File.basename(__FILE__, '.rb')
+    PREFIX = %W(show #{NAME})
+  end
+
+  def run(args)
+    val = :term == @proc.settings[:terminal] 
+    onoff = show_onoff(val)
+    msg("%s is %s." % [@name, onoff])
+  end
+end
+
+if __FILE__ == $0
+  require_relative '../../mock'
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::ShowTerminal, false)
+  cmd.run(cmd.prefix)
+end

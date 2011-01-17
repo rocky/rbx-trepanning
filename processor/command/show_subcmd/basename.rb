@@ -7,8 +7,12 @@ class Trepan::Subcommand::ShowBasename < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
     HELP       = "Show only file basename in showing file names"
     MIN_ABBREV = 'ba'.size
+
+    # FIXME: DRY setting NAME and PREFIX
     NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(show #{NAME})
+    dirname    = File.basename(File.dirname(File.expand_path(__FILE__)))
+    PREFIX     = %W(#{dirname[0...-'_subcmd'.size]}
+                    #{NAME})
   end
 
 end

@@ -8,7 +8,7 @@ class Trepan::Subcommand::ShowHidelevel < Trepan::ShowIntSubcommand
     HELP = 'Show the number of stack levels to hide'
     MIN_ABBREV   = 'hide'.size
     NAME         = File.basename(__FILE__, '.rb')
-    PREFIX       = %w(show hidelevel)
+    PREFIX       = %W(show #{NAME})
   end
   def run(args)
     if @proc.settings[:hidelevel]

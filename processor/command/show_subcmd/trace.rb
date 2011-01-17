@@ -18,11 +18,11 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  parent_cmd = File.dirname(__FILE__)[0...-('_subcmd'.size)]
-  dbgr, cmd = MockDebugger::setup(parent_cmd, false)
-  command = Trepan::SubSubcommand::ShowTrace.new(dbgr.processor, 
-                                                 cmds[parent_cmd])
-  name = File.basename(__FILE__, '.rb')
-  cmd_args = [parent_cmd, name]
-  command.run(cmd_args)
+  cmd_ary          = Trepan::SubSubcommand::ShowTrace::PREFIX
+  dbgr, parent_cmd = MockDebugger::setup(cmd_ary[0], false)
+  cmd              = Trepan::SubSubcommand::ShowTrace.new(dbgr.processor, 
+                                                          parent_cmd)
+  cmd_name       = cmd_ary.join('')
+  prefix_run = cmd_ary[1..-1]
+  cmd.run(prefix_run)
 end
