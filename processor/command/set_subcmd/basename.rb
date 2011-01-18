@@ -7,9 +7,8 @@ class Trepan::Subcommand::SetBasename < Trepan::SetBoolSubcommand
   unless defined?(HELP)
     HELP = "Set to show only file basename in showing file names"
     IN_LIST    = true
-    MIN_ABBREV = 'te'.size
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(set #{NAME})
+    MIN_ABBREV = 'ba'.size
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   end
 
 end

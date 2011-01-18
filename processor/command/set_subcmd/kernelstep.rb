@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../show_subcmd/kernelstep'
 
 class Trepan::Subcommand::SetKernelstep < Trepan::Subcommand::ShowKernelstep
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 set #{NAME} [on|off]
 
@@ -14,7 +14,6 @@ Allow/disallow stepping into kernel methods.
 
     IN_LIST      = true
     MIN_ABBREV   = 'kern'.size
-    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set stepping into kernel methods."
   end
 

@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowKernelstep < Trepan::Subcommand
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
-    HELP       = "Show stepping into kernel methods"
-
-    IN_LIST      = true
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+    HELP         = "Show stepping into kernel methods"
     MIN_ABBREV   = 'kern'.size
-
-    # FIXME: DRY setting NAME and PREFIX
-    NAME       = File.basename(__FILE__, '.rb')
-    dirname    = File.basename(File.dirname(File.expand_path(__FILE__)))
-    PREFIX     = %W(#{dirname[0...-'_subcmd'.size]}
-                    #{NAME})
 
     # Specific to this class
     KERNEL_METHOD_FILE_RE    = /^kernel\//

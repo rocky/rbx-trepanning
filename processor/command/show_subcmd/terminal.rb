@@ -6,9 +6,8 @@ require_relative '../base/subsubmgr'
 
 class Trepan::Subcommand::ShowTerminal < Trepan::ShowBoolSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP   = 'Show whether we use terminal highlighting'
-    NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %W(show #{NAME})
   end
 
   def run(args)

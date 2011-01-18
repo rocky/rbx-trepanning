@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetTerminal < Trepan::SetBoolSubcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP       = 'Set whether we use terminal highlighting'
     IN_LIST    = true
     MIN_ABBREV = 'ba'.size
-
-    # FIXME: DRY setting NAME and PREFIX
-    dirname    = File.basename(File.dirname(File.expand_path(__FILE__)))
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(#{dirname[0...-'_subcmd'.size]} #{NAME})
   end
-
   def run(args)
     if args.size == 3 && 'reset' == args[2]
       LineCache::clear_file_format_cache

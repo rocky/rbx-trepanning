@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowAlias < Trepan::Subcommand
-    NAME       = File.basename(__FILE__, '.rb')
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
     HELP         = <<-EOH
-show #{NAME} [NAME1 NAME2 ...] 
+#{PREFIX.join(' ')} [NAME1 NAME2 ...] 
 
 If aliases names are given, show their definition. If left blank, show
 all alias names
     EOH
     MIN_ABBREV = 'al'.size
-    PREFIX     = %W(show #{NAME})
     SHORT_HELP = "Show defined aliases"
   end
 

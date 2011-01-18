@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require 'linecache'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoFile < Trepan::Subcommand
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     DEFAULT_FILE_ARGS = %w(size sha1)
 
-    HELP =
-"info file [{FILENAME|.} [all | brkpts | sha1 | size | stat]]
+    HELP = <<-EOH
+#{PREFIX.join(' ')} [{FILENAME|.} [all | brkpts | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
 the program is running then the current file associated with the
@@ -25,11 +26,9 @@ stat   -- File.stat information
 all    -- All of the above information.
 
 If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
-"
+EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
-    NAME         = File.basename(__FILE__, '.rb')
     NEED_STACK   = false
-    PREFIX       = %w(info file)
   end
   
   # Get file information
@@ -133,7 +132,6 @@ end
 
 if __FILE__ == $0
   require_relative '../../mock'
-  require_relative '../../subcmd'
   name = File.basename(__FILE__, '.rb')
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')

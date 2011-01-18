@@ -7,9 +7,8 @@ require_relative '../base/subsubmgr'
 class Trepan::SubSubcommand::ShowTrace < Trepan::SubSubcommandMgr 
 
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = "Show event tracing printing"
-    NAME       = File.basename(__FILE__, '.rb')
-    PREFIX     = %W(show #{NAME})
     MIN_ABBREV = 'tr'.size
     SHORT_HELP = HELP
   end

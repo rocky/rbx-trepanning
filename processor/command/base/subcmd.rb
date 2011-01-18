@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # A base class for debugger subcommands.
 #
 # Note: don't end classname with Command (capital C) since main
@@ -194,6 +194,18 @@ class Trepan
 
 end
 
+module Trepanning
+  module Subcommand
+    module_function
+    def set_name_prefix(__file__, klass)
+      dirname    = File.basename(File.dirname(File.expand_path(__file__)))
+      name = File.basename(__file__, '.rb')
+      klass.const_set('NAME', name)
+      klass.const_set('PREFIX', %W(#{dirname[0...-'_subcmd'.size]} #{name}))
+    end
+  end
+end
+
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
@@ -210,4 +222,7 @@ if __FILE__ == $0
   # p subcmd.settings
   # p subcmd.show_onoff(subcmd.settings[:autoeval])
   # subcmd.run_set_int('', 'Just a test')
+  class Trepan::Subcommand::Foo < Trepan::Subcommand
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+  end
 end

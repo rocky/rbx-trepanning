@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-info breakpoints [num1 ...] [verbose]
+#{PREFIX.join(' ')} [num1 ...] [verbose]
 
 Show status of user-settable breakpoints. If no breakpoint numbers are
 given, the show all breakpoints. Otherwise only those breakpoints
@@ -18,8 +21,6 @@ The "enb" column indicates whether the breakpoint is enabled.
 The "Where" column indicates where the breakpoint is located.
 EOH
   MIN_ABBREV   = 'br'.size
-  NAME         = File.basename(__FILE__, '.rb')
-  PREFIX       = %w(info breakpoints)
   SHORT_HELP   = 'Status of user-settable breakpoints'
   
   def run(args)

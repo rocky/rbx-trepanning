@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetHidelevel < Trepan::Subcommand
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-set #{NAME} [NUM]
+#{PREFIX.join(' ')} [NUM]
 
 Hide this many stack frames from the bottom (or least-recent) frame.
 
@@ -35,7 +35,6 @@ See also 'backtrace' and 'show hidelevel'.
 
     IN_LIST      = true
     MIN_ABBREV   = 'hide'.size
-    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set the number of bottom frames to hide."
   end
 

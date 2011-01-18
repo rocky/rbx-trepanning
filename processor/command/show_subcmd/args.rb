@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowArgs < Trepan::Subcommand
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = 'Show argument list to give program when it is restarted'
     MIN_ABBREV   = 'ar'.size
-    PREFIX       = %W(show #{NAME})
   end
 
   def run(args)

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::SetDifferent < Trepan::SetBoolSubcommand
   unless defined?(HELP)
-    NAME         = File.basename(__FILE__, '.rb')
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-set #{NAME} [on|off|nostack]
+#{PREFIX.join(' ')} [on|off|nostack]
 
 Set to make sure 'next/step' move to a new position.
 
@@ -35,7 +35,6 @@ override this setting.
 
     IN_LIST      = true
     MIN_ABBREV   = 'dif'.size
-    PREFIX       = %W(set #{NAME})
     SHORT_HELP   = "Set to make sure 'next/step' move to a new position."
   end
 

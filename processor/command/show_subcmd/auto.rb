@@ -6,9 +6,8 @@ require_relative '../base/subsubmgr'
 
 class Trepan::SubSubcommand::ShowAuto < Trepan::SubSubcommandMgr
   unless defined?(HELP)
+    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP   = 'Show settings which some sort of "automatic" default behavior'
-    NAME   = File.basename(__FILE__, '.rb')
-    PREFIX = %W(show #{NAME})
   end
 end
 
