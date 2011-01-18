@@ -11,11 +11,11 @@ class TestTCPDbgServer < Test::Unit::TestCase
   include Trepanning::TCPPacking
 
   def test_basic
-    server = Trepan::TCPDbgServer.new({ :open => false,
-                                        :port => 1027,
-                                        :host => 'localhost'
-                                      })
-    server.open
+    server = Trepan::TCPDbgServer.new
+    server.open({ :open => false,
+                  :port => 1027,
+                  :host => '127.0.0.1'
+                })
     threads = []
     msgs = %w(one two three)
     Thread.new do
@@ -30,7 +30,7 @@ class TestTCPDbgServer < Test::Unit::TestCase
       end
     end
     threads << Thread.new do 
-      t = TCPSocket.new('localhost', 1027)
+      t = TCPSocket.new('127.0.0.1', 1027)
       msgs.each do |msg|
         begin
           t.puts(pack_msg(msg))
