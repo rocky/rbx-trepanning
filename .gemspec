@@ -22,6 +22,7 @@ FILES = FileList[
   'test/data/**/*.cmd',
   'test/data/**/*.right',
   'test/**/*.rb',
+  'sample/*',
 ]                        
 
 Gem::Specification.new do |spec|
