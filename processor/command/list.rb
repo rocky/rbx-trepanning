@@ -222,6 +222,8 @@ Some examples:
       last = max_line
     end
 
+    old_maxstring = settings[:maxstring]
+    settings[:maxstring] = -1
     begin
       opts = {
         :reload_on_change => @proc.reload_on_change,
@@ -243,6 +245,8 @@ Some examples:
       end
     rescue => e
       errmsg e.to_s if settings[:debugexcept]
+    ensure
+      settings[:maxstring] = old_maxstring
     end
   end
 end

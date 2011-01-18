@@ -4,7 +4,7 @@ class Trepan
   module Util
 
     def safe_repr(str, max, elipsis='... ')
-      if str.is_a?(String) && str.size > max && !str.index("\n")
+      if str.is_a?(String) && max > 0 && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
       else
         str
