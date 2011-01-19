@@ -112,7 +112,10 @@ class Trepan
       # end
       
       if text && !text.strip.empty?
+        old_maxstring = @settings[:maxstring]
+        @settings[:maxstring] = -1
         msg text
+        @settings[:maxstring] = old_maxstring
         @line_no -= 1
       else
         show_bytecode
