@@ -8,7 +8,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
 
   def setup
     @meth = Rubinius::CompiledMethod.of_sender
-    @brkpts = BreakpointMgr.new
+    @brkpts = Trepan::BreakpointMgr.new
     @offset = 0
   end
 

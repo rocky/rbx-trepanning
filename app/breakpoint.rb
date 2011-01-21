@@ -1,3 +1,4 @@
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 class Trepan
   class Breakpoint
 
