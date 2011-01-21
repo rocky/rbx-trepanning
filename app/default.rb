@@ -1,7 +1,5 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # A place for the default settings
-# This could be put elsewhere but it is expected that this will grow
-# get quite large.
 class Trepan
 
   # I am not sure if we need to sets of hashes, but we'll start out
