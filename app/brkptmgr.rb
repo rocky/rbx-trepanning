@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'set'
 require 'rubygems'; require 'require_relative'
 require_relative 'breakpoint'
@@ -115,7 +115,7 @@ if __FILE__ == $0
   # offset = frame.pc_offset
   b2 = Trepanning::Breakpoint.new("<2nd one>", meth, 0, 5, 2)
   brkpts << b2
-  p brkpts.find(b2.meth, b2.ip)
+  p brkpts.find(b2.method, b2.ip)
   p brkpts[2]
   puts '--- 2 ---'
   ## p brkpts.line_breaks(iseq.source_container)

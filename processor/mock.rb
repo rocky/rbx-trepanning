@@ -30,7 +30,7 @@ module MockDebugger
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
-      @settings             = Trepanning::DEFAULT_SETTINGS.merge(settings)
+      @settings             = Trepan::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new]
       @vm_locations         = Rubinius::VM.backtrace(1, true)
       @current_frame        = Trepan::Frame.new(self, 0, @vm_locations[0])

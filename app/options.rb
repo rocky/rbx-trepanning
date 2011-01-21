@@ -29,7 +29,6 @@ require 'optparse'
 class Trepan
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
-  include Trepanning
 
   Trepan::VERSION = '0.0.4.dev' unless defined?(Trepan::VERSION)
   Trepan::PROGRAM = 'trepan' unless defined?(Trepan::PROGRAM)
@@ -40,7 +39,7 @@ class Trepan
 
   def self.copy_default_options
     options = {}
-    Trepanning::DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
       begin 
         options[key] = value.clone
       rescue TypeError
@@ -94,7 +93,7 @@ EOB
       end
       opts.on("-h", "--host NAME", String, 
               "Host or IP used in TCP connections for --server or --client. " + 
-              "Default is #{Trepan::DEFAULT_SETTINGS[:host].inspect}.") do 
+              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
         |name_or_ip| 
         options[:host] = name_or_ip
       end
@@ -151,6 +150,5 @@ if __FILE__ == $0
   puts '=' * 10
   p options
   puts '=' * 10
-  include Trepanning
-  p Trepanning::DEFAULT_CMDLINE_SETTINGS
+  p Trepan::DEFAULT_CMDLINE_SETTINGS
 end

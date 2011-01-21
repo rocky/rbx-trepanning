@@ -11,7 +11,7 @@ load 'tmpdir.rb'
 class TestAppOptions < Test::Unit::TestCase
 
   def setup
-    @options = Trepanning::DEFAULT_CMDLINE_SETTINGS.clone
+    @options = Trepan::DEFAULT_CMDLINE_SETTINGS.clone
     @stderr  = StringIO.new
     @stdout  = StringIO.new
     @options = Trepan::copy_default_options

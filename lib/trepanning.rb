@@ -47,7 +47,7 @@ class Trepan
   #
   def initialize(settings={})
     @breakpoint = nil
-    @settings = Trepanning::DEFAULT_SETTINGS.merge(settings)
+    @settings = DEFAULT_SETTINGS.merge(settings)
     @input  = @settings[:input] || STDIN
     @output = @settings[:output] || STDOUT
 
@@ -231,8 +231,8 @@ class Trepan
 
   def add_startup_files()
     seen = {}
-    cwd_initfile = File.join('.', Trepanning::CMD_INITFILE_BASE)
-    [cwd_initfile, Trepanning::CMD_INITFILE].each do |initfile|
+    cwd_initfile = File.join('.', Trepan::CMD_INITFILE_BASE)
+    [cwd_initfile, Trepan::CMD_INITFILE].each do |initfile|
       full_initfile_path = File.expand_path(initfile)
       next if seen[full_initfile_path]
       add_command_file(full_initfile_path) if File.readable?(full_initfile_path)

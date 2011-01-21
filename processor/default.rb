@@ -37,7 +37,7 @@ class Trepan
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
-      :user_cmd_dir  => File.join(Trepanning::HOME_DIR, 'tepanx', 'command'),
+      :user_cmd_dir  => File.join(Trepan::HOME_DIR, 'tepanx', 'command'),
                                    # User command directory
       :terminal        => false,   # Use terminal highlight? 
 
@@ -45,7 +45,7 @@ class Trepan
       :show_ip         => false,
       :show_bytecode   => false,
 
-    } unless defined?(DEFAULT_SETTINGS)
+    } unless defined?(CmdProcessor::DEFAULT_SETTINGS)
   end
 end
 

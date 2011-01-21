@@ -30,7 +30,7 @@ sets the default value to 'no'.
 Option -q will turn off any debugger output that normally occurs in the
 running of the program.
 
-Note that the command startup file #{Trepanning::CMD_INITFILE_BASE} is read automatically
+Note that the command startup file #{Trepan::CMD_INITFILE_BASE} is read automatically
 via a #{NAME} command the debugger is started.
 
 An error in any command terminates execution of the command file
