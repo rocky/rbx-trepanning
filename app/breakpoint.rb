@@ -1,4 +1,4 @@
-module Trepanning
+class Trepan
   class Breakpoint
 
     attr_accessor :condition # If non-nil, this is a String to be eval'd
@@ -211,7 +211,7 @@ end
 
 if __FILE__ == $0
   method = Rubinius::CompiledMethod.of_sender
-  bp = Trepanning::Breakpoint.new '<start>', method, 1, 2, 0
+  bp = Trepan::Breakpoint.new '<start>', method, 1, 2, 0
   %w(describe location icon_char hits temp? enabled? condition).each do |field|
     puts "#{field}: #{bp.send(field.to_sym)}"
   end

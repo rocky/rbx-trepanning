@@ -40,12 +40,12 @@ See also 'continue', 'step', and 'next' commands.
     
     if next_ip >= exec.iseq.size
       @proc.step_to_parent
-    elsif Trepanning::ISeq.goto_op?(exec, @proc.frame.next_ip)
+    elsif ISeq.goto_op?(exec, @proc.frame.next_ip)
       @proc.set_breakpoints_between(exec, @proc.frame.next_ip, next_ip)
     else
       line = exec.line_from_ip(next_ip)
       
-      bp = Trepanning::Breakpoint.for_ip(exec, next_ip, :event => 'vm-insn')
+      bp = Breakpoint.for_ip(exec, next_ip, :event => 'vm-insn')
       bp.scoped!(@proc.frame.scope)
       bp.activate
     end

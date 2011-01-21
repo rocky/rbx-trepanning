@@ -48,8 +48,7 @@ class Trepan
       meth = f.method
       ip   = f.ip
 
-      bp = Trepanning::Breakpoint.for_ip(meth, ip, 
-                                         {:event => event, :temp => true})
+      bp = Breakpoint.for_ip(meth, ip, {:event => event, :temp => true})
       bp.scoped!(parent_frame.scope)
       bp.activate
       
@@ -77,7 +76,7 @@ class Trepan
 
       msg "temp ips: #{ips.inspect}" if settings[:debugstep]
       ips.each do |ip|
-        bp = Trepanning::Breakpoint.for_ip(meth, ip, opts)
+        bp = Breakpoint.for_ip(meth, ip, opts)
         bp.scoped!(@frame.scope)
         bp.activate
         bps << bp
@@ -96,17 +95,17 @@ class Trepan
         return []
       end
       
-      bp1 = Trepanning::Breakpoint.for_ip(meth, ips[0], 
-                                          { :event => 'return',
-                                            :temp  => true})
+      bp1 = Breakpoint.for_ip(meth, ips[0], 
+                              { :event => 'return',
+                                :temp  => true})
       bp1.scoped!(@frame.scope)
       bp1.activate
       result = [bp1]
       
       1.upto(ips.size-1) do |i| 
-        bp2 = Trepanning::Breakpoint.for_ip(meth, ips[i], 
-                                            { :event => 'return',
-                                              :temp  => true})
+        bp2 = Breakpoint.for_ip(meth, ips[i], 
+                                { :event => 'return',
+                                  :temp  => true})
         bp2.scoped!(@frame.scope)
         bp1.related_with(bp2)
         bp2.activate

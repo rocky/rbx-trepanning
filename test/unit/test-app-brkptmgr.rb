@@ -23,7 +23,7 @@ class TestLibAppBrkptMgr < Test::Unit::TestCase
     assert_equal(0, @brkpts.size)
 
     # Try adding via << rather than .add
-    b2 = @brkpts << Trepanning::Breakpoint.new(@meth, 5, nil, :temp => true)
+    b2 = @brkpts << Trepan::Breakpoint.new(@meth, 5, nil, :temp => true)
 
     assert_equal(nil, @brkpts.find(@meth, 6))
     @brkpts.reset
