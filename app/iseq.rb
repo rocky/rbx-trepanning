@@ -1,15 +1,17 @@
 # Module for working with instruction sequences.
 class Trepan
-  class ISeq
+  module ISeq
     OP_GOTO = Rubinius::InstructionSet.opcodes_map[:goto]
     OP_GOTO_IF_TRUE  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
     OP_GOTO_IF_FALSE = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
     OP_RET           = Rubinius::InstructionSet.opcodes_map[:ret]
     OP_YIELD_STACK   = Rubinius::InstructionSet.opcodes_map[:yield_stack]
 
+    module_function
+
     # Returns prefix string to indicate whether a breakpoint has been
     # set at this ip and or whether we are currently stopped at this ip.
-    def self.disasm_prefix(ip, frame_ip, cm)
+    def disasm_prefix(ip, frame_ip, cm)
       prefix = cm.breakpoint?(ip) ? 'B' : ' ' 
       prefix += 
         if ip == frame_ip
@@ -19,11 +21,11 @@ class Trepan
         end
     end
 
-    def self.goto_op?(cm, ip)
+    def goto_op?(cm, ip)
       [OP_GOTO, OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE].member?(cm.iseq[ip])
     end
 
-    def self.goto_between(cm, start, fin)
+    def goto_between(cm, start, fin)
       
       iseq = cm.iseq
       
@@ -51,7 +53,7 @@ class Trepan
       end
     end
 
-    def self.next_interesting(cm, ip)
+    def next_interesting(cm, ip)
       pop = Rubinius::InstructionSet.opcodes_map[:pop]
       
       if cm.iseq[ip] == pop
@@ -61,7 +63,7 @@ class Trepan
       return ip
     end
     
-    def self.yield_or_return_between(cm, start, fin)
+    def yield_or_return_between(cm, start, fin)
       iseq = cm.iseq
       ips = []
       i = start
