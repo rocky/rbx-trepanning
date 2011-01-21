@@ -26,20 +26,21 @@
 #      Show invocation help and exit.
 
 require 'optparse'
-module Trepanning
+class Trepan
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
+  include Trepanning
 
-  Trepanning::VERSION = '0.0.4.dev' unless defined?(Trepanning::VERSION)
-  Trepanning::PROGRAM = 'trepan' unless defined?(Trepanning::PROGRAM)
+  Trepan::VERSION = '0.0.4.dev' unless defined?(Trepan::VERSION)
+  Trepan::PROGRAM = 'trepan' unless defined?(Trepan::PROGRAM)
 
-  def show_version
+  def self.show_version
     "#{PROGRAM} version #{VERSION}"
   end
 
-  def copy_default_options
+  def self.copy_default_options
     options = {}
-    DEFAULT_CMDLINE_SETTINGS.each do |key, value|
+    Trepanning::DEFAULT_CMDLINE_SETTINGS.each do |key, value|
       begin 
         options[key] = value.clone
       rescue TypeError
@@ -49,7 +50,7 @@ module Trepanning
     options
   end
 
-  def setup_options(options, stdout=$stdout, stderr=$stderr)
+  def self.setup_options(options, stdout=$stdout, stderr=$stderr)
     OptionParser.new do |opts|
       opts.banner = <<EOB
 #{show_version}
@@ -93,7 +94,7 @@ EOB
       end
       opts.on("-h", "--host NAME", String, 
               "Host or IP used in TCP connections for --server or --client. " + 
-              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
+              "Default is #{Trepan::DEFAULT_SETTINGS[:host].inspect}.") do 
         |name_or_ip| 
         options[:host] = name_or_ip
       end
@@ -136,12 +137,11 @@ EOB
 end
 
 if __FILE__ == $0
-  include Trepanning
   opts = {}
   options ={}
   [%w(--help), %w(--version)].each do |o|
-    options = copy_default_options
-    opts    = setup_options(options)
+    options = Trepan::copy_default_options
+    opts    = Trepan::setup_options(options)
     rest    = opts.parse o
     p options
     puts '=' * 10
@@ -151,5 +151,6 @@ if __FILE__ == $0
   puts '=' * 10
   p options
   puts '=' * 10
+  include Trepanning
   p Trepanning::DEFAULT_CMDLINE_SETTINGS
 end
