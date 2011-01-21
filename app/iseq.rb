@@ -1,6 +1,6 @@
 # Module for working with instruction sequences.
-module Trepanning
-  module ISeq
+class Trepan
+  class ISeq
     OP_GOTO = Rubinius::InstructionSet.opcodes_map[:goto]
     OP_GOTO_IF_TRUE  = Rubinius::InstructionSet.opcodes_map[:goto_if_true]
     OP_GOTO_IF_FALSE = Rubinius::InstructionSet.opcodes_map[:goto_if_false]
@@ -9,7 +9,7 @@ module Trepanning
 
     # Returns prefix string to indicate whether a breakpoint has been
     # set at this ip and or whether we are currently stopped at this ip.
-    def disasm_prefix(ip, frame_ip, cm)
+    def self.disasm_prefix(ip, frame_ip, cm)
       prefix = cm.breakpoint?(ip) ? 'B' : ' ' 
       prefix += 
         if ip == frame_ip
@@ -18,14 +18,12 @@ module Trepanning
           '   '
         end
     end
-    module_function :disasm_prefix
 
-    def goto_op?(cm, ip)
+    def self.goto_op?(cm, ip)
       [OP_GOTO, OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE].member?(cm.iseq[ip])
     end
-    module_function :goto_op?
 
-    def goto_between(cm, start, fin)
+    def self.goto_between(cm, start, fin)
       
       iseq = cm.iseq
       
@@ -53,7 +51,7 @@ module Trepanning
       end
     end
 
-    def next_interesting(cm, ip)
+    def self.next_interesting(cm, ip)
       pop = Rubinius::InstructionSet.opcodes_map[:pop]
       
       if cm.iseq[ip] == pop
@@ -63,7 +61,7 @@ module Trepanning
       return ip
     end
     
-    def yield_or_return_between(cm, start, fin)
+    def self.yield_or_return_between(cm, start, fin)
       iseq = cm.iseq
       ips = []
       i = start
@@ -81,15 +79,29 @@ module Trepanning
   end
 end
 if __FILE__ == $0
-  include Trepanning::ISeq
   vm_locations = Rubinius::VM.backtrace(0, true)
   call_loc = vm_locations[1]
   cm = call_loc.method
   puts cm.decode
-  ips = yield_or_return_between(cm, cm.lines.first, cm.lines.last)
-  puts "return: #{ips.inspect}"
-  ips = goto_between(cm, cm.lines.first, cm.lines.last)
-  puts "goto: #{ips.inspect}"
-  puts Trepanning::ISeq::disasm_prefix(ips[0], ips[0], cm)
-  p Trepanning::ISeq::disasm_prefix(10, ips[0], cm)
+  ips = nil
+  puts '-' * 20
+  0.upto((cm.lines.last+1)/2) do |i|
+    ip = cm.lines[i*2]
+    unless -1 == ip
+      ips = Trepan::ISeq.yield_or_return_between(cm, ip, cm.lines.last) 
+      puts "return: #{ips.inspect}"
+      break 
+    end
+  end
+  puts '-' * 20
+  0.upto((cm.lines.last+1)/2) do |i|
+    ip = cm.lines[i*2]
+    unless -1 == ip
+      ips = Trepan::ISeq.goto_between(cm, ip, cm.lines.last)
+      puts "goto: #{ips.inspect}"
+      break 
+    end
+  end
+  puts Trepan::ISeq.disasm_prefix(ips[0], ips[0], cm)
+  p Trepan::ISeq.disasm_prefix(10, ips[0], cm)
 end

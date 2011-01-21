@@ -2,7 +2,6 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
 class Trepan
   class CmdProcessor
-    include Trepanning::ISeq
     
     # It might be interesting to allow stepping within a parent frame
     def step_over_by(step, frame=@top_frame)
@@ -61,7 +60,7 @@ class Trepan
     # We also set a temporary breakpoint in the caller.
     def set_breakpoints_between(meth, start_ip, fin_ip)
       opts = {:event => 'line', :temp  => true}
-      ips = goto_between(meth, start_ip, fin_ip)
+      ips = ISeq.goto_between(meth, start_ip, fin_ip)
       bps = []
       
       if ips.kind_of? Fixnum
@@ -91,7 +90,7 @@ class Trepan
     end
     
     def set_breakpoints_on_return_between(meth, start_ip, fin_ip)
-      ips = yield_or_return_between(meth, start_ip, fin_ip)
+      ips = ISeq::yield_or_return_between(meth, start_ip, fin_ip)
       if ips.empty?
         errmsg '"ret" or "yield_stack" opcode not found'
         return []
