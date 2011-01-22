@@ -54,7 +54,7 @@ module CodeRay
                 tokens << [@match[1], :space]
                 opcode = @match[2]
                 tokens << [opcode, :reserved]
-                if %w(push_literal create_block).member?(opcode)
+                if %w(push_literal create_block set_literal).member?(opcode)
                   :expect_literal
                 else
                   :expect_operand
@@ -70,13 +70,23 @@ module CodeRay
               tokens << [match, :space] if match
             end
             if match = scan(/^#<.+>/)
-              tokens << [match, :string]
+              tokens << [match, :content]
             elsif scan(/^(\d+)/)
               tokens << [@match[0], :integer]
             elsif scan(/^([:][^: ,\n]+)/)
               tokens << [@match[0], :symbol]
-            elsif scan(/^"[^"]*"/)
-              tokens << [@match[0], :string]
+            elsif match = scan(/^"[^"]*"/)
+              string = match.dup
+              while  "\\" == match[-2..-2]
+                match = scan(/^.*"/)
+                break unless match 
+                string << match 
+              end
+              tokens << [string, :string]
+            elsif match = scan(/nil|true|false/)
+              tokens << [match, :pre_constant]
+            elsif match = scan(/\/.*\//)
+              tokens << [match, :entity]
             else
               match = scan(/^.*$/)              
               tokens << [match, :error] unless match.empty?
@@ -96,7 +106,13 @@ module CodeRay
                 tokens << [@match[0], :symbol]
                 :expect_another_operand
               elsif scan(/^"[^"]*"/)
-                tokens << [@match[0], :string]
+                string = match.dup
+                while  "\\" == match[-2..-2]
+                  match = scan(/^.*"/)
+                  break unless match 
+                  string << match 
+                end
+                tokens << [string, :string]
                 :expect_another_operand
               else
                 :expect_opt_comment
@@ -142,6 +158,7 @@ string='
      0000:  passed_arg                 1    # line: 679
      0002:  goto_if_true               8
      0004:  push_false                 
+     0080:  push_literal               "\n     0003:  push_literal               #<Rubinius::CompiledMethod gcd file=/x>\n     0028:  create_block               #<Rubinius::CompiledMethod __block__ file=/y>\n     0007:  send_stack                 :method_visibility, 0\n     0046:  push_literal               \"    # line: 147
 '  
   llvm_scanner = CodeRay.scanner :llvm
   tokens = llvm_scanner.tokenize(string)
