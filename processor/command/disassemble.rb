@@ -43,7 +43,7 @@ Examples:
           false
         end
           
-      prefix = Trepanning::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
+      prefix = Trepan::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
       str = "#{prefix} #{insn}"
       if show_line
         str += 
