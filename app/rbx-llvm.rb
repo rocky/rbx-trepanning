@@ -13,7 +13,28 @@ module CodeRay
       register_for :llvm
       file_extension 'llvm'
 
-      def scan_tokens tokens, options
+      def string_parse(tokens)
+        if match = scan(/^"[^"]*"/)
+          string = match.dup
+          while  "\\" == match[-2..-2]
+            match = scan(/^.*"/)
+            break unless match 
+            string << match 
+          end
+          tokens << [string, :string]
+          true
+        else
+          false
+        end
+      end
+
+      def space_parse(tokens)
+        if match = scan(/^[ \t]*/)
+          tokens << [match, :space] if match
+        end
+      end
+
+      def scan_tokens(tokens, options)
         
         state = :initial
         number_expected = true
@@ -26,7 +47,6 @@ module CodeRay
           case state
 
           when :initial
-
             if match = scan(/^\s*/)
               tokens << [match, :space]  unless match.empty?
             end
@@ -66,23 +86,15 @@ module CodeRay
               end
 
           when :expect_literal
-            if match = scan(/^[ \t]*/)
-              tokens << [match, :space] if match
-            end
+            space_parse(tokens)
             if match = scan(/^#<.+>/)
               tokens << [match, :content]
             elsif scan(/^(\d+)/)
               tokens << [@match[0], :integer]
             elsif scan(/^([:][^: ,\n]+)/)
               tokens << [@match[0], :symbol]
-            elsif match = scan(/^"[^"]*"/)
-              string = match.dup
-              while  "\\" == match[-2..-2]
-                match = scan(/^.*"/)
-                break unless match 
-                string << match 
-              end
-              tokens << [string, :string]
+            elsif string_parse(tokens)
+              # 
             elsif match = scan(/nil|true|false/)
               tokens << [match, :pre_constant]
             elsif match = scan(/\/.*\//)
@@ -94,10 +106,7 @@ module CodeRay
             state = :expect_opt_comment
             
           when :expect_operand
-            # debugger
-            if match = scan(/^[ \t]*/)
-              tokens << [match, :space] if match
-            end
+            space_parse(tokens)
             state = 
               if scan(/^(\d+)/)
                 tokens << [@match[0], :integer]
@@ -105,14 +114,7 @@ module CodeRay
               elsif scan(/^([:][^: ,\n]+)/)
                 tokens << [@match[0], :symbol]
                 :expect_another_operand
-              elsif scan(/^"[^"]*"/)
-                string = match.dup
-                while  "\\" == match[-2..-2]
-                  match = scan(/^.*"/)
-                  break unless match 
-                  string << match 
-                end
-                tokens << [string, :string]
+              elsif string_parse(tokens)
                 :expect_another_operand
               else
                 :expect_opt_comment
@@ -127,12 +129,7 @@ module CodeRay
                 :expect_opt_comment
               end
           when :expect_opt_comment
-            if match = scan(/^[ \t]*/)
-              tokens << [match, :space] unless match.empty?
-            end
-            if match = scan(/^$/)
-              tokens << [match, :space]  unless match.empty?
-            end
+            space_parse(tokens)
             if match = scan(/^#.*$/)
               tokens << [match, :comment] 
             else

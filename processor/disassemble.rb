@@ -32,7 +32,7 @@ class Trepan
 
       # FIXME DRY with command/disassemble.rb
       if @settings[:terminal]
-        require_relative '../app/llvm'
+        require_relative '../app/rbx-llvm'
         @llvm_highlighter = CodeRay::Duo[:llvm, :term]
         # llvm_scanner = CodeRay.scanner :llvm
         # p llvm_scanner.tokenize(disasm)
