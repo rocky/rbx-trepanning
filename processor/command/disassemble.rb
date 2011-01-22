@@ -32,6 +32,8 @@ Examples:
     lines = cm.lines
     next_line_ip = 0
     next_i = 1
+    prefixes = []
+    disasm = ''
     cm.decode.each do |insn|
       show_line = 
         if insn.ip >= next_line_ip
@@ -43,8 +45,8 @@ Examples:
           false
         end
           
-      prefix = Trepan::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
-      str = "#{prefix} #{insn}"
+      prefixes << Trepan::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
+      str = insn.to_s
       if show_line
         str += 
           if insn.instance_variable_get('@comment')
@@ -56,7 +58,26 @@ Examples:
           end
         str += "# line: #{line_no}"  
       end
-      msg str
+      disasm += "#{str}\n"
+    end
+
+    # FIXME DRY with ../disassemble.rb
+    if @proc.settings[:terminal]
+      require_relative '../../app/llvm'
+      @llvm_highlighter = CodeRay::Duo[:llvm, :term]
+      # llvm_scanner = CodeRay.scanner :llvm
+      # p llvm_scanner.tokenize(disasm)
+      disasm = @llvm_highlighter.encode(disasm)
+    end
+      
+    old_maxstring = settings[:maxstring]
+    settings[:maxstring] = -1
+    begin
+      disasm.split("\n").each_with_index do |inst, i|
+        msg "#{prefixes[i]} #{inst}"
+      end
+    ensure
+      settings[:maxstring] = old_maxstring
     end
   end
 

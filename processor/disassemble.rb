@@ -1,3 +1,4 @@
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
 
@@ -21,11 +22,30 @@ class Trepan
 
       ip = start
 
-      partial.each do |ins|
+      prefixes = []
+      disasm = partial.inject('') do |result, ins|
         inst = Rubinius::CompiledMethod::Instruction.new(ins, meth, ip)
-        prefix = ISeq::disasm_prefix(ip, frame.next_ip, meth)
-        msg "#{prefix} #{inst}"
+        prefixes << ISeq::disasm_prefix(ip, frame.next_ip, meth)
         ip += ins.size
+        result += "#{inst}\n"
+      end
+
+      # FIXME DRY with command/disassemble.rb
+      if @settings[:terminal]
+        require_relative '../app/llvm'
+        @llvm_highlighter = CodeRay::Duo[:llvm, :term]
+        # llvm_scanner = CodeRay.scanner :llvm
+        # p llvm_scanner.tokenize(disasm)
+        disasm = @llvm_highlighter.encode(disasm)
+      end
+      old_maxstring = settings[:maxstring]
+      settings[:maxstring] = -1
+      begin
+        disasm.split("\n").each_with_index do |inst, i|
+          msg "#{prefixes[i]} #{inst}"
+        end
+      ensure
+        settings[:maxstring] = old_maxstring
       end
     end
   end

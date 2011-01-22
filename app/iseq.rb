@@ -40,8 +40,16 @@ class Trepan
         when OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE
           return [next_interesting(cm, iseq[i + 1]),
                   next_interesting(cm, i + 2)] # target and next ip
+        when nil
+          return -1
         else
-          op = Rubinius::InstructionSet[op]
+          # Rubinius is getting an error here sometimes. Need to figure
+          # out what's wrong.
+          begin
+            op = Rubinius::InstructionSet[op]
+          rescue TypeError
+            return -1
+          end
           i += (op.arg_count + 1)
         end
       end
