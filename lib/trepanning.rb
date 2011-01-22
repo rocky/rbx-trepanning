@@ -196,9 +196,7 @@ class Trepan
     method = Rubinius::CompiledMethod.of_sender
 
     event = settings[:immediate] ? 'debugger-call' : 'start'
-    bp = Trepanning::Breakpoint.new('<start>', method, 0, 0, 0, 
-                                    {:event => event}
-                                     )
+    bp = Breakpoint.new('<start>', method, 0, 0, 0, {:event => event} )
     channel = Rubinius::Channel.new
 
     @local_channel.send Rubinius::Tuple[bp, Thread.current, channel, locs]

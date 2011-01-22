@@ -2,100 +2,102 @@
 require 'set'
 require 'rubygems'; require 'require_relative'
 require_relative 'breakpoint'
-class BreakpointMgr
+class Trepan
+  class BreakpointMgr
 
-  attr_reader :list
-  attr_reader :set
+    attr_reader :list
+    attr_reader :set
 
-  def initialize
-    @list = []
-    @set = Set.new
-  end
-
-  def <<(brkpt)
-    @list << brkpt
-    @set.add(set_key(brkpt))
-  end
-
-  def [](index)
-    raise TypeError, 
-    "index #{index} should be a Fixnum, is #{index.class}" unless
-      index.is_a?(Fixnum)
-    @list.detect {|bp| bp.id == index }
-  end
-
-  alias detect []
-
-  def delete(index)
-    bp = detect(index)
-    if bp
-      delete_by_brkpt(bp)
-      return bp
-    else
-      return nil
+    def initialize
+      @list = []
+      @set = Set.new
     end
-  end
 
-  def delete_by_brkpt(delete_bp)
-    @list = @list.reject{|candidate| candidate == delete_bp}
-    @set  = Set.new(@list.map{|bp| set_key(bp)})
-    delete_bp.remove! unless @set.member?(set_key(delete_bp))
-    return delete_bp
-  end
+    def <<(brkpt)
+      @list << brkpt
+      @set.add(set_key(brkpt))
+    end
 
-  def add(*args)
-    brkpt = Trepanning::Breakpoint.new(*args)
-    @list << brkpt
-    @set.add(set_key(brkpt))
-    return brkpt
-  end
+    def [](index)
+      raise TypeError, 
+      "index #{index} should be a Fixnum, is #{index.class}" unless
+        index.is_a?(Fixnum)
+      @list.detect {|bp| bp.id == index }
+    end
 
-  def empty?
-    @list.empty?
-  end
+    alias detect []
 
-  # def line_breaks(container)
-  #   result = {}
-  #   @list.each do |bp|
-  #     if bp.source_container == container
-  #       bp.source_location.each do |line|
-  #         result[line] = bp 
-  #       end
-  #     end
-  #   end
-  #   result
-  # end
-
-  def find(meth, ip)
-    @list.detect do |bp| 
-      if bp.enabled? && bp.ip == ip
-        begin
-          return bp ## if bp.condition?(bind)
-        rescue
-        end 
+    def delete(index)
+      bp = detect(index)
+      if bp
+        delete_by_brkpt(bp)
+        return bp
+      else
+        return nil
       end
     end
-  end
 
-  def max
-    @list.map{|bp| bp.id}.max || 0
-  end
+    def delete_by_brkpt(delete_bp)
+      @list = @list.reject{|candidate| candidate == delete_bp}
+      @set  = Set.new(@list.map{|bp| set_key(bp)})
+      delete_bp.remove! unless @set.member?(set_key(delete_bp))
+      return delete_bp
+    end
 
-  # Key used in @set to list unique instruction-sequence offsets.
-  def set_key(bp)
-    [bp.method, bp.ip]
-  end
+    def add(*args)
+      brkpt = Trepan::Breakpoint.new(*args)
+      @list << brkpt
+      @set.add(set_key(brkpt))
+      return brkpt
+    end
 
-  def size
-    @list.size
-  end
+    def empty?
+      @list.empty?
+    end
 
-  def reset
-    @list.each{|bp| bp.remove!}
-    @list = []
-    @set  = Set.new
-  end
+    # def line_breaks(container)
+    #   result = {}
+    #   @list.each do |bp|
+    #     if bp.source_container == container
+    #       bp.source_location.each do |line|
+    #         result[line] = bp 
+    #       end
+    #     end
+    #   end
+    #   result
+    # end
 
+    def find(meth, ip)
+      @list.detect do |bp| 
+        if bp.enabled? && bp.ip == ip
+          begin
+            return bp ## if bp.condition?(bind)
+          rescue
+          end 
+        end
+      end
+    end
+
+    def max
+      @list.map{|bp| bp.id}.max || 0
+    end
+
+    # Key used in @set to list unique instruction-sequence offsets.
+    def set_key(bp)
+      [bp.method, bp.ip]
+    end
+
+    def size
+      @list.size
+    end
+
+    def reset
+      @list.each{|bp| bp.remove!}
+      @list = []
+      @set  = Set.new
+    end
+
+  end
 end
 if __FILE__ == $0
   def bp_status(brkpts, i)
@@ -108,12 +110,12 @@ if __FILE__ == $0
 
   meth = Rubinius::CompiledMethod.of_sender
 
-  brkpts = BreakpointMgr.new
+  brkpts = Trepan::BreakpointMgr.new
   brkpts.add("<start>", meth, 0, 0, 1)
   p brkpts[2]
   bp_status(brkpts, 1)
   # offset = frame.pc_offset
-  b2 = Trepanning::Breakpoint.new("<2nd one>", meth, 0, 5, 2)
+  b2 = Trepan::Breakpoint.new("<2nd one>", meth, 0, 5, 2)
   brkpts << b2
   p brkpts.find(b2.method, b2.ip)
   p brkpts[2]
@@ -125,10 +127,10 @@ if __FILE__ == $0
 
   # Two of the same breakpoints but delete 1 and see that the
   # other still stays
-  b2 = Trepanning::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
+  b2 = Trepan::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b2
   bp_status(brkpts, 4)
-  b3 = Trepanning::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
+  b3 = Trepan::Breakpoint.new("<dup brkpt>", meth, 0, 0, 0)
   brkpts << b3
   bp_status(brkpts, 5)
   brkpts.delete_by_brkpt(b2)
