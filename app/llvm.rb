@@ -52,15 +52,39 @@ module CodeRay
             state = 
               if scan(/(\s+)(\S+)/)
                 tokens << [@match[1], :space]
-                tokens << [@match[2], :reserved]
-                :expect_operand
+                opcode = @match[2]
+                tokens << [opcode, :reserved]
+                if %w(push_literal create_block).member?(opcode)
+                  :expect_literal
+                else
+                  :expect_operand
+                end
               else
                 match = scan(/^(.*)$/)
                 tokens << [match, :error]
                 :initial
               end
 
+          when :expect_literal
+            if match = scan(/^[ \t]*/)
+              tokens << [match, :space] if match
+            end
+            if match = scan(/^#<.+>/)
+              tokens << [match, :string]
+            elsif scan(/^(\d+)/)
+              tokens << [@match[0], :integer]
+            elsif scan(/^([:][^: ,\n]+)/)
+              tokens << [@match[0], :symbol]
+            elsif scan(/^"[^"]*"/)
+              tokens << [@match[0], :string]
+            else
+              match = scan(/^.*$/)              
+              tokens << [match, :error] unless match.empty?
+              end
+            state = :expect_opt_comment
+            
           when :expect_operand
+            # debugger
             if match = scan(/^[ \t]*/)
               tokens << [match, :space] if match
             end
@@ -68,10 +92,10 @@ module CodeRay
               if scan(/^(\d+)/)
                 tokens << [@match[0], :integer]
                 :expect_another_operand
-              elsif scan(/^(:\S+)/)
+              elsif scan(/^([:][^: ,\n]+)/)
                 tokens << [@match[0], :symbol]
                 :expect_another_operand
-              elsif scan(/^"[^"]"/)
+              elsif scan(/^"[^"]*"/)
                 tokens << [@match[0], :string]
                 :expect_another_operand
               else
@@ -81,7 +105,7 @@ module CodeRay
           when :expect_another_operand
             state = 
               if match = scan(/^,/)
-                tokens << [@match[1], :operator]
+                tokens << [@match[0], :operator]
                 :expect_operand
               else
                 :expect_opt_comment
@@ -111,6 +135,10 @@ if __FILE__ == $0
   require 'term/ansicolor'
   ruby_scanner = CodeRay.scanner :llvm
 string='
+     0003:  push_literal               #<Rubinius::CompiledMethod gcd file=/x>
+     0028:  create_block               #<Rubinius::CompiledMethod __block__ file=/y>
+     0007:  send_stack                 :method_visibility, 0
+     0046:  push_literal               "The GCD of %d and %d is %d"
      0000:  passed_arg                 1    # line: 679
      0002:  goto_if_true               8
      0004:  push_false                 
