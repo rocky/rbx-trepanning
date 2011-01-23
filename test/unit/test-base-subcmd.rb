@@ -48,7 +48,7 @@ class TestBaseCommandHelp < Test::Unit::TestCase
                        "Constant #{attr} should be defined in \"#{cmd_obj.name} #{subcmd_obj.class::NAME}\"")
         end
       end
-        
+      
     end
   end
 

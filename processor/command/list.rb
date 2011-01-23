@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # -*- coding: utf-8 -*-
 require 'rubygems'
 require 'require_relative'
@@ -222,12 +222,10 @@ Some examples:
       last = max_line
     end
 
-    old_maxstring = settings[:maxstring]
-    settings[:maxstring] = -1
     begin
       opts = {
         :reload_on_change => @proc.reload_on_change,
-        :output => @proc.settings[:terminal]
+        :output => settings[:terminal]
       }
       first.upto(last).each do |lineno|
         line = LineCache::getline(cached_item, lineno, opts)
@@ -245,8 +243,6 @@ Some examples:
       end
     rescue => e
       errmsg e.to_s if settings[:debugexcept]
-    ensure
-      settings[:maxstring] = old_maxstring
     end
   end
 end
@@ -258,6 +254,7 @@ if __FILE__ == $0
   dbgr, cmd = MockDebugger::setup
   cmd.proc.send('frame_initialize')
   LineCache::cache(__FILE__)
+  require 'trepanning'
   cmd.run([cmd.name])
   cmd.run([cmd.name, __FILE__ + ':10'])
   

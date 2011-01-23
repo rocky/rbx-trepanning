@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 class Trepan::Command::HelpCommand < Trepan::Command
@@ -43,7 +43,7 @@ See also 'examine' and 'whatis'.
 
   # List the command categories and a short description of each.
   def list_categories
-    msg("Classes of commands:")
+    section 'Classes of commands:'
     CATEGORIES.keys.sort.each do |cat|
       msg("%-13s -- %s" % [cat, CATEGORIES[cat]])
     end
@@ -62,7 +62,7 @@ Type "help" followed by command name for full documentation.
     if args.size > 1
       cmd_name = args[1]
       if cmd_name == '*'
-        msg("All command names:")
+        section 'All command names:'
         msg columnize_commands(@proc.commands.keys.sort)
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
@@ -89,7 +89,7 @@ Type "help" followed by command name for full documentation.
         if matches.empty?
           errmsg("No commands found matching /^#{cmd_name}/. Try \"help\".")
         else
-          msg("Command names matching /^#{cmd_name}/:")
+          section "Command names matching /^#{cmd_name}/:"
           msg columnize_commands(matches.sort)
         end
       end
@@ -103,7 +103,7 @@ Type "help" followed by command name for full documentation.
   def show_category(category, args)
       
     if args.size == 1 && args[0] == '*'
-      msg("Commands in class %s:" % category)
+      section "Commands in class %s:" % category
       
       cmds = @proc.commands.keys.select do |cmd_name|
         category == @proc.commands[cmd_name].category
@@ -113,8 +113,8 @@ Type "help" followed by command name for full documentation.
       return columnize_commands(cmds)
     end
         
-    msg("%s." % CATEGORIES[category])
-    msg("List of commands:\n")
+    msg "%s." % CATEGORIES[category]
+    section "List of commands:"
     @proc.commands.keys.sort.each do |name|
       next if category != @proc.commands[name].category
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 require_relative '../eval'
@@ -18,7 +18,7 @@ Print the value of the ARRAY in columns and sorted."
   end
   
   def run(args)
-    array = @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
+    array = @proc.debug_eval(@proc.cmd_argstr, settings[:maxstring])
     # FIXME: should test for enumerable
     if array.is_a?(Array)
       msg columnize_commands(array.sort)

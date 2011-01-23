@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
@@ -16,7 +18,7 @@ next to the inspect output of the value.
   NEED_STACK    = true
   SHORT_HELP    = 'Run code in the current context'
   def run(args)
-    @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
+    @proc.debug_eval(@proc.cmd_argstr, settings[:maxstring])
   end
 end
 

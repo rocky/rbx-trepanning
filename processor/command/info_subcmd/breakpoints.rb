@@ -24,10 +24,6 @@ EOH
   SHORT_HELP   = 'Status of user-settable breakpoints'
   
   def run(args)
-    # FIXME: Originally was 
-    #   section "Breakpoints"
-    # Add section? 
-
     show_all = 
       if args.size > 2
         opts = {
@@ -47,10 +43,11 @@ EOH
       msg('No breakpoints.')
     else
       # There's at least one
+      section "Num  Breakpoint"
       bpmgr.list.each do |bp|
         msg "%3d: %s" % [bp.id, bp.describe]
       end
-      msg('Deferred breakpoints...')
+      section 'Deferred breakpoints...'
       @proc.dbgr.deferred_breakpoints.each_with_index do |bp, i|
         if bp
           msg "%3d: %s" % [i+1, bp.describe]

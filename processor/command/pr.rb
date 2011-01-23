@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 require_relative '../eval'
@@ -25,7 +25,7 @@ See 'set max string' to change the string truncation limit.
   end
   
   def run(args)
-    msg @proc.debug_eval(@proc.cmd_argstr, @proc.settings[:maxstring])
+    msg @proc.debug_eval(@proc.cmd_argstr, settings[:maxstring])
   end
 end
         

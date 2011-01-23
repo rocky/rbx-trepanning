@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 require_relative '../../app/iseq'
@@ -62,7 +64,7 @@ Examples:
     end
 
     # FIXME DRY with ../disassemble.rb
-    if @proc.settings[:terminal]
+    if settings[:terminal]
       require_relative '../../app/rbx-llvm'
       @llvm_highlighter = CodeRay::Duo[:llvm, :term]
       # llvm_scanner = CodeRay.scanner :llvm
@@ -70,14 +72,8 @@ Examples:
       disasm = @llvm_highlighter.encode(disasm)
     end
       
-    old_maxstring = settings[:maxstring]
-    settings[:maxstring] = -1
-    begin
-      disasm.split("\n").each_with_index do |inst, i|
-        msg "#{prefixes[i]} #{inst}"
-      end
-    ensure
-      settings[:maxstring] = old_maxstring
+    disasm.split("\n").each_with_index do |inst, i|
+      msg ("#{prefixes[i]} #{inst}", :unlimited => true)
     end
   end
 
@@ -86,14 +82,12 @@ Examples:
     if 1 == args.size
       @proc.show_bytecode
     elsif 'all' == args[1]
-      # FIXME: first msg is a section command.
-      msg "Bytecode for #{@proc.frame.vm_location.describe}"
+      section "Bytecode for #{@proc.frame.vm_location.describe}"
       disassemble_method(current_method)
     else
       cm = @proc.parse_method(args[1])
       if cm
-        # FIXME: first msg is a section command.
-        msg "Bytecode for method #{args[1]}"
+        section "Bytecode for method #{args[1]}"
         disassemble_method(cm.executable)
       else
         errmsg "Method #{args[1]} not found"

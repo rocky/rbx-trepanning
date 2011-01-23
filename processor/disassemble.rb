@@ -14,8 +14,7 @@ class Trepan
         fin = meth.iseq.size
       end
 
-      # FIXME: Add section instead of "msg"
-      msg "Bytecode between #{start} and #{fin-1} for line #{line}"
+      section "Bytecode between #{start} and #{fin-1} for line #{line}"
 
       iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)
       partial = iseq_decoder.decode_between(start, fin)
@@ -38,14 +37,8 @@ class Trepan
         # p llvm_scanner.tokenize(disasm)
         disasm = @llvm_highlighter.encode(disasm)
       end
-      old_maxstring = settings[:maxstring]
-      settings[:maxstring] = -1
-      begin
-        disasm.split("\n").each_with_index do |inst, i|
-          msg "#{prefixes[i]} #{inst}"
-        end
-      ensure
-        settings[:maxstring] = old_maxstring
+      disasm.split("\n").each_with_index do |inst, i|
+        msg "#{prefixes[i]} #{inst}", :unlimited => true
       end
     end
   end

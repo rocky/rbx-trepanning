@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # Mock setup for commands.
 require 'rubygems'; require 'require_relative'
 
@@ -76,17 +76,20 @@ module MockDebugger
     cmd.proc.frame_setup
     show_special_class_constants(cmd) if show_constants
 
-    def cmd.msg(message)
-      puts message
-    end
-    def cmd.msg_nocr(message)
-      print message
-    end
-    def cmd.errmsg(message)
-      puts "Error: #{message}"
-    end
     def cmd.confirm(prompt, default)
       true
+    end
+    def cmd.errmsg(message, opts={})
+      puts "Error: #{message}"
+    end
+    def cmd.msg(message, opts={})
+      puts message
+    end
+    def cmd.msg_nocr(message, opts={})
+      print message
+    end
+    def cmd.section(message, opts={})
+      puts "Section: #{message}"
     end
 
     return dbgr, cmd

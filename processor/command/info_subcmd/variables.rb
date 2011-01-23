@@ -34,7 +34,7 @@ The optional argument is which variable specifically to show the value of.
       if @proc.dbgr.variables.key?(var)
         msg "var '#{var}' = #{variables[var].inspect}"
       else
-        msg "No variable set named '#{var}'"
+        errmsg "No variable set named '#{var}'"
       end
     end
   end
