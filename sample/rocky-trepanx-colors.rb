@@ -1,9 +1,11 @@
 require 'coderay/encoders/term'
 TERM_TOKEN_COLORS = {
-  :comment => '1;36',    # yellow brownish
+  :comment => '36',    # yellow brownish
   :global_variable => '36',  # yellow brownish 
+  :integer => '34',
+  :label => '4',       # black underline
   :regexp => {
-    :content => '33',  # light turquoise (from read)
+    :content => '33',  # light turquoise (from red)
     :delimiter => '1;29',
     :modifier => '35',
     :function => '1;29'
