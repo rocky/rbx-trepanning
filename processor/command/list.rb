@@ -238,7 +238,7 @@ Some examples:
         s = s + ' ' if s.size < 4 
         s += (@proc.frame && lineno == @proc.frame.vm_location.line) ? '->' : '  '
         # && container == frame.source_container) 
-        msg(s + "\t" + line)
+        msg(s + "\t" + line, {:unlimited => true})
         @proc.line_no = lineno
       end
     rescue => e
