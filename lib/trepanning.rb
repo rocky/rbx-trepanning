@@ -10,7 +10,6 @@ require_relative '../processor/main'
 require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'
-require_relative '../app/display'        # FIXME: remove
 require_relative '../interface/user'     # user interface (includes I/O)
 require_relative '../interface/client'   # client interface (remote debugging)
 require_relative '../interface/server'   # server interface (remote debugging)
@@ -36,8 +35,6 @@ class Trepan
   attr_reader   :settings     # Hash[:symbol] of things you can configure
   attr_reader   :deferred_breakpoints
   attr_reader   :processor
-
-  include Trepan::Display  # FIXME: remove
 
   # Create a new debugger object. The debugger starts up a thread
   # which is where the command line interface executes from. Other
@@ -391,7 +388,7 @@ class Trepan
         end
       end
 
-      display "ip #{ip} = #{op.opcode} #{ins.join(', ')}"
+      puts "=> ip #{ip} = #{op.opcode} #{ins.join(', ')}"
     end
   end
 
