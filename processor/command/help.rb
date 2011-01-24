@@ -50,6 +50,7 @@ See also 'examine' and 'whatis'.
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
 Type "help *" for the list of all commands.
+Type "help all" for the list of all commands.
 Type "help REGEXP" for the list of commands matching /^#{REGEXP}/
 Type "help CLASS *" for the list of all commands in class CLASS.
 Type "help" followed by command name for full documentation.
@@ -64,6 +65,10 @@ Type "help" followed by command name for full documentation.
       if cmd_name == '*'
         section 'All command names:'
         msg columnize_commands(@proc.commands.keys.sort)
+      elsif cmd_name =~ /^all$/i
+        CATEGORIES.sort.each do |category|
+          show_category(category[0], [])
+        end
       elsif CATEGORIES.member?(cmd_name)
         show_category(args[1], args[2..-1])
       elsif @proc.commands.member?(cmd_name) or @proc.aliases.member?(cmd_name)
@@ -108,13 +113,13 @@ Type "help" followed by command name for full documentation.
       cmds = @proc.commands.keys.select do |cmd_name|
         category == @proc.commands[cmd_name].category
       end.sort
-
       width = settings[:maxwidth]
       return columnize_commands(cmds)
     end
         
-    msg "%s." % CATEGORIES[category]
-    section "List of commands:"
+    msg('')
+    section "Command class: %s" % category
+    msg('')
     @proc.commands.keys.sort.each do |name|
       next if category != @proc.commands[name].category
       msg("%-13s -- %s" % [name, @proc.commands[name].short_help])

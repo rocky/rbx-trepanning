@@ -34,7 +34,7 @@ Note that the command startup file #{Trepan::CMD_INITFILE_BASE} is read automati
 via a #{NAME} command the debugger is started.
 
 An error in any command terminates execution of the command file
-unless option -c is given.
+unless option -c or --continue is given.
     HELP
     CATEGORY     = 'support'
     MIN_ARGS     = 1  # Need at least this many
