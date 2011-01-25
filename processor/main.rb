@@ -24,6 +24,7 @@ class Trepan
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
+    attr_reader   :cmd_queue       # queue of commands to run
     ## attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
     attr_accessor   :dbgr          # Trepan instance (via
@@ -86,6 +87,7 @@ class Trepan
     end
 
     def initialize(dbgr, settings={})
+      @cmd_queue       = []
       @dbgr            =  dbgr
       @debug_nest      = 1
       @hidelevels      = {}
@@ -181,7 +183,12 @@ class Trepan
       return true if intf.input_eof? && intf_size == 1
       while intf_size > 1 || !intf.input_eof?
         begin
-          @current_command = read_command().strip
+          @current_command = 
+            if @cmd_queue.empty?
+              read_command.strip
+            else
+              @cmd_queue.shift
+            end
           if @current_command.empty? 
             if @last_command && intf.interactive?
               @current_command = @last_command 
@@ -292,8 +299,13 @@ class Trepan
         end
 
       unless eval_command
-        # Expand macros. FIXME: put in a procedure
+        commands = current_command.split(';;')
+        if commands.size > 1
+          current_command = commands.shift
+          @cmd_queue.unshift *commands
+        end
         args = current_command.split
+        # Expand macros. FIXME: put in a procedure
         while true do
           macro_cmd_name = args[0]
           return false if args.size == 0
