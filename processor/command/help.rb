@@ -4,8 +4,9 @@ require_relative 'base/cmd'
 class Trepan::Command::HelpCommand < Trepan::Command
 
   unless defined?(HELP)
-    HELP = 
-"help [command [subcommand]|expression]
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
+#{NAME} [command [subcommand]|expression]
 
 Without argument, print the list of available debugger commands.
 
@@ -22,8 +23,7 @@ subcommand. For example 'help info line' give help about the
 info line command.
 
 See also 'examine' and 'whatis'.
-"
-
+    HELP
 
     ALIASES       = %w(?)
     CATEGORIES    = {
@@ -36,7 +36,6 @@ See also 'examine' and 'whatis'.
     'stack'       => 'Examining the call stack'
     }
     CATEGORY      = 'support'
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
@@ -134,9 +133,9 @@ if __FILE__ == $0
 
   cmd.run %W(#{cmd.name} help)
   puts '=' * 40
-  cmd.run %w(#{cmd.name} *)
+  cmd.run %W(#{cmd.name} *)
   puts '=' * 40
-  cmd.run %w(#{cmd.name} fdafsasfda)
+  cmd.run %W(#{cmd.name} fdafsasfda)
   puts '=' * 40
   cmd.run [cmd.name]
   puts '=' * 40

@@ -16,17 +16,20 @@ module UnitHelper
     @cmdproc.dbgr  = @dbg
     @cmds     = @cmdproc.commands
 
-    def @cmdproc.msg(message, opts={})
-      @msgs << message
-    end
     def @cmdproc.errmsg(message, opts={})
       @errmsgs << message
     end
     def @cmdproc.errmsgs
       @errmsgs
     end
+    def @cmdproc.msg(message, opts={})
+      @msgs << message
+    end
     def @cmdproc.msgs
       @msgs
+    end
+    def @cmdproc.section(message, opts={})
+      @msgs << message
     end
     reset_cmdproc_vars
   end
