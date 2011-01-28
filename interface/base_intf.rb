@@ -16,7 +16,7 @@ class Trepan
   #  - another interface in another process or computer
   class Interface
 
-    attr_accessor :interactive, :input, :output, :ansi_term
+    attr_accessor :interactive, :input, :output
 
     unless defined?(YES)
       YES = %w(y yes oui si yep ja)
@@ -29,7 +29,6 @@ class Trepan
       @interactive = false 
       @opts        = opts
       @output      = out || STDOUT
-      @ansi_term   = opts[:ansi_term]
     end
 
     # Closes all input and/or output.
