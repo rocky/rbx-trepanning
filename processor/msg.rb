@@ -6,7 +6,7 @@ class Trepan
   class CmdProcessor
     def errmsg(message, opts={})
       message = safe_rep(message) unless opts[:unlimited]
-      if @settings[:terminal] && defined?(Term::ANSIColor)
+      if @settings[:highlight] && defined?(Term::ANSIColor)
         message = 
           Term::ANSIColor.underline + message + Term::ANSIColor.reset 
       end
@@ -33,7 +33,7 @@ class Trepan
 
     def section(message, opts={})
       message = safe_rep(message) unless opts[:unlimited]
-      if @settings[:terminal] && defined?(Term::ANSIColor)
+      if @settings[:highlight] && defined?(Term::ANSIColor)
         message = 
           Term::ANSIColor.bold + message + Term::ANSIColor.reset 
       end

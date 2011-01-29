@@ -36,7 +36,7 @@ class Trepan
       # file names
       opts = {
         :reload_on_change => @reload_on_change,
-        :output => @settings[:terminal]
+        :output => @settings[:highlight]
       }
       line = LineCache::getline(filename, line_number, opts)
       unless line
@@ -56,7 +56,7 @@ class Trepan
     def loc_and_text(loc)
       opts = {
         :reload_on_change => @reload_on_change,
-        :output => @settings[:terminal]
+        :output => @settings[:highlight]
       }
       vm_location = @frame.vm_location
       filename = vm_location.method.active_path

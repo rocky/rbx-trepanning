@@ -74,7 +74,6 @@ class Trepan
         'raise'          => '!!',
         'return'         => '<-',
         'start'          => '>>',
-        'start'          => '>>',
         'switch'         => 'sw',
         'trace-var'      => '$V',
         'unknown'        => '?!',

@@ -64,7 +64,7 @@ Examples:
     end
 
     # FIXME DRY with ../disassemble.rb
-    if settings[:terminal]
+    if settings[:highlight]
       require_relative '../../app/rbx-llvm'
       @llvm_highlighter = CodeRay::Duo[:llvm, :term]
       # llvm_scanner = CodeRay.scanner :llvm
