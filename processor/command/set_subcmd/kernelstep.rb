@@ -7,7 +7,7 @@ class Trepan::Subcommand::SetKernelstep < Trepan::Subcommand::ShowKernelstep
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
-set #{NAME} [on|off]
+#{PREFIX.join(' ')} [on|off]
 
 Allow/disallow stepping into kernel methods.
     EOH

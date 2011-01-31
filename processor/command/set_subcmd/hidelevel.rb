@@ -23,11 +23,11 @@ would be otherwise be, empty then we show all entries, or take NUM to
 be 0.
 
 Examples:
-   set #{NAME}     # Use the default value and hide 'uninteresting' ones
-   set #{NAME} 0   # Show all stack entries, even from loading the program
+   #{PREFIX.join(' ')}     # Use the default value and hide 'uninteresting' ones
+   #{PREFIX.join(' ')} 0   # Show all stack entries, even from loading the program
                      # or initial stack entries the debugger created to 
                      # debug the program.
-   set #{NAME} 1   # Hide only the bottom-most or least-recent stack frame.
+   #{PREFIX.join(' ')} 1   # Hide only the bottom-most or least-recent stack frame.
 
 See also 'backtrace' and 'show hidelevel'. 
 .
