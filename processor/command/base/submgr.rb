@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'cmd'
 require_relative '../../subcmd'
@@ -60,20 +60,18 @@ class Trepan::SubcommandMgr < Trepan::Command
     subcommands = {}
     cmd_names.each do |name|
       next unless Trepan::Subcommand.constants.member?(name)
-      subcmd_class = "Trepan::Subcommand::#{name}.new(self)"
-      cmd = self.instance_eval(subcmd_class)
-      cmd_name = cmd.name
+      klass = Trepan::Subcommand.const_get(name)
+      cmd = klass.send(:new, self)
       @subcmds.add(cmd)
     end
     subcmd_names.each do |name|
       next unless Trepan::SubSubcommand.constants.member?(name)
-      subcmd_class = "Trepan::SubSubcommand::#{name}.new(self, parent)"
+      subcmd_class = Trepan::SubSubcommand.const_get(name)
       begin
-        cmd = self.instance_eval(subcmd_class)
+        cmd = subcmd_class.send(:new, self, parent)
       rescue
         puts "Subcmd #{name} is bad"
       end
-      cmd_name = cmd.name
       @subcmds.add(cmd)
     end
   end

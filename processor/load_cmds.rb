@@ -1,4 +1,5 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net> Part of
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net> Part of
 # Trepan::CmdProcess that loads up debugger commands from builtin and
 # user directories.
 # Sets @commands, @aliases, @macros
@@ -35,17 +36,14 @@ class Trepan
         require rb
       end if File.directory?(cmd_dir)
       # Instantiate each Command class found by the above require(s).
-      Trepan::Command.constants.grep(/.Command$/).each do |command|
-        # Note: there is probably a non-eval way to instantiate the
-        # command, but I don't know it. And eval works.
-        new_cmd = "Trepan::Command::#{command}.new(self)"
-        cmd = self.instance_eval(new_cmd)
+      Trepan::Command.constants.grep(/.Command$/).each do |name|
+        klass = Trepan::Command.const_get(name)
+        cmd = klass.send(:new, self)
 
         # Add to list of commands and aliases.
-        cc = cmd.class
-        cmd_name = cc.const_get(:NAME)
-        if cc.constants.member?('ALIASES')
-          aliases= cc.const_get('ALIASES')
+        cmd_name = klass.const_get(:NAME)
+        if klass.constants.member?('ALIASES')
+          aliases= klass.const_get('ALIASES')
           aliases.each {|a| @aliases[a] = cmd_name}
         end
         @commands[cmd_name] = cmd
