@@ -2,14 +2,18 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
+require_relative '../../app/method'
 require_relative '../../app/iseq'
 
 class Trepan::Command::DisassembleCommand < Trepan::Command
+
+  include Trepanning::Method
+
   NAME         = File.basename(__FILE__, '.rb')
-  ALIASES      = %w(dis)
+  ALIASES       = %w(disas disassem) # Note we (will) have disable
   CATEGORY     = 'data'
   HELP         = <<-HELP
-#{NAME} [all|method]
+#{NAME} [all|method|LINE-NUM]
 
 Disassembles Rubinius VM instructions. By default, the bytecode for the
 current line is disassembled only.
@@ -23,7 +27,7 @@ Examples:
    #{NAME} [1,2].max    # disassemble max method of Array
    #{NAME} Object.is_a? # disassemble Object.is_a?
    #{NAME} is_a?        # same as above (probably)
-
+   #{NAME} 6            # Disassemble line 6 if there is bytecode for it
     HELP
 
   NEED_STACK   = true
@@ -66,7 +70,7 @@ Examples:
     # FIXME DRY with ../disassemble.rb
     if settings[:highlight]
       require_relative '../../app/rbx-llvm'
-      @llvm_highlighter = CodeRay::Duo[:llvm, :term]
+      @llvm_highlighter ||= CodeRay::Duo[:llvm, :term]
       # llvm_scanner = CodeRay.scanner :llvm
       # p llvm_scanner.tokenize(disasm)
       disasm = @llvm_highlighter.encode(disasm)
@@ -90,7 +94,18 @@ Examples:
         section "Bytecode for method #{args[1]}"
         disassemble_method(cm.executable)
       else
-        errmsg "Method #{args[1]} not found"
+        opts = {:msg_on_error => false }
+        line_num = @proc.get_an_int(args[1], opts) 
+        if line_num
+          cm = find_method_with_line(current_method, line_num)
+          if cm
+            @proc.show_bytecode(line_num)
+          else
+            errmsg "Can't find that bytecode for line #{line_num}"
+          end
+        else
+          errmsg "Method #{args[1]} not found"
+        end
       end
     end
   end
