@@ -8,6 +8,7 @@ class Trepan::SubSubcommand::ShowAuto < Trepan::SubSubcommandMgr
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP   = 'Show settings which some sort of "automatic" default behavior'
+    MIN_ABBREV   = 'au'.size
   end
 end
 

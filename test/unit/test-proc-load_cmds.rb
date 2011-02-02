@@ -18,6 +18,15 @@ class TestCmdProcessorLoadCmds < Test::Unit::TestCase
     assert_equal(false, @proc.aliases.empty?)
   end
 
+  def test_complete
+    assert_equal(%w(delete directory disassemble display down),
+                 @proc.complete("d"),
+                 "Failed completion of 'd' commands")
+    assert_equal(['show debug', 'show different'], @proc.complete("sho d"),
+                 "Failed completion of 'sho d' subcommands")
+    $errors = []
+  end
+
   def test_run_cmd
     $errors = []
 
