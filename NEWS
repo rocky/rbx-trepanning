@@ -1,3 +1,10 @@
+Feb 1, 2011  (0.0.4)
+- Add Remote debugging interface. Add options --server --port
+- Add Syntax highlighting on Ruby and Rubinus LLVM listings and locations
+- Section highlighting on some commands; italics on error if term mode
+- Use ;; to allow multiple debugger commands. Document debugger command syntax
+- Numerous bug fixes and code cleanups
+
 Jan 1, 2011  (0.0.3)
 - Add finish+
 - Add "step into" "step over" and "step out" as alternates
