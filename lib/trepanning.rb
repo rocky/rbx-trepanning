@@ -64,9 +64,11 @@ class Trepan
         opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
+        opts[:complete] = @processor.method(:complete)
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
-        [Trepan::UserInterface.new(@input, @output)]
+        opts = {:complete => @processor.method(:complete)}
+        [Trepan::UserInterface.new(@input, @output, opts)]
       end
 
     process_cmdfile_setting(@settings)

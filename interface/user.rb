@@ -16,7 +16,7 @@ require_relative '../io/input'
 # process as the debugged program.
 class Trepan::UserInterface < Trepan::Interface
 
-  FILE_HISTORY = '.trapan_hist' unless defined?(FILE_HISTORY)
+  FILE_HISTORY = '.trepanx_hist' unless defined?(FILE_HISTORY)
 
   def initialize(inp=nil, out=nil, opts={})
     super(inp, out, opts)
@@ -25,6 +25,9 @@ class Trepan::UserInterface < Trepan::Interface
              else
                Trepan::UserInput.open(inp)
              end
+    if Trepan::GNU_readline? && opts[:complete].is_a?(Method)
+      Readline.completion_proc = opts[:complete]
+    end
   end
 
   # Called when a dangerous action is about to be done, to make

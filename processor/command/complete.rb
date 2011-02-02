@@ -1,6 +1,7 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
+require_relative '../load_cmds'
 class Trepan::Command::CompleteCommand < Trepan::Command
 
   unless defined?(HELP)
@@ -19,17 +20,8 @@ NOTE: For now we just handle completion of the first token.
 
   # This method runs the command
   def run(args) # :nodoc
-    if args.size == 2
-      cmd_matches = @proc.commands.keys.select do |cmd|
-        cmd.start_with?(args[1])
-      end
-      alias_matches = @proc.aliases.keys.select do |cmd|
-        cmd.start_with?(args[1]) && !cmd_matches.member?(@proc.aliases[cmd])
-      end
-      (cmd_matches+alias_matches).sort.each do |match|
-        msg match
-      end
-    else # FIXME: handle more complex completions
+    @proc.complete(args[1..-1]).each do |match|
+      msg match
     end
   end
 end
