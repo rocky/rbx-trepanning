@@ -14,6 +14,7 @@ class Trepan
         fin = meth.iseq.size
       end
 
+      start += 1 if start == -1
       section "Bytecode between #{start} and #{fin-1} for line #{line}"
 
       iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)

@@ -13,13 +13,20 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
   ALIASES       = %w(disas disassem) # Note we (will) have disable
   CATEGORY     = 'data'
   HELP         = <<-HELP
-#{NAME} [all|method|LINE-NUM]
+#{NAME} [all]
+#{NAME} [method|LINE-NUM]...
 
 Disassembles Rubinius VM instructions. By default, the bytecode for the
 current line is disassembled only.
 
-If a method name is given, disassemble just that method. If the
-argument is 'all', the entire method is shown as bytecode.
+If a method name is given, disassemble just that method. 
+
+If a line number given, then disassemble just that line number if it
+has bytecode assocated with that line. Note that if a line has
+discontinuous regions we will show just the first region associated
+with that line.
+
+If the argument is 'all', the entire method is shown as bytecode.
 
 Examples:
    #{NAME}              # dissasemble VM for current line
@@ -28,6 +35,7 @@ Examples:
    #{NAME} Object.is_a? # disassemble Object.is_a?
    #{NAME} is_a?        # same as above (probably)
    #{NAME} 6            # Disassemble line 6 if there is bytecode for it
+   #{NAME} 6 is_a?      # The above two commands combined into one
     HELP
 
   NEED_STACK   = true
@@ -89,22 +97,24 @@ Examples:
       section "Bytecode for #{@proc.frame.vm_location.describe}"
       disassemble_method(current_method)
     else
-      cm = @proc.parse_method(args[1])
-      if cm
-        section "Bytecode for method #{args[1]}"
-        disassemble_method(cm.executable)
-      else
-        opts = {:msg_on_error => false }
-        line_num = @proc.get_an_int(args[1], opts) 
-        if line_num
-          cm = find_method_with_line(current_method, line_num)
-          if cm
-            @proc.show_bytecode(line_num)
-          else
-            errmsg "Can't find that bytecode for line #{line_num}"
-          end
+      args[1..-1].each do |arg|
+        cm = @proc.parse_method(arg)
+        if cm
+          section "Bytecode for method #{arg}"
+          disassemble_method(cm.executable)
         else
-          errmsg "Method #{args[1]} not found"
+          opts = {:msg_on_error => false }
+          line_num = @proc.get_an_int(arg, opts) 
+          if line_num
+            cm = find_method_with_line(current_method, line_num)
+            if cm
+              @proc.show_bytecode(line_num)
+            else
+              errmsg "Can't find that bytecode for line #{line_num}"
+            end
+          else
+            errmsg "Method #{arg} not found"
+          end
         end
       end
     end
@@ -128,6 +138,8 @@ if __FILE__ == $0
     # require_relative '../../lib/trepanning'
     # debugger
     cmd.run([cmd.name, 'self.setup'])
+    puts '=' * 40
+    cmd.run([cmd.name, __LINE__.to_s])
   end
   foo(cmd)
 end
