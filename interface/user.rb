@@ -25,7 +25,7 @@ class Trepan::UserInterface < Trepan::Interface
              else
                Trepan::UserInput.open(inp)
              end
-    if Trepan::GNU_readline? && opts[:complete].is_a?(Method)
+    if Trepan::GNU_readline? && opts[:complete]
       Readline.completion_proc = opts[:complete]
     end
   end
@@ -84,4 +84,18 @@ if __FILE__ == $0
       puts "EOF is now: %s" % intf.input.eof?.inspect
     end
   end
+
+  def readline(prompt='')
+    @output.flush
+    line = 
+      if @input.line_edit
+        @input.readline(prompt)
+        # FIXME: Do something with history?
+      else
+        @output.write(prompt) if prompt and prompt.size > 0
+        @input.readline
+      end
+    return line
+  end
+
 end

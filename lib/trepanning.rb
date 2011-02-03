@@ -51,7 +51,15 @@ class Trepan
     cmdproc_settings = {:highlight => @settings[:highlight]}
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
-
+    completion_proc = Proc.new do |str|
+      size = Readline.line_buffer.size
+      completed_ary = @processor.complete(Readline.line_buffer, true)
+      completed_ary.map do |complete|
+        suffix = complete[size..-1] 
+        suffix ? str + suffix : str
+      end
+    end
+        
     @intf = 
       if @settings[:server]
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
@@ -64,10 +72,10 @@ class Trepan
         opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
-        opts[:complete] = @processor.method(:complete)
+        opts[:complete] = completion_proc
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
-        opts = {:complete => @processor.method(:complete)}
+        opts = {:complete => completion_proc}
         [Trepan::UserInterface.new(@input, @output, opts)]
       end
 

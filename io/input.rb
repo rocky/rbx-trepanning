@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Debugger user/command-oriented input possibly attached to IO-style
 # input or GNU Readline.
@@ -18,6 +18,7 @@ class Trepan
       @opts      = DEFAULT_OPTS.merge(opts)
       @input     = inp || STDIN
       @eof       = false
+      @line_edit = @opts[:line_edit]
     end
 
     def closed?; @input.closed? end
@@ -28,18 +29,21 @@ class Trepan
     end
 
     # Read a line of input. EOFError will be raised on EOF.  
-    # 
-    # Note that we don't support prompting first. Instead, arrange
-    # to call Trepan::Output.write() first with the prompt. 
-    def readline
-      # FIXME we don't do command completion.
+    def readline(prompt='')
       raise EOFError if eof?
       begin 
-        line = @opts[:line_edit] ? Readline.readline : @input.gets
-        @eof = !line
-      rescue
+        if @line_edit 
+          line = Readline.readline(prompt)
+        else
+          line = @input.gets
+          end
+      rescue EOFError
+      rescue => e
+        puts $!.backtrace
+        puts "Exception caught #{e.inspect}"
         @eof = true
       end
+      @eof = !line
       raise EOFError if eof?
       return line
     end
@@ -53,7 +57,7 @@ class Trepan
       def open(inp=nil, opts={})
         inp ||= STDIN
         inp = File.new(inp, 'r') if inp.is_a?(String)
-        opts[:line_edit] = 
+        opts[:line_edit] = @line_edit = 
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end
@@ -63,7 +67,19 @@ end
 
 def Trepan::GNU_readline?
   begin
-    require 'readline'
+    if require 'rb-readline'
+      # Returns current line buffer
+      #
+      def Readline.line_buffer
+        RbReadline.rl_line_buffer
+      end
+      
+      # Returns current line buffer
+      #
+      def Readline.line_buffer=(new_value)
+        RbReadline.rl_line_buffer = new_value
+      end
+    end
     return true
   rescue LoadError
     return false

@@ -33,6 +33,7 @@ class Trepan
       @state   = :disconnected
       @port    = nil   # Current port in use
       @host    = nil   # current host in use
+      @line_edit = false
       open(@opts) if @opts[:open]
     end
 
