@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 class Trepan
   module Util
@@ -10,20 +10,6 @@ class Trepan
       else
         str
       end
-    end
-
-    # Return an Array of String found from Array of String
-    # +complete_ary+ which start out with String +prefix+.
-    def complete_token(complete_ary, prefix)
-      complete_ary.select { |cmd| cmd.to_s.start_with?(prefix) }.sort
-    end
-    
-    # Find all starting matches in Hash +aliases+ that start with +prefix+,
-    # but filter out any matches already in +expanded+.
-    def complete_token_filtered(aliases, prefix, expanded)
-      complete_ary = aliases.keys
-      complete_ary.select { |cmd| 
-        cmd.to_s.start_with?(prefix) && ! expanded.member?(aliases[cmd])}.sort
     end
 
     # Find user portion of script skipping over Rubinius code loading.

@@ -5,7 +5,6 @@ require_relative 'subcmd'
 require_relative '../../subcmd'
 require_relative '../../help'
 
-require 'rubygems'; require 'require_relative'
 class Trepan::SubSubcommandMgr < Trepan::Subcommand
 
   include Trepan::Help
@@ -151,7 +150,11 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
   def complete(prefix)
     prior = self.prefix.join('').size
     last_args = @subcmds.list.map{|str| str[prior..-1]}
-    Trepan::Util.complete_token(last_args, prefix)
+    Trepan::Complete.complete_token(last_args, prefix)
+  end
+
+  def complete_token_with_next(prefix)
+    Trepan::Complete.complete_token_with_next(@subcmds.subcmds, prefix)
   end
 
   def run(args)
@@ -187,6 +190,6 @@ if __FILE__ == $0
   # puts '=' * 40
   # FIXME
   # require_relative '../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
+  # Trepan.debugger
   # puts cmd.help(%w(help info registers p.*))
 end

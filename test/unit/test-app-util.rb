@@ -24,13 +24,4 @@ class TestAppUtil < Test::Unit::TestCase
       assert_equal(false, !!find_main_script(locs))
     end
   end
-
-  def test_complete_token
-    ary = %w(a aa ab aac).sort
-    [[[], 'b'], [ary, 'a'], [%w(aa aac), 'aa'], 
-     [ary, ''], [['ab'], 'ab'], [[], 'abc']].each do |result, prefix|
-      assert_equal(result, complete_token(ary, prefix),
-                   "Trouble matching #{ary}.inspect on #{prefix.inspect}")
-    end
-  end
 end

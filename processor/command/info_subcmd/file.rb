@@ -30,6 +30,10 @@ EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NEED_STACK   = false
   end
+
+  completion %w(all brkpts iseq sha1 size stat)
+
+  include Trepanning
   
   # Get file information
   def run(args)
@@ -142,9 +146,9 @@ if __FILE__ == $0
   [%w(info file nothere),
    %w(info file .),
    %w(info file),
-   %w(info file file.rb),
-   %w(info file . all),
-   %w(info file . lines size sha1 sha1)].each do |args|
+   %W(info file #{__FILE__}),
+   %W(info file #{__FILE__} all),
+   %W(info file #{__FILE__} brkpts bad size sha1 sha1)].each do |args|
     subcommand.run(args)
     puts '-' * 40
   end
