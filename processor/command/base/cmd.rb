@@ -104,6 +104,13 @@ class Trepan
       my_const(help_constant_sym)
     end
 
+    def self.completion(ary) 
+      self.send(:define_method, 
+                :complete, 
+                Proc.new {|prefix| 
+                  Trepan::Complete.complete_token(ary, prefix) })
+    end
+
     # From reference debugger
     def run_code(str)
       @proc.dbgr.current_frame.run(str)
