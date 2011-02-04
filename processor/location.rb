@@ -1,6 +1,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require 'rubygems'
 require 'linecache'
+require 'rubygems'; require 'require_relative'
 require_relative 'disassemble'
 require_relative 'msg'
 require_relative 'frame'

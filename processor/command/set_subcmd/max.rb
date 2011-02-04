@@ -19,9 +19,8 @@ if __FILE__ == $0
   cmd_name       = cmd_ary.join('')
   prefix_run = cmd_ary[1..-1]
   cmd.run(prefix_run)
-  # require_relative '../../../lib/trepanning'
-  # # Trepan.debug(:set_restart => true)
-  ## puts cmd.summary_help(cmd.name)
-  ## puts
-  ## puts '-' * 20
+  # require 'trepanning'; debugger
+  %w(s lis foo).each do |prefix|
+    p [prefix, cmd.complete(prefix)]
+  end
 end

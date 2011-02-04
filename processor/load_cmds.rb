@@ -4,6 +4,7 @@
 # Part of Trepan::CmdProcess that loads up debugger commands from
 # builtin and user directories.  
 # Sets @commands, @aliases, @macros
+require 'rubygems'; require 'require_relative'
 require_relative '../app/util'
 class Trepan
   class CmdProcessor
