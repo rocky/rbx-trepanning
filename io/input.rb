@@ -67,9 +67,11 @@ end
 
 def Trepan::GNU_readline?
   begin
-    if require 'rb-readline'
+    # if require '~/.rvm/src/rb-readline/lib/rb-readline.rb'
+    if require 'rb-readline.rb'
+    # if require 'readline'
+      # load '~/.rvm/src/rbx-head/lib/rb-readline/rbreadline.rb'
       # Returns current line buffer
-      #
       def Readline.line_buffer
         RbReadline.rl_line_buffer
       end
