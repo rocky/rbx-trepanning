@@ -3,6 +3,7 @@
 class Trepan
   module Util
 
+    module_function 
     def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && max > 0 && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
@@ -10,8 +11,21 @@ class Trepan
         str
       end
     end
-    module_function :safe_repr
+
+    # Return an Array of String found from Array of String
+    # +complete_ary+ which start out with String +prefix+.
+    def complete_token(complete_ary, prefix)
+      complete_ary.select { |cmd| cmd.to_s.start_with?(prefix) }.sort
+    end
     
+    # Find all starting matches in Hash +aliases+ that start with +prefix+,
+    # but filter out any matches already in +expanded+.
+    def complete_token_filtered(aliases, prefix, expanded)
+      complete_ary = aliases.keys
+      complete_ary.select { |cmd| 
+        cmd.to_s.start_with?(prefix) && ! expanded.member?(aliases[cmd])}.sort
+    end
+
     # Find user portion of script skipping over Rubinius code loading.
     # Unless hidestack is off, we don't show parts of the frame below this.
     def find_main_script(locs)

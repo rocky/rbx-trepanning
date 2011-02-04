@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net> Part of
-# Trepan::CmdProcess that loads up debugger commands from builtin and
-# user directories.
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net> 
+
+# Part of Trepan::CmdProcess that loads up debugger commands from
+# builtin and user directories.  
 # Sets @commands, @aliases, @macros
+require_relative '../app/util'
 class Trepan
   class CmdProcessor
 
@@ -30,11 +32,19 @@ class Trepan
     # 'command' directory. Then a new instance of each class of the 
     # form Trepan::xxCommand is added to @commands and that array
     # is returned.
-
-    def load_debugger_commands(cmd_dir)
-      Dir.glob(File.join(cmd_dir, '*.rb')).each do |rb| 
-        require rb
-      end if File.directory?(cmd_dir)
+    def load_debugger_commands(file_or_dir)
+      if File.directory?(file_or_dir)
+        Dir.glob(File.join(file_or_dir, '*.rb')).each do |rb| 
+          # We use require so that multiple calls have no effect.
+          require rb
+        end
+      elsif File.readable?(file_or_dir)
+        # We use load in case we are reloading. 
+        # 'require' would not be effective here
+        load file_or_dir
+      else
+        return false
+      end
       # Instantiate each Command class found by the above require(s).
       Trepan::Command.constants.grep(/.Command$/).each do |name|
         klass = Trepan::Command.const_get(name)
@@ -72,7 +82,7 @@ class Trepan
         @commands[cmd_name].run(cmd_array)
       end
     end
-    
+
     def complete(arg, replace_leading=true)
       if arg.kind_of?(String)
         args = arg.split
@@ -81,15 +91,12 @@ class Trepan
       else
         return []
       end
-      return [arg] if args.empty?
+      return [] if args.empty?
       if args.size == 1
-        cmd_matches = @commands.keys.select do |cmd|
-          cmd.start_with?(args[0])
-        end
-        alias_matches = @aliases.keys.select do |cmd|
-          cmd.start_with?(args[0]) && !cmd_matches.member?(@aliases[cmd])
-        end
-        (cmd_matches + alias_matches).sort
+        matches = Trepan::Util.complete_token(@commands.keys, args[0])
+        aliases = Trepan::Util.complete_token_filtered(@aliases, args[0], 
+                                                       matches)
+        (matches + aliases).sort
       else 
         first_ary = complete(args[0])
         return first_ary unless 1 == first_ary.size 

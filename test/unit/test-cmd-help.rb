@@ -97,4 +97,8 @@ class TestCommandHelp < Test::Unit::TestCase
     end
   end
 
+  def test_help_complete
+    assert_equal(%w(break breakpoints), @my_cmd.complete('br'))
+    assert_equal(%w(unalias undisplay), @my_cmd.complete('un'))
+  end
 end

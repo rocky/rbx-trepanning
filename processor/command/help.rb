@@ -1,6 +1,7 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
+require_relative '../../app/util'
 class Trepan::Command::HelpCommand < Trepan::Command
 
   unless defined?(HELP)
@@ -39,6 +40,14 @@ See also 'examine' and 'whatis'.
     NEED_STACK    = false
     SHORT_HELP    = 'Print commands or give help for command(s)'
   end
+
+  def complete(prefix)
+    matches = Trepan::Util.complete_token(CATEGORIES.keys + %w(* syntax all) + 
+                                          @proc.commands.keys, prefix)
+    aliases = Trepan::Util.complete_token_filtered(@proc.aliases, prefix, 
+                                                   matches)
+    (matches + aliases).sort
+  end    
 
   # List the command categories and a short description of each.
   def list_categories
@@ -194,4 +203,6 @@ if __FILE__ == $0
   cmd.run %W(#{cmd.name} s.*)
   puts '=' * 40
   cmd.run %W(#{cmd.name} s<>)
+  puts '=' * 40
+  p cmd.complete('br')
 end

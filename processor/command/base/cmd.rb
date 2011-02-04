@@ -5,6 +5,7 @@
 # will think this a command name like QuitCommand 
 require 'rubygems'
 require 'columnize'
+require_relative '../../../app/util'
 
 class Trepan
   class Command
