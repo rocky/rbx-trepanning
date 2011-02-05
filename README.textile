@@ -8,8 +8,7 @@ There is a "google group mailing list":http://groups.google.com/group/ruby-debug
 
 To run initially: 
 
-bc. 
-   $ trepanx my-ruby-program.rb
+bc.   $ trepanx my-ruby-program.rb
 
 Or to call from inside your code: 
 
