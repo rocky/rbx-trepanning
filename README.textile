@@ -13,8 +13,7 @@ bc.
 
 Or to call from inside your code: 
 
-bc.
-   require 'trepanning' 
+bc.   require 'trepanning' 
    debugger # Don't stop here...
     work # but stop here.
 
@@ -24,8 +23,7 @@ bc.  debugger(:immediate=>true)
 
 Finally, if you put in your .trepanx
 
-bc.
-    Rubinius::Loader.debugger = proc { 
+bc.   Rubinius::Loader.debugger = proc { 
     require 'trepanning'; 
     Trepan.start(:skip_loader => :Xdebug) 
 
