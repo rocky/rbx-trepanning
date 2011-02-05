@@ -4,6 +4,7 @@ require 'readline'
 require 'compiler/iseq'
 
 require 'rubygems'; require 'require_relative'
+require_relative '../app/complete'
 require_relative '../app/frame'
 require_relative '../app/util'           # get_dollar_0
 require_relative '../processor/main'
@@ -51,11 +52,7 @@ class Trepan
     cmdproc_settings = {:highlight => @settings[:highlight]}
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
-    completion_proc = Proc.new do |str|
-      @processor.complete(Readline.line_buffer, true).map do |cmd|
-        cmd.split[-1]
-      end
-    end
+    completion_proc = method(:completion_method)
         
     @intf = 
       if @settings[:server]
@@ -135,6 +132,23 @@ class Trepan
     add_startup_files unless @settings[:nx]
     add_command_file(@settings[:restore_profile]) if 
       @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
+  end
+
+  def completion_method(str, leading=Readline.buffer)
+    args =
+      if str.empty? && leading.end_with?(' ')
+        leading.split(' ').compact + ['']
+      else
+        leading.split(' ').compact
+      end
+    completion = @processor.complete(args)
+    if 1 == completion.size && completion[0].split[-1] == str
+      [str + ' ']
+    else
+      completion.map do |cmd|
+        cmd.split[-1]
+      end
+    end
   end
 
   ## HACK to skip over loader code. Until I find something better...
