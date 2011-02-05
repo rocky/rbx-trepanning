@@ -82,12 +82,6 @@ def Trepan::GNU_readline?
       def Readline.line_buffer
         RbReadline.rl_line_buffer
       end
-      
-      # Returns current line buffer
-      #
-      def Readline.line_buffer=(new_value)
-        RbReadline.rl_line_buffer = new_value
-      end
       at_exit { Trepan::UserInput::finalize }
     end
     return true

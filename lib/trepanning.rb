@@ -52,11 +52,8 @@ class Trepan
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
     completion_proc = Proc.new do |str|
-      size = Readline.line_buffer.size
-      completed_ary = @processor.complete(Readline.line_buffer, true)
-      completed_ary.map do |complete|
-        suffix = complete[size..-1] 
-        suffix ? str + suffix : str
+      @processor.complete(Readline.line_buffer, true).map do |cmd|
+        cmd.split[-1]
       end
     end
         
