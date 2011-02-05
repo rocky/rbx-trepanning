@@ -134,17 +134,28 @@ class Trepan
       @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
   end
 
+  # The method is called when we want to do debugger command completion
+  # such as called from GNU Readline with <TAB>.
   def completion_method(str, leading=Readline.buffer)
     args =
       if str.empty? && leading.end_with?(' ')
+        # A line ending with a blank means we want to get all completions
+        # of the *next* token, not the current token.
         leading.split(' ').compact + ['']
       else
+        # We split on a single blank rather than sequences of spaces
+        # because we need to keep the line exactly as it is except for the
+        # last token
         leading.split(' ').compact
       end
     completion = @processor.complete(args)
     if 1 == completion.size && completion[0].split[-1] == str
+      # If we were at the end of a complete token add a space so that
+      # the next time, we'll complete any context after that.
       [str + ' ']
     else
+      # We have multiple completions. Get the last token so that will
+      # be presented as a list of completions.
       completion.map do |cmd|
         cmd.split[-1]
       end
