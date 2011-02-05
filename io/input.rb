@@ -19,6 +19,7 @@ class Trepan
       @input     = inp || STDIN
       @eof       = false
       @line_edit = @opts[:line_edit]
+      @have_readline = nil
     end
 
     def closed?; @input.closed? end
@@ -61,16 +62,22 @@ class Trepan
           inp.respond_to?(:isatty) && inp.isatty && Trepan::GNU_readline?
         self.new(inp, opts)
       end
+
+      def finalize
+        if defined?(RbReadline)
+          RbReadline.rl_cleanup_after_signal()
+          RbReadline.rl_deprep_terminal()
+        end
+      end
     end
   end
 end
 
 def Trepan::GNU_readline?
   begin
-    # if require '~/.rvm/src/rb-readline/lib/rb-readline.rb'
-    if require 'rb-readline.rb'
-    # if require 'readline'
-      # load '~/.rvm/src/rbx-head/lib/rb-readline/rbreadline.rb'
+    return @have_readline unless @have_readline.nil?
+    @have_readline ||= require 'rb-readline.rb'
+    if @have_readline
       # Returns current line buffer
       def Readline.line_buffer
         RbReadline.rl_line_buffer
@@ -81,6 +88,7 @@ def Trepan::GNU_readline?
       def Readline.line_buffer=(new_value)
         RbReadline.rl_line_buffer = new_value
       end
+      at_exit { Trepan::UserInput::finalize }
     end
     return true
   rescue LoadError
