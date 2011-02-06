@@ -2,19 +2,25 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require 'linecache'
+require 'columnize'
 require_relative '../base/subcmd'
+require_relative '../../../app/complete'
 
-class Trepan::Subcommand::InfoFile < Trepan::Subcommand
+class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     DEFAULT_FILE_ARGS = %w(size sha1)
 
     HELP = <<-EOH
-#{PREFIX.join(' ')} [{FILENAME|.} [all | brkpts | sha1 | size | stat]]
+#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all | brkpts | sha1 | size | stat]]
 
 Show information about the current file. If no filename is given and
-the program is running then the current file associated with the
-current stack entry is used. Sub options which can be shown about a file are:
+the program is running, then the current file associated with the
+current stack entry is used. Giving . has the same effect. 
+
+Given * gives a list of all files we know about.
+
+Sub options which can be shown about a file are:
 
 brkpts -- Line numbers where there are statement boundaries. 
           These lines can be used in breakpoint commands.
@@ -25,20 +31,42 @@ stat   -- File.stat information
 
 all    -- All of the above information.
 
-If no sub-options are given #{DEFAULT_FILE_ARGS.join(' ')} are assumed.
+If no sub-options are given, "#{DEFAULT_FILE_ARGS.join(' ')}" are assumed.
+
+Examples:
+
+#{CMD}    # Show #{DEFAULT_FILE_ARGS.join(' ')} information about current file
+#{CMD} .  # same as above
+#{CMD} brkpts      # show the number of lines in the current file
+#{CMD} brkpts size # same as above but also list breakpoint line numbers
+#{CMD} *  # Give a list of files we know about
 EOH
     MIN_ABBREV   = 'fi'.size  # Note we have "info frame"
     NEED_STACK   = false
   end
 
-  completion %w(all brkpts iseq sha1 size stat)
+  # completion %w(all brkpts iseq sha1 size stat)
 
   include Trepanning
+
+  def file_list
+       (LineCache.class_variable_get('@@file_cache').keys +
+        LineCache.class_variable_get('@@file2file_remap').keys).uniq
+  end
+  def complete(prefix)
+    completions = ['.'] + file_list
+    Trepan::Complete.complete_token(completions, prefix)
+  end
   
   # Get file information
   def run(args)
     return if args.size < 2
     args << '.' if 2 == args.size 
+    if '*' == args[2]
+      section 'Files names cached:'
+      msg columnize_commands(file_list.sort)
+      return
+    end
     filename = 
       if '.' == args[2]
         if not @proc.frame
@@ -136,20 +164,20 @@ end
 
 if __FILE__ == $0
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
   # FIXME: DRY the below code
   dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoFile.new(cmd)
+  subcommand = Trepan::Subcommand::InfoFiles.new(cmd)
   testcmdMgr = Trepan::Subcmd.new(subcommand)
   LineCache::cache(__FILE__)
   
   [%w(info file nothere),
    %w(info file .),
+   %w(info file *),
    %w(info file),
-   %W(info file #{__FILE__}),
    %W(info file #{__FILE__} all),
    %W(info file #{__FILE__} brkpts bad size sha1 sha1)].each do |args|
     subcommand.run(args)
     puts '-' * 40
   end
+  p subcommand.complete('')
 end
