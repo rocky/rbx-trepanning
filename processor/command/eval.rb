@@ -5,9 +5,10 @@ require_relative './base/cmd'
 
 class Trepan::Command::EvalCommand < Trepan::Command
 
+  NAME          = File.basename(__FILE__, '.rb')
   CATEGORY      = 'data'
   HELP    = <<-HELP
-eval [STRING]
+#{NAME} [STRING]
 
 Run code in the context of the current frame.
 
@@ -18,9 +19,9 @@ next to the inspect output of the value.
 If no string is given we run the string from the current source code
 about to be run
 
-eval 1+2  # 3
-eval @v
-eval      # Run current source-code line
+#{NAME} 1+2  # 3
+#{NAME} @v
+#{NAME}      # Run current source-code line
 
 See also 'set autoeval'
       HELP
