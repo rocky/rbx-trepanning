@@ -87,19 +87,6 @@ class Trepan
       :show_bytecode => false,
     }
 
-    @history_path = File.expand_path("~/.trepanx")
-
-    if File.exists?(@history_path)
-      File.readlines(@history_path).each do |line|
-        Readline::HISTORY << line.strip
-      end
-      @history_io = File.new(@history_path, "a")
-    else
-      @history_io = File.new(@history_path, "w")
-    end
-
-    @history_io.sync = true
-
     @processor.dbgr = self
     @deferred_breakpoints = []
     @thread = nil
@@ -198,7 +185,7 @@ class Trepan
 
 
   attr_reader :variables, :current_frame, :breakpoints
-  attr_reader :vm_locations, :history_io, :debugee_thread
+  attr_reader :vm_locations, :debugee_thread
 
   def self.global(settings={})
     @global ||= new(settings)

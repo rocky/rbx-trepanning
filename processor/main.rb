@@ -215,7 +215,7 @@ class Trepan
       leave_cmdloop = run_command(@current_command)
 
       # Save it to the history.
-      @dbgr.history_io.puts @last_command
+      intf.history_io.puts @last_command if @last_command && intf.history_io
     end
 
     def after_cmdloop
