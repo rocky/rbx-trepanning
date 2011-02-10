@@ -52,10 +52,11 @@ class Trepan
     cmdproc_settings = {:highlight => @settings[:highlight]}
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
-    completion_proc = method(:completion_method)
+    @completion_proc = method(:completion_method)
         
     @intf = 
       if @settings[:server]
+        @completion_proc = nil
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
@@ -66,10 +67,10 @@ class Trepan
         opts = Trepan::ClientInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
         opts[:port] = @settings[:port] if @settings[:port]
         opts[:host] = @settings[:host] if @settings[:host]
-        opts[:complete] = completion_proc
+        opts[:complete] = @completion_proc
         [Trepan::ClientInterface.new(nil, nil, nil, nil, opts)]
       else
-        opts = {:complete => completion_proc}
+        opts = {:complete => @completion_proc}
         [Trepan::UserInterface.new(@input, @output, opts)]
       end
 
@@ -183,7 +184,7 @@ class Trepan
     @intf << startup
   end
 
-
+  attr_reader :completion_proc # GNU Readline completion proc
   attr_reader :variables, :current_frame, :breakpoints
   attr_reader :vm_locations, :debugee_thread
 
