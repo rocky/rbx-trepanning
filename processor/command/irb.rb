@@ -31,7 +31,7 @@ But arguments have to be quoted because #{NAME} will evaluate them:
 
 Here then is a loop to query VM stack values:
   (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
-    HELP
+     HELP
 
     CATEGORY     = 'support'
     MAX_ARGS     = 1  # Need at most this many
@@ -39,7 +39,7 @@ Here then is a loop to query VM stack values:
   end
 
   # This method runs the command
-  def run(args) # :nodoc
+  def run(args)
     add_debugging = 
       if args.size > 1
         '-d' == args[1]
@@ -65,10 +65,33 @@ Here then is a loop to query VM stack values:
     $trepanx_irb_statements = nil
     $trepanx_command = nil
 
-    conf = {:BACK_TRACE_LIMIT => settings[:maxstack]}
-    cont = IRB.start_session(@proc.frame.binding, @proc, conf).to_s
-    trap('SIGINT', save_trap) # Restore old trap
+    conf = {:BACK_TRACE_LIMIT => settings[:maxstack],
+            :RC => true}
 
+    # ?? Should we set GNU readline to what we have,
+    # or let IRB make its own determination? 
+
+    # Save the Readline history and set the Readline completion function 
+    # to be IRB's function 
+    if Trepan::GNU_readline? 
+      @proc.intf.save_history if @proc.intf.respond_to?(:save_history)
+      require 'irb/completion'
+      Readline.completion_proc = IRB::InputCompletor::CompletionProc
+    end
+
+    # And just when you thought, we'd never get around to 
+    # actually running irb...
+    cont = IRB.start_session(@proc.frame.binding, @proc, conf)
+    trap('SIGINT', save_trap) # Restore our old interrupt function.
+
+    # Restore the debuggers' Readline history and the Readline completion 
+    # function
+    if Trepan::GNU_readline? && @proc.dbgr.completion_proc
+      @proc.intf.read_history if @proc.intf.respond_to?(:read_history)
+      Readline.completion_proc = @proc.dbgr.completion_proc 
+    end
+
+    # Respect any backtrace limit set in irb.
     back_trace_limit = IRB.CurrentContext.back_trace_limit
     if settings[:maxstack] !=  back_trace_limit
       msg("\nSetting debugger's BACK_TRACE_LIMIT (%d) to match irb's last setting (%d)" % 
@@ -76,8 +99,17 @@ Here then is a loop to query VM stack values:
       settings[:maxstack]= IRB.CurrentContext.back_trace_limit
     end
 
-    if %w(continue finish next ext step).member?(cont)
-      @proc.commands[cont].run([cont]) # (1, {})
+    case cont
+    when :continue
+      @proc.continue
+    when :finish
+      @proc.finish 
+    when :next
+      @proc.next # (1, {})
+    when :quit
+      @proc.quit
+    when :step
+      @proc.step # (1, {})
     else
       @proc.print_location
     end

@@ -26,12 +26,13 @@ module MockDebugger
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
     attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
-                :debugee_thread
+                :debugee_thread, :completion_proc
 
     def initialize(settings={})
       @before_cmdloop_hooks = []
       @settings             = Trepan::DEFAULT_SETTINGS.merge(settings)
-      @intf                 = [Trepan::UserInterface.new]
+      @intf                 = [Trepan::UserInterface.new(nil, nil,
+                                                         :history_save=>false)]
       @vm_locations         = Rubinius::VM.backtrace(1, true)
       @current_frame        = Trepan::Frame.new(self, 0, @vm_locations[0])
       @debugee_thread       = Thread.current
@@ -40,6 +41,8 @@ module MockDebugger
 
       ## @core                 = Trepan::Core.new(self)
       @trace_filter         = []
+
+      @completion_proc = Proc.new{|str| str}
 
       # Don't allow user commands in mocks.
       ## @core.processor.settings[:user_cmd_dir] = nil 

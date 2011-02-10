@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Unit test for rbdbgr.interface.user
+# Unit test for interface.user
 
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
@@ -11,7 +11,7 @@ class TestInterfaceUser < Test::Unit::TestCase
   # Test UserInterface.confirm()
   def test_confirm
     
-    user_intf = Trepan::UserInterface.new
+    user_intf = Trepan::UserInterface.new(nil, nil, {:history_save => false})
     def user_intf.readline(prompt)
       $response_answer
     end

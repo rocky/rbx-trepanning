@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Interface when communicating with the user in the same process as
 # the debugged program.
@@ -12,14 +12,20 @@ require_relative '../io/input'
 
 # Moutput    = import_relative('dbg_output', '..io', 'pydbgr')
 
-# Interface when communicating with the user in the same
-# process as the debugged program.
+# Interface when communicating with the user.
 class Trepan::UserInterface < Trepan::Interface
 
-  FILE_HISTORY = '.trepanx_hist' unless defined?(FILE_HISTORY)
+  DEFAULT_USER_OPTS = {
+    :histsize => 256,                   # Use gdb's default setting
+    :file_history   => '.trepanx_hist', # where history file lives
+                                        # Note a directory will 
+                                        # be appended
+    :history_save   => true             # do we save the history?
+  } unless defined?(DEFAULT_USER_OPTS)
 
   def initialize(inp=nil, out=nil, opts={})
     super(inp, out, opts)
+    @opts = DEFAULT_USER_OPTS.merge(opts)
     @input = if inp.class.ancestors.member?(Trepan::InputBase)
                inp
              else
@@ -27,7 +33,9 @@ class Trepan::UserInterface < Trepan::Interface
              end
     if Trepan::GNU_readline? && opts[:complete]
       Readline.completion_proc = opts[:complete]
+      read_history
     end
+    at_exit { finalize }
   end
 
   # Called when a dangerous action is about to be done, to make
@@ -53,31 +61,70 @@ class Trepan::UserInterface < Trepan::Interface
     return YES.member?(response)
   end
 
+  # Read a saved Readline history file into Readline. The history
+  # file will be created if it doesn't already exist.
+  # Much of this code follows what's done in ruby-debug.
+  def read_history 
+    unless @histfile
+      dirname = ENV['HOME'] || ENV['HOMEPATH'] || File.expand_path('~')
+      @histfile = File.join(dirname, @opts[:file_history])
+    end
+    @histsize ||= (ENV['HISTSIZE'] ? ENV['HISTSIZE'].to_i : @opts[:histsize])
+    Readline.completion_proc = @opts[:complete]
+    if File.exists?(@histfile)
+      lines = IO::readlines(@histfile).last(@histsize).collect do  
+        |line| line.chomp 
+      end
+      Readline::HISTORY.push(*lines)
+      @history_io = File.new(@histfile, "a")
+    else
+      @history_io = File.new(@histfile, "w")
+    end
+    @history_io.sync = true
+    @history_save = @opts[:history_save]
+  end
+
+  def save_history 
+    if @histfile
+      lines = Readline::HISTORY.to_a
+      lines = lines[-@histsize, @histsize] if lines.size > @histsize
+      lines = lines.select
+      File::open(@histfile, 'w') do |file| 
+        file.puts lines
+      end if defined?(@history_save) and @history_save
+      begin
+        open(@histfile, 'w') do |file|
+          Readline::HISTORY.to_a.last(@histsize).each do |line|
+            file.puts line
+          end 
+        end if defined?(@history_save) and @history_save
+      rescue
+      end
+    end
+  end
+
   def finalize(last_wishes=nil)
     # print exit annotation
-    # save history
+    if Trepan::GNU_readline? && @history_save
+      ## FIXME: figure out why we get a closed stream (IOError) when
+      ## save_history is called
+      ## save_history 
+    end
     super
   end
 
   def interactive? ; @input.interactive? end
 
-  def read_command(prompt='')
-    line = readline(prompt)
-    # FIXME: Do something with history?
-    return line
-  end
+  def read_command(prompt=''); readline(prompt) end
 
   def readline(prompt='')
     @output.flush
-    line = 
-      if @input.line_edit
-        @input.readline(prompt)
-        # FIXME: Do something with history?
-      else
-        @output.write(prompt) if prompt and prompt.size > 0
-        @input.readline
-      end
-    return line
+    if @input.line_edit
+      @input.readline(prompt)
+    else
+      @output.write(prompt) if prompt and prompt.size > 0
+      @input.readline
+    end
   end
 
 end

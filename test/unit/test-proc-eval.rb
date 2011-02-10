@@ -14,7 +14,7 @@ class TestProcEval < Test::Unit::TestCase
   def test_basic
     common_setup
     @dbgr    = Trepan.new
-    @cmdproc = Trepan::CmdProcessor.new(@dbgrr)
+    @cmdproc = Trepan::CmdProcessor.new(@dbgr)
     assert_equal('(eval "x = 1; y = 2")',
 
                  @cmdproc.fake_eval_filename('x = 1; y = 2'))
