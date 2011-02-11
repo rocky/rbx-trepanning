@@ -14,6 +14,8 @@ class Trepan
   # input or GNU Readline.
   class UserInput < Trepan::InputBase
 
+    @@readline_finalized = false
+
     def initialize(inp, opts={})
       @opts      = DEFAULT_OPTS.merge(opts)
       @input     = inp || STDIN
@@ -64,9 +66,10 @@ class Trepan
       end
 
       def finalize
-        if defined?(RbReadline)
+        if defined?(RbReadline) && !@@readline_finalized
           RbReadline.rl_cleanup_after_signal()
           RbReadline.rl_deprep_terminal()
+          @@readline_finalized = true
         end
       end
     end

@@ -9,13 +9,6 @@ def Trepan::GNU_readline?
   false
 end
 
-# Part 2 of hack: 
-# Make sure Trepan::UserInterface#finalize does nothing.
-class Trepan::UserInterface < Trepan::Interface
-  def finalize(last_wishes=nil)
-  end
-end
-
 # Test commands completion
 class TestLibTrepanning < Test::Unit::TestCase
 
