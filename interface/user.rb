@@ -106,7 +106,7 @@ class Trepan::UserInterface < Trepan::Interface
     if Trepan::GNU_readline? && @history_save
       ## FIXME: figure out why we get a closed stream (IOError) when
       ## save_history is called
-      ## save_history 
+      save_history 
     end
     super
   end

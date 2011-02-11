@@ -239,7 +239,7 @@ class Trepan
   alias debugger start
 
   def stop(settings = {})
-    # Nothing for now...
+    Rubinius::VM.debug_channel = nil
   end
 
   def add_command_file(cmdfile, opts={}, stderr=$stderr)

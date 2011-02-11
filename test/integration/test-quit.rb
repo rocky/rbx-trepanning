@@ -6,13 +6,16 @@ require_relative 'helper'
 class TestQuit < Test::Unit::TestCase
   @@NAME = File.basename(__FILE__, '.rb')[5..-1]
 
-  def test_trepanx_set_confirm_off
-    opts = {}
-    opts[:filter] = Proc.new{|got_lines, correct_lines|
-      got_lines[0] = "-> (null.rb:1 @0)\n"
-    }
-    assert_equal(true, run_debugger('quit2', 'null.rb', opts))
-  end
+  # FIXME: causes rubinius to hang. Use
+  #   rbx -Xagent.start -S rake
+  # to see backtrace
+  # def test_trepanx_set_confirm_off
+  #   opts = {}
+  #   opts[:filter] = Proc.new{|got_lines, correct_lines|
+  #     got_lines[0] = "-> (null.rb:1 @0)\n"
+  #   }
+  #   assert_equal(true, run_debugger('quit2', 'null.rb', opts))
+  # end
 
   def test_trepanx_call
     opts = {}
