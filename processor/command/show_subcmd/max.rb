@@ -24,6 +24,4 @@ if __FILE__ == $0
   cmd_name       = cmd_ary.join('')
   prefix_run = cmd_ary[1..-1]
   cmd.run(prefix_run)
-  # require_relative '../../../lib/trepanning'
-  # Trepan.debug(:set_restart => true)
 end

@@ -31,13 +31,13 @@ class Trepan
 
     # Get line +line_number+ from file named +filename+. Return "\n"
     # there was a problem. Leading blanks are stripped off.
-    def line_at(filename, line_number)
+    def line_at(filename, line_number, 
+                opts = {
+                  :reload_on_change => @reload_on_change,
+                  :output => @settings[:highlight]
+                })
       # We use linecache first to give precidence to user-remapped
       # file names
-      opts = {
-        :reload_on_change => @reload_on_change,
-        :output => @settings[:highlight]
-      }
       line = LineCache::getline(filename, line_number, opts)
       unless line
         # Try using search directories (set with command "directory")
@@ -53,11 +53,10 @@ class Trepan
       return line.lstrip.chomp
     end
 
-    def loc_and_text(loc)
-      opts = {
-        :reload_on_change => @reload_on_change,
-        :output => @settings[:highlight]
-      }
+    def loc_and_text(loc, opts=
+                     {:reload_on_change => @reload_on_change,
+                       :output => @settings[:highlight]
+                     })
       vm_location = @frame.vm_location
       filename = vm_location.method.active_path
       line_no  = vm_location.line
@@ -68,7 +67,7 @@ class Trepan
         text = LineCache::getline(static.script, line_no, opts)
         loc += " remapped #{canonic_file(file)}:#{line_no}"
       else
-        text = line_at(filename, line_no)
+        text = line_at(filename, line_no, opts)
         map_file, map_line = LineCache::map_file_line(filename, line_no)
         if [filename, line_no] != [map_file, map_line]
           loc += " remapped #{canonic_file(map_file)}:#{map_line}"

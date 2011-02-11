@@ -10,8 +10,6 @@ require 'rubygems'; require 'require_relative'
 require_relative 'base_intf'
 require_relative '../io/input'
 
-# Moutput    = import_relative('dbg_output', '..io', 'pydbgr')
-
 # Interface when communicating with the user.
 class Trepan::UserInterface < Trepan::Interface
 
