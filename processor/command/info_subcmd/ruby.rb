@@ -9,9 +9,9 @@ class Trepan::Subcommand::InfoRuby < Trepan::Subcommand
     HELP         = <<-EOH
 #{CMD=PREFIX.join(' ')} [-v|--verbose|-no-verbose]
 
-Show Rubinius version information such as you'd get from 
-"rbx -v" (which is really just the value of RUBY_RELEASE_DATE
-or "rbx -vv". 
+Show Ruby version information such as you'd get from 
+"rbx -v" (which is really just the value of RUBY_RELEASE_DATE),
+or from "rbx -vv". 
 
 See also constants: RUBY_DESCRIPITON, RUBY_VERSION, and RUBY_RELEASE_DATE."
     EOH
