@@ -164,10 +164,7 @@ end
 
 if __FILE__ == $0
   require_relative '../../mock'
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoFiles.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFiles, false)
   LineCache::cache(__FILE__)
   
   [%w(info file nothere),
@@ -176,8 +173,8 @@ if __FILE__ == $0
    %w(info file),
    %W(info file #{__FILE__} all),
    %W(info file #{__FILE__} brkpts bad size sha1 sha1)].each do |args|
-    subcommand.run(args)
+    cmd.run(args)
     puts '-' * 40
   end
-  p subcommand.complete('')
+  p cmd.complete('')
 end

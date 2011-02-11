@@ -44,8 +44,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  # FIXME: DRY the below code
-  dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoProgram.new(cmd)
-  testcmdMgr = Trepan::Subcmd.new(subcommand)
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoProgram, false)
+  cmd.run(cmd.prefix)
 end

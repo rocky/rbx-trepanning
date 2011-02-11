@@ -77,6 +77,7 @@ module MockDebugger
     cmds = cmdproc.commands
     cmd  = cmds[name]
     cmd.proc.frame_setup
+    cmd.proc.event = 'debugger-call'
     show_special_class_constants(cmd) if show_constants
 
     def cmd.confirm(prompt, default)

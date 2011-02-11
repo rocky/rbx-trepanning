@@ -81,7 +81,6 @@ end
 if __FILE__ == $0
   # Demo it.
   require_relative '../../mock'
-  name = File.basename(__FILE__, '.rb')
-  dbgr, cmd = MockDebugger::setup('info')
-  subcommand = Trepan::Subcommand::InfoLine.new(cmd)
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoLine, false)
+  cmd.run(cmd.prefix)
 end

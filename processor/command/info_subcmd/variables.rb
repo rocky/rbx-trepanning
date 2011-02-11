@@ -39,3 +39,10 @@ The optional argument is which variable specifically to show the value of.
     end
   end
 end
+
+if __FILE__ == $0
+  # Demo it.
+  require_relative '../../mock'
+  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoVariables, false)
+  # cmd.run(cmd.prefix)
+end
