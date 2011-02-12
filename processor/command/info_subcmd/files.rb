@@ -9,10 +9,10 @@ require_relative '../../../app/complete'
 class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    DEFAULT_FILE_ARGS = %w(size sha1)
+    DEFAULT_FILE_ARGS = %w(size mtime sha1)
 
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all | brkpts | sha1 | size | stat]]
+#{CMD=PREFIX.join(' ')} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
 
 Show information about the current file. If no filename is given and
 the program is running, then the current file associated with the
@@ -24,6 +24,8 @@ Sub options which can be shown about a file are:
 
 brkpts -- Line numbers where there are statement boundaries. 
           These lines can be used in breakpoint commands.
+ctime  -- File creation time
+mtime  -- File modification time
 sha1   -- A SHA1 hash of the source text. This may be useful in comparing
           source code.
 size   -- The number of lines in the file.
@@ -50,8 +52,8 @@ EOH
   include Trepanning
 
   def file_list
-       (LineCache.class_variable_get('@@file_cache').keys +
-        LineCache.class_variable_get('@@file2file_remap').keys).uniq
+    (LineCache.class_variable_get('@@file_cache').keys +
+     LineCache.class_variable_get('@@file2file_remap').keys).uniq
   end
   def complete(prefix)
     completions = ['.'] + file_list
@@ -82,7 +84,7 @@ EOH
     args += DEFAULT_FILE_ARGS if args.size == 3
 
     m = filename + ' is'
-    canonic_name = LineCache::map_file(filename)
+    canonic_name = LineCache::map_file(filename) || filename
     if LineCache::cached?(canonic_name)
       m += " cached in debugger"
       if canonic_name != filename
@@ -102,8 +104,17 @@ EOH
     #     canonic_name = matches[0]
     #   end
     else
-      msg(m + ' not cached in debugger.')
-      return
+      matches = file_list.select{|try| try.end_with?(filename)}
+      if (matches.size > 1)
+        msg("Multiple files found ending filename string:")
+        matches.sort.each { |match_file| msg "\t%s" % match_file }
+        return
+      elsif 1 == matches.size
+        canonic_name = LineCache::map_file(matches[1])
+      else
+        msg(m + ' not cached in debugger.')
+        return
+      end
     end
     seen = {}
     args[3..-1].each do |arg|
@@ -134,6 +145,14 @@ EOH
         processed_arg = seen[:brkpts] = true
       end
 
+      if %w(all ctime).member?(arg)
+        unless seen[:ctime]
+          msg("create time:\t%s." % 
+              LineCache::stat(canonic_name).ctime.to_s)
+        end
+        processed_arg = seen[:ctime] = true
+      end
+      
       # if %w(all iseq).member?(arg) 
       #   unless seen[:iseq]
       #     if SCRIPT_ISEQS__.member?(canonic_name)
@@ -148,6 +167,14 @@ EOH
       #   processed_arg = seen[:iseq] = true
       # end
 
+      if %w(all mtime).member?(arg)
+        unless seen[:mtime]
+          msg("modify time:\t%s." % 
+              LineCache::stat(canonic_name).mtime.to_s)
+        end
+        processed_arg = seen[:mtime] = true
+      end
+      
       if %w(all stat).member?(arg)
         unless seen[:stat]
           msg("Stat info:\n\t%s." % LineCache::stat(canonic_name).inspect)
@@ -166,11 +193,13 @@ if __FILE__ == $0
   require_relative '../../mock'
   cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoFiles, false)
   LineCache::cache(__FILE__)
+  LineCache::cache('../../mock.rb')
   
   [%w(info file nothere),
    %w(info file .),
    %w(info file *),
    %w(info file),
+   %W(info file #{__FILE__}),
    %W(info file #{__FILE__} all),
    %W(info file #{__FILE__} brkpts bad size sha1 sha1)].each do |args|
     cmd.run(args)
