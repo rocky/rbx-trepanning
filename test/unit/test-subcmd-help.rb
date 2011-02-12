@@ -2,7 +2,6 @@
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require_relative '../../processor/main'
-# require_relative '../../app/core'
 
 # Mock debugger stub. FIXME: put in comment helper routine.
 class Trepan
@@ -13,20 +12,17 @@ class TestSubCmdHelp < Test::Unit::TestCase
 
   def setup
     @dbg     = Trepan.new
-    # @core    = Trepan::Core.new(@dbg)
     @cmdproc = Trepan::CmdProcessor.new(@dbg)
     @cmds    = @cmdproc.instance_variable_get('@commands')
   end
 
   # See that subcommand class constants exist.
   def test_required_class_constants
-    puts 'Still need HELP const for subcmds?'
     @cmds.each do |cmd_name, cmd|
       if cmd.is_a?(Trepan::SubcommandMgr)
         cmd.subcmds.subcmds.each do |subcmd_name, subcmd|
           where = "of subcommand #{subcmd_name} in command #{cmd_name}"
-          # %w(HELP NAME SHORT_HELP).each do
-          %w(NAME SHORT_HELP).each do
+          %w(HELP NAME SHORT_HELP).each do
             |const|
             value = subcmd.my_const(const)
             assert_equal(true, value.is_a?(String),

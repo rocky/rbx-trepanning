@@ -39,10 +39,10 @@ class TestTCPDbgClient < Test::Unit::TestCase
           client.writeline(mess)
           assert_equal mess, client.read_msg.chomp
         rescue EOFError
-          puts "Got EOF"
+          puts "In client: got EOF"
           break
         rescue Exception => e
-          puts "Got #{e}"
+          puts "In client: got #{e}"
           break
         end
       end
