@@ -20,6 +20,8 @@ class Trepan
       :port    => 1027,  # Arbitrary non-privileged port
     }
 
+    attr_reader :state
+
     def initialize(opts={})
       @opts      = CLIENT_SOCKET_OPTS.merge(opts)
       @addr      = nil
@@ -34,7 +36,11 @@ class Trepan
     def close
       @state = :closing
       @inout.close if @inout
-      @state = :disconnnected
+      @state = :disconnected
+    end
+
+    def disconnected?
+      :disconnected == @state
     end
 
     def open(opts={})

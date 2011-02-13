@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency('diff-lcs') # For testing only
   spec.add_dependency('rbx-require-relative')
   spec.add_dependency('rbx-linecache', '~>1.0')
+  spec.add_dependency('citrus')
   spec.authors      = ['R. Bernstein']
   spec.date         = Time.now
   spec.description = <<-EOF
