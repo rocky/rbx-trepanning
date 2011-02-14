@@ -15,7 +15,6 @@ arguments and should return either a String or an Array of Strings to
 use in its place.  If the return is a String, that gets tokenized by a
 simple String#split .  Note that macro processing is done right after
 splitting on ;; so if the macro returns a string containing ;; those
-
 won't be handled on the first string returned.
 
 If instead, Array of Strings is returned, then the first string is
