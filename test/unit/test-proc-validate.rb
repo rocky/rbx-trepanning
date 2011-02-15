@@ -76,13 +76,14 @@ class TestValidate < Test::Unit::TestCase
     ['Array#map', 'Trepan::CmdProcessor.new'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
-      assert @proc.method?(str), "#{str} should be known as a method"
+      assert_equal(true, @proc.method?(str),
+                   "#{str} should be known as a method")
     end
     ['food', '.errmsg'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
-      assert_equal(false, !!@proc.method?(str),
-                   "#{str} should not be known as a method")
+      assert_equal(false, @proc.method?(str),
+                   "#{str} should be known as a method")
     end
 
   end

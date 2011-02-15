@@ -53,6 +53,8 @@ class Trepan
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
     @completion_proc = method(:completion_method)
+
+    @in_deferred_checking = false
         
     @intf = 
       if @settings[:server]
@@ -344,15 +346,20 @@ class Trepan
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)
-    dbp = Trepanning::DeferredBreakpoint.new(self, @current_frame, klass_name, which, name,
-                                             line, @deferred_breakpoints)
+    dbp = Trepan::DeferredBreakpoint.new(self, @current_frame, klass_name, 
+                                         which, name, line, 
+                                         @deferred_breakpoints)
     @deferred_breakpoints << dbp
     # @processor.brkpts << dbp
   end
 
   def check_deferred_breakpoints
-    @deferred_breakpoints.delete_if do |bp|
-      bp.resolve!
+    unless @in_deferred_checking 
+      @in_deferred_checking = true
+      @deferred_breakpoints.delete_if do |bp|
+        bp.resolve!
+      end
+      @in_deferred_checking = false
     end
   end
 

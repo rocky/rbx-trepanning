@@ -8,8 +8,6 @@ class Trepan
       
       f = frame
       
-      ip = -1
-      
       meth = f.method
       possible_line = f.line + step
       next_ip = f.next_ip == f.ip ? f.next_ip + 1 : f.next_ip
@@ -18,7 +16,7 @@ class Trepan
       fin_ip = meth.first_ip_on_line_after(possible_line, f.next_ip)
       # fin_ip = meth.first_ip_on_line_after(possible_line, next_ip)
       
-      if fin_ip <= -1
+      unless fin_ip
         return step_to_parent('line')
       end
 
@@ -33,7 +31,6 @@ class Trepan
       end
       
       meth = f.method
-      ip = -1
       fin_ip = meth.lines.last
       
       set_breakpoints_on_return_between(meth, f.next_ip, fin_ip)

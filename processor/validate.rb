@@ -7,7 +7,6 @@ require 'rubygems'
 require 'require_relative'
 require 'linecache'
 require_relative '../app/method'
-require_relative '../app/method_name'
 require_relative '../app/validate'
 ## require_relative '../app/condition'
 ## require_relative '../app/file'
@@ -216,28 +215,17 @@ class Trepan
       raise TypeError
     end
 
-    include CmdParser
-
-    def get_method(method_string)
-      start_binding = 
-        begin
-          @frame.binding
-        rescue
-          binding
-        end
-      meth_for_string(method_string, start_binding)
-    end
-
-    # FIXME: this is a ? method but we return 
-    # the method value. 
     def method?(method_string)
-      begin
-        get_method(method_string)
-      rescue Citrus::ParseError
-        return false
-      rescue NameError
-        return false
-      end
+      obj, type, meth = 
+        if method_string =~ /(.+)(#|::|\.)(.+)/
+          [$1, $2, $3]
+        else
+          ['self', '.', method_string]
+        end
+      ret = debug_eval_no_errmsg("#{obj}.method(#{meth.inspect})")
+      return true if ret 
+      return debug_eval_no_errmsg("#{obj}.is_a?(Class)") &&
+        debug_eval_no_errmsg("#{obj}.method_defined?(#{meth.inspect})")
     end
 
     # parse_position(self, arg)->(fn, container, lineno)
@@ -342,7 +330,7 @@ if __FILE__ == $0
   puts proc.parse_position_one_arg('tmpdir.rb').inspect
   
   puts '=' * 40
-  ['Array.map', 'Trepan::CmdProcessor.new',
+  ['Array#map', 'Trepan::CmdProcessor.new',
    'foo', 'proc.errmsg'].each do |str|
     puts "#{str} should be true: #{proc.method?(str).inspect}"
   end

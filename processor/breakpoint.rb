@@ -58,7 +58,7 @@ class Trepan
       if line
         ip = cm.first_ip_on_line(line)
         
-        if ip == -1
+        unless ip
           errmsg "Unknown line '#{line}' in method '#{cm.name}'"
           return nil
         end
@@ -66,6 +66,9 @@ class Trepan
         line = cm.first_line
         ip = 0
       end
+
+      # def lines without code will have value -1.
+      ip = 0 if -1 == ip
 
       bp = @brkpts.add(descriptor, cm, ip, line, @brkpts.max+1, opts)
       bp.activate

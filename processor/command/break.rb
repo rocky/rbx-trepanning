@@ -97,7 +97,4 @@ if __FILE__ == $0
   # Trepan.start(:set_restart => true)
   cmd.run([cmd.name, __LINE__.to_s])
   cmd.run([cmd.name, 'foo'])
-  cmd.run([cmd.name, "MockDebugger::setup"])
-  require 'irb'
-  cmd.run([cmd.name, "IRB.start"])
 end

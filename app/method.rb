@@ -144,7 +144,7 @@ module Rubinius
         end
         i += 2
       end
-      -1
+      nil
     end
   end
 end
