@@ -25,7 +25,7 @@ strings which contain other macros or ;; splitting will be acted upon.
 Here is an example. The below creates a macro called finish+ which
 issues two commands 'finish' followed by 'step':
 
-  macro finish+ Proc.new{|*args| ['finish', 'step']}
+  macro fin+ Proc.new{|*args| %w(finish step)}
 
 Here is another example using arguments. I use the following to debug
 a debugger command:
