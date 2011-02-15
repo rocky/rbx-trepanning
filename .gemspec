@@ -15,6 +15,7 @@ FILES = FileList[
   'THANKS',
   'app/*',
   'bin/*',
+  'data/*',
   'interface/*',
   'io/*',
   'lib/*',

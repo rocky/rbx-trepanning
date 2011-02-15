@@ -17,11 +17,11 @@ class Trepan
     @@readline_finalized = false
 
     def initialize(inp, opts={})
-      @opts      = DEFAULT_OPTS.merge(opts)
-      @input     = inp || STDIN
-      @eof       = false
-      @line_edit = @opts[:line_edit]
-      @have_readline = nil
+      @opts         = DEFAULT_OPTS.merge(opts)
+      @input        = inp || STDIN
+      @eof          = false
+      @line_edit    = @opts[:line_edit]
+      @use_readline = opts[:readline]
     end
 
     def closed?; @input.closed? end
@@ -35,7 +35,7 @@ class Trepan
     def readline(prompt='')
       raise EOFError if eof?
       begin 
-        if @line_edit 
+        if @line_edit && @use_readline
           line = Readline.readline(prompt, true)
         else
           line = @input.gets
@@ -78,9 +78,9 @@ end
 
 def Trepan::GNU_readline?
   begin
-    return @have_readline unless @have_readline.nil?
-    @have_readline ||= require 'rb-readline.rb'
-    if @have_readline
+    return @use_readline unless @use_readline.nil?
+    @use_readline ||= require 'rb-readline.rb'
+    if @use_readline
       # Returns current line buffer
       def Readline.line_buffer
         RbReadline.rl_line_buffer
