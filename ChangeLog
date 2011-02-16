@@ -1,3 +1,34 @@
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, app/options.rb: Get ready for 0.0.5 release
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb: Clean up usage text
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* bin/trepanx, processor/validate.rb: Small bugs. validate: handling
+	get_an_int error msg. trepanx: option name is now highlight, not
+	readline
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* bin/trepanx, processor/validate.rb: Small bugs. validate: handling
+	get_an_int error msg. trepanx: option name is now highlight, not
+	readline
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, ChangeLog, NEWS, app/options.rb, bin/trepanx,
+	interface/user.rb, io/input.rb, lib/trepanning.rb: Add --readline
+	and --no-readline options to trepanx .gemspec: was missing data
+	directory Update NEWS in preparation for a release.
+
 2011-02-14  rocky <rockyb@rubyforge.org>
 
 	* processor/command/macro.rb, processor/load_cmds.rb: Add macros to
