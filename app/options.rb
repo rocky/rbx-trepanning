@@ -9,7 +9,7 @@ class Trepan
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
 
-  Trepan::VERSION = '0.0.6'
+  Trepan::VERSION = '0.0.7.dev'
   Trepan::PROGRAM = 'trepanx'
 
   def self.show_version
@@ -32,7 +32,7 @@ class Trepan
     OptionParser.new do |opts|
       opts.banner = <<EOB
 #{show_version}
-Usage: #{PROGRAM} [options] <script.rb> [-- <script.rb parameters>]
+Usage: #{PROGRAM} [options] [[--] <script.rb> <script.rb parameters>]
 EOB
       opts.on('--client',
               "Connect to out-of-process program") do
