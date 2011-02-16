@@ -40,7 +40,7 @@ ruby-debug, other debuggers, and Ruby Rails.
 Some of the core debugger concepts have been rethought. As a result,
 some of this may be experimental.
 
-This version works only Rubinus 1.2.1 or higher.
+nThis version works only Rubinus 1.2.1 or higher.
 EOF
   ## spec.add_dependency('diff-lcs') # For testing only
   spec.author       = 'R. Bernstein'
@@ -52,7 +52,7 @@ EOF
   spec.homepage     = 'http://wiki.github.com/rocky/rbx-trepanning'
   spec.name         = 'rbx-trepanning'
   spec.license      = 'MIT'
-  spec.platform     = Gem::Platform::new ['universal', 'rubinius', '1.2.1']
+  spec.platform     = Gem::Platform::new ['universal', 'rubinius', '1.2']
   spec.require_path = 'lib'
   spec.required_ruby_version = '~> 1.8.7'
   spec.summary      = 'Trepan Ruby Debugger for Rubinius 1.2 and higher'
