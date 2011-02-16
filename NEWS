@@ -1,3 +1,6 @@
+Feb 15, 2011  (0.0.6)
+- Repackage using rubinus platform 1.2 rather than 1.2.1
+
 Feb 15, 2011  (0.0.5)
 - "disassemble" command: allow disassembly of specified line numbers
 - GNU Readline: 
