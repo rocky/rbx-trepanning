@@ -3,7 +3,7 @@
 raise RuntimeError, 'This package is for Rubinius 1.2 or 1.2.1dev only!' unless
   Object.constants.include?('Rubinius') && 
   Rubinius.constants.include?('VM') && 
-  %w(1.2 1.2.1dev).member?(Rubinius::VERSION)
+  %w(1.2.1 1.2.2dev).member?(Rubinius::VERSION)
 
 require 'rubygems'
 require 'rake/gempackagetask'
@@ -23,15 +23,14 @@ task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
     sh "gem build .gemspec"
     FileUtils.mkdir_p 'pkg'
-    FileUtils.mv("#{gemspec.name}-#{gemspec.version}-universal-rubinius-1.2.gem", 
-                 "pkg/#{gemspec.name}-#{gemspec.version}-universal-rubinius-1.2.gem")
+    FileUtils.mv("#{gemspec.file_name}", "pkg/#{gemspec.file_name}")
   end
 end
 
 desc "Install the gem locally"
 task :install => :gem do
   Dir.chdir(ROOT_DIR) do
-    sh %{gem install --local pkg/#{gemspec.name}-#{gemspec.version}}
+    sh %{gem install --local pkg/#{gemspec.file_name}}
   end
 end
 
