@@ -4,7 +4,7 @@ require 'rbconfig'
 require 'rubygems'; require 'require_relative'
 module Trepanning
 
-  :module_function # All functions below are easily publically accessible
+  module_function # All functions below are easily publically accessible
 
   # Given a Ruby interpreter and program we are to debug, debug it.
   # The caller must ensure that ARGV is set up to remove any debugger
@@ -62,7 +62,6 @@ module Trepanning
   def ruby_path
     File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| RbConfig::CONFIG[k]})
   end
-  module_function :ruby_path
 
   # Do a shell-like path lookup for prog_script and return the results.
   # If we can't find anything return prog_script.
