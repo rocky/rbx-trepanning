@@ -33,8 +33,8 @@ class Trepan::UserInterface < Trepan::Interface
              else
                Trepan::UserInput.open(inp, {:readline => opts[:readline]})
              end
-    if Trepan::GNU_readline? && opts[:complete]
-      Readline.completion_proc = opts[:complete]
+    if Trepan::GNU_readline? && @opts[:complete]
+      Readline.completion_proc = @opts[:complete]
       read_history
     end
     at_exit { finalize }
@@ -111,11 +111,13 @@ class Trepan::UserInterface < Trepan::Interface
 
   def interactive? ; @input.interactive? end
 
-  def read_command(prompt=''); readline(prompt) end
+  def read_command(prompt='')
+    readline(prompt) 
+  end
 
   def readline(prompt='')
     @output.flush
-    if @input.line_edit && @opts[:use_readline]
+    if @input.line_edit && @opts[:readline]
       @input.readline(prompt)
     else
       @output.write(prompt) if prompt and prompt.size > 0

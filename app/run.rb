@@ -47,7 +47,10 @@ module Trepanning
       :skip_loader => true
     }.merge(start_opts)
     dbgr.start(start_opts)
-    Kernel::load program_to_debug
+    begin
+      Kernel::load program_to_debug
+    rescue Interrupt
+    end
 
     # The dance we have to undo to restore $0 and undo the mess created
     # above.

@@ -100,7 +100,6 @@ class Trepan
       coms_macs = @commands.merge(@macros)
       match_pairs = Trepan::Complete.complete_token_with_next(coms_macs,
                                                                args[0])
-      return [] if match_pairs.empty?
       match_hash = {}
       match_pairs.each do |pair|
         match_hash[pair[0]] = pair[1]
