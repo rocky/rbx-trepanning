@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # The main "driver" class for a command processor. Other parts of the 
 # command class and debugger command objects are pulled in from here.
 
@@ -8,8 +8,8 @@ require 'pathname'  # For cleanpath
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
-%w(default breakpoint disassemble display eval load_cmds location frame hook msg 
-   running stepping validate).each do
+%w(default breakpoint disassemble display eval eventbuf load_cmds location 
+   frame hook msg running stepping validate).each do
   |mod_str|
   require_relative mod_str
 end
@@ -116,7 +116,8 @@ class Trepan
       # load_cmds has to come first.
       ## %w(load_cmds breakpoint display eventbuf frame running validate
       ##   ).each do |submod|
-      %w(load_cmds breakpoint display frame running validate).each do |submod|
+      %w(load_cmds breakpoint display eventbuf frame running validate).each do 
+        |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)

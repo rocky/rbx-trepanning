@@ -18,6 +18,6 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../../../mock'
   require_relative '../auto'
-  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowIrb,
+  cmd = MockDebugger::subsub_setup(Trepan::SubSubcommand::ShowAuto,
                                    Trepan::SubSubcommand::ShowAutoIrb)
 end
