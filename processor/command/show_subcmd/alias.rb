@@ -4,10 +4,10 @@ require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::ShowAlias < Trepan::Subcommand
-    Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+  Trepanning::Subcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
     HELP         = <<-EOH
-#{PREFIX.join(' ')} [NAME1 NAME2 ...] 
+#{CMD} [NAME1 NAME2 ...] 
 
 If aliases names are given, show their definition. If left blank, show
 all alias names

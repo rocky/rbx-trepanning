@@ -7,7 +7,7 @@ class Trepan::Subcommand::InfoLine < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP = <<-EOH
-#{CMD=PREFIX.join(' ')} [LINE-NUMBER]
+#{CMD} [LINE-NUMBER]
 
 Show bytecode offset for LINE-NUMBER. If no LINE-NUMBER is given, 
 then we use the current line that we are stopped in.

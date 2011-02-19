@@ -102,8 +102,8 @@ class Trepan
       @trace_hook     = ['trace', 
                         Proc.new{|*args| print_location}]
       @tracebuf_hook  = ['tracebuffer', 
-                         Proc.new{|*args| @eventbuf.append(@core.event, @frame, 
-                                                           @core.hook_arg)}]
+                         Proc.new{|*args| @eventbuf.append(@event, @frame, 
+                                                           nil)}]
     end
 
   end
