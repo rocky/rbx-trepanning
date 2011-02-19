@@ -12,6 +12,15 @@ class Trepan
       @reload_on_change = nil
     end
 
+    # Return the text to the current source line.
+    # FIXME: loc_and_text should call this rather than the other
+    # way around.
+    def current_source_text
+      opts = {:reload_on_change => @reload_on_change}
+      loc, junk, text = @proc.loc_and_text(loc, opts)
+      text
+    end
+
     def resolve_file_with_dir(path_suffix)
       settings[:directory].split(/:/).each do |dir|
         dir = 

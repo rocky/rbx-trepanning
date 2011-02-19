@@ -5,8 +5,9 @@ require_relative './base/cmd'
 
 class Trepan::Command::EvalCommand < Trepan::Command
 
+  old_verbose = $VERBOSE  
+  $VERBOSE    = nil
   NAME          = File.basename(__FILE__, '.rb')
-  CATEGORY      = 'data'
   HELP    = <<-HELP
 #{NAME} [STRING]
 
@@ -17,23 +18,30 @@ may be used again easily. The name of the global variable is printed
 next to the inspect output of the value.
 
 If no string is given we run the string from the current source code
-about to be run
+about to be run. If the command ends ? (via an alias) and no string
+is given we will also strip off any leading 'if', 'while', 'elseif' or
+'until' in the string. 
 
 #{NAME} 1+2  # 3
 #{NAME} @v
 #{NAME}      # Run current source-code line
+#{NAME}?     # but strips off leading 'if', 'while', 'elsif' or 'until'
+             # from command 
 
 See also 'set autoeval'
       HELP
 
-  NAME          = File.basename(__FILE__, '.rb')
+  ALIASES       = %w(eval? ev? ev)
+  CATEGORY      = 'data'
   NEED_STACK    = true
   SHORT_HELP    = 'Run code in the current context'
+  $VERBOSE      = old_verbose 
+
   def run(args)
     if args.size == 1
-      loc = @proc.source_location_info
-      opts = {:reload_on_change => @proc.reload_on_change}
-      loc, junk, text = @proc.loc_and_text(loc, opts)
+      text  = @proc.current_source_text
+      text.gsub!(/^\s*(?:if|elsif|until|while)\s*/,'') if 
+        '?' == args[0][-1..-1] 
       msg "eval: #{text}"
     else
       text = @proc.cmd_argstr
