@@ -4,24 +4,25 @@ require_relative 'base/cmd'
 class Trepan::Command::ExitCommand < Trepan::Command
 
   unless defined?(HELP)
+    NAME         = File.basename(__FILE__, '.rb')
     ALIASES      = %w(quit q q! quit! exit!)
-    HELP = 
-      'exit [exitcode] - hard exit of the debugged program.  
+    HELP = <<-HELP
+#{NAME} [exitcode] - hard exit of the debugged program.  
 
 The program being debugged is exited via exit!() which does not run
 the Kernel at_exit finalizers. If a return code is given, that is the
 return code passed to exit() - presumably the return code that will be
 passed back to the OS. If no exit code is given, 0 is used.
 
-If you are in interactive mode, you are prompted to confirm
-quitting. However if you do not want to be prompted, add ! the end.
-(vim/vi/ed users can use alias q!).
+If you are in interactive mode, and confirm is not set off, you are
+prompted to confirm quitting. However if you do not want to be
+prompted, add ! the end.  (vim/vi/ed users can use alias q!).
 
-See also "kill".'
+See also "kill" and "set confirm".'
+    HELP
 
     CATEGORY     = 'support'
     MAX_ARGS     = 2  # Need at most this many
-    NAME         = File.basename(__FILE__, '.rb')
     SHORT_HELP  = 'Exit program via "exit!()"'
   end
 
