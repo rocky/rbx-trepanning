@@ -1,5 +1,7 @@
-# Frame code from reference debugger.
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 class Trepan
+
+  # Call-Stack frame methods
   class Frame
     def initialize(debugger, number, vm_location)
       @debugger = debugger

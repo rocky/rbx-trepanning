@@ -1,10 +1,11 @@
+#!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'readline'
 require 'compiler/iseq'
 
 require 'rubygems'; require 'require_relative'
-require_relative '../app/complete'
+require_relative '../app/complete'       # command completion
 require_relative '../app/frame'
 require_relative '../app/util'           # get_dollar_0
 require_relative '../processor/main'
@@ -12,6 +13,7 @@ require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'
 require_relative '../interface/user'     # user interface (includes I/O)
+require_relative '../interface/script'   # --command interface (includes I/O)
 require_relative '../interface/client'   # client interface (remote debugging)
 require_relative '../interface/server'   # server interface (remote debugging)
 require_relative '../io/null_output'
@@ -26,7 +28,6 @@ class Trepan
   attr_accessor :breakpoint   # Breakpoint. The current breakpoint we are
                               # stopped at or nil if none.
   attr_accessor :intf         # Array. The way the outside world
-                              # interfaces with us.  An array, so that
                               # interfaces with us.  An array, so that
                               # interfaces can be stacked.
   attr_accessor :restart_argv # How to restart us, empty or nil.
@@ -129,40 +130,24 @@ class Trepan
 
   # The method is called when we want to do debugger command completion
   # such as called from GNU Readline with <TAB>.
-  def completion_method(str, leading=Readline.line_buffer)
-    args =
-      if str.empty? && leading.end_with?(' ')
-        # A line ending with a blank means we want to get all completions
-        # of the *next* token, not the current token.
-        leading.split(' ').compact + ['']
-      else
-        # We split on a single blank rather than sequences of spaces
-        # because we need to keep the line exactly as it is except for the
-        # last token
-        leading.split(' ').compact
-      end
-    completion = @processor.complete(args)
+  def completion_method(last_token, leading=Readline.line_buffer)
+    completion = @processor.complete(leading, last_token)
     if 1 == completion.size 
-      last_token = completion[0].split[-1]
-      if  last_token == str
-        # If we were at the end of a complete token add a space so that
-        # the next time, we'll complete any context after that.
-        [str + ' ']
-      elsif str.end_with?(' ') && str.strip == last_token 
-        # There is nothing more to complete
-        []
-      elsif str.empty? && completion[0] == leading
-        # There is also nothing more to complete
-        []
+      completion_token = completion[0]
+      if last_token.end_with?(' ')
+        if last_token.rstrip == completion_token 
+          # There is nothing more to complete
+          []
+        else
+          []
+        end
       else
-        [last_token]
+        [completion_token]
       end
     else
       # We have multiple completions. Get the last token so that will
       # be presented as a list of completions.
-      completion.map do |cmd|
-        cmd.split[-1]
-      end
+      completion
     end
   end
 

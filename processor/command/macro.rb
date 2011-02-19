@@ -47,15 +47,15 @@ See also 'show macro'.
   end
   
   def run(args)
-    macro_name = args[1]
-    proc_argstr = @proc.cmd_argstr[macro_name.size..-1].lstrip
-    proc_obj = @proc.debug_eval(proc_argstr, @proc.settings[:maxstring])
+    cmd_name = args[1]
+    cmd_argstr = @proc.cmd_argstr[cmd_name.size..-1].lstrip
+    proc_obj = @proc.debug_eval(cmd_argstr, @proc.settings[:maxstring])
     if proc_obj
       if proc_obj.is_a?(Proc)
-        @proc.macros[macro_name] = proc_obj
-        msg "Macro \"#{macro_name}\" defined."
+        @proc.macros[cmd_name] = proc_obj
+        msg "Macro \"#{cmd_name}\" defined."
       else
-        errmsg "Expecting a Proc object; got: #{proc_argstr}"
+        errmsg "Expecting a Proc object; got: #{cmd_argstr}"
       end
     end
   end

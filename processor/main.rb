@@ -20,10 +20,10 @@ class Trepan
 
     # SEE ALSO attr's in require_relative's of loop above.
 
-    attr_reader   :cmd_name        # command name before alias or macro resolution
     attr_reader   :cmd_argstr      # Current command args, a String.
                                    # This is current_command with the command
                                    # name removed from the beginning.
+    attr_reader   :cmd_name        # command name before alias or macro resolution
     attr_reader   :cmd_queue       # queue of commands to run
     ## attr_reader   :core            # Trepan core object
     attr_reader   :current_command # Current command getting run, a String.
@@ -109,7 +109,7 @@ class Trepan
       prelude_file = File.expand_path(File.join(File.dirname(__FILE__), 
                                                 %w(.. data prelude.rb)))
 
-      ## Start with empty thread and frame info.
+      # Start with empty thread and frame info.
       frame_teardown 
 
       # Run initialization routines for each of the "submodule"s.
@@ -186,7 +186,8 @@ class Trepan
         begin
           @current_command = 
             if @cmd_queue.empty?
-              read_command.strip
+              # Leave trailing blanks on for the "complete" command
+              read_command.chomp 
             else
               @cmd_queue.shift
             end
@@ -214,7 +215,7 @@ class Trepan
           end
         end
       end
-      leave_cmdloop = run_command(@current_command)
+      run_command(@current_command)
 
       # Save it to the history.
       @intf.history_io.puts @last_command if @last_command && @intf.history_io
@@ -279,7 +280,7 @@ class Trepan
             skip_command = before_cmdloop
           end
         rescue SystemExit
-          ## @dbgr.stop
+          @dbgr.stop
           raise
         rescue Exception => exc
           errmsg("Internal debugger error: #{exc.inspect}")
@@ -312,9 +313,9 @@ class Trepan
           return false if args.size == 0
           break unless @macros.member?(macro_cmd_name)
           current_command = @macros[macro_cmd_name].call(*args[1..-1])
-          msg current_command if settings[:debugmacro]
+          msg current_command.inspect if settings[:debugmacro]
           if current_command.is_a?(Array) && 
-              current_command.any {|val| !val.is_a?(String)}
+              current_command.all? {|val| val.is_a?(String)}
             args = (first=current_command.shift).split
             @cmd_queue += current_command
             current_command = first
