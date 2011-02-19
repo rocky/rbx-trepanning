@@ -1,5 +1,6 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
+require_relative '../app/complete'
 require_relative '../app/frame'
 require_relative '../app/util'
 class Trepan
@@ -45,6 +46,11 @@ class Trepan
       else
         nil
       end
+    end
+
+    def frame_complete(prefix)
+      ary = (-@stack_size..@stack_size-1).map{|i| i.to_s}
+      Trepan::Complete.complete_token(ary, prefix)
     end
 
     # def frame_container(frame, canonicalize=true)

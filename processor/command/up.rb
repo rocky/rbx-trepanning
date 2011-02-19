@@ -27,6 +27,10 @@ See also 'down' and 'frame'.
   SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   $VERBOSE      = old_verbose
 
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
   def initialize(proc)
     super
     @direction = +1 # -1 for down.
