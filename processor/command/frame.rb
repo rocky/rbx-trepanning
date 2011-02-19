@@ -28,6 +28,10 @@ See also 'up', 'down', and  'backtrace'.
   NAME         = File.basename(__FILE__, '.rb')
   SHORT_HELP   = 'Make a specific frame in the call stack the current frame'
   
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
   def run(args)
 
     if args.size == 1

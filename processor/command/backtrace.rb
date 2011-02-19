@@ -33,6 +33,11 @@ See also 'set hidelevel'.
   NEED_STACK   = true
   SHORT_HELP   =  'Show the current call stack'
   
+  def complete(prefix)
+    @proc.frame_complete(prefix)
+  end
+  
+  # This method runs the command
   def run(args)
     verbose_ary, count_ary = args[1..-1].partition {|item| item =~ /full/i}
     verbose = !verbose_ary.empty?
