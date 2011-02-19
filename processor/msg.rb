@@ -35,12 +35,12 @@ class Trepan
         begin
           require 'coderay'
           require 'term/ansicolor'
-          @ruby_highlighter ||= CodeRay::Duo[:ruby, :term]
-          return @ruby_highlighter.encode(text)
+          @ruby_highlighter = CodeRay::Duo[:ruby, :term]
         rescue LoadError
+          return text
         end
       end
-      text
+      return @ruby_highlighter.encode(text)
     end
 
     def safe_rep(str)

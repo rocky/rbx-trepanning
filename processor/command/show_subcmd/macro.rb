@@ -7,21 +7,39 @@ require_relative '../../../app/complete'
 class Trepan::Subcommand::ShowMacro < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP = "Show defined macros"
+    HELP = <<-HELP
+#{CMD=PREFIX.join(' ')} 
+#{CMD} *
+#{CMD} MACRO1 [MACRO2 ..]
+
+In the first form a list of the existing macro names are shown
+in column format.
+
+In the second form, all macro names and their definitions are show.
+
+In the last form the only definitions of the given macro names is shown.
+    HELP
+    SHORT_HELP = "Show defined macros"
     MIN_ABBREV = 'ma'.size
   end
 
   def complete(prefix)
-    Trepan::Complete.complete_token(@proc.macros.keys, prefix)
+    Trepan::Complete.complete_token(@proc.macros.keys + %w(*), prefix)
   end
 
   def run(args)
     if args.size > 2
-      args[2..-1].each do |macro_name|
+      macro_names = 
+        if args.size == 3 && '*' == args[2] 
+          @proc.macros.keys
+        else
+          args[2..-1]
+        end        
+      macro_names.each do |macro_name|
         if @proc.macros.member?(macro_name)
           section "#{macro_name}:"
           string = @proc.macros[macro_name][1]
-          msg "  #{@proc.ruby_format(string)}"
+          msg "  #{@proc.ruby_format(string)}", {:unlimited => true}
         else
           errmsg "%s is not a defined macro" % macro_name
         end
