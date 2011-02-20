@@ -34,7 +34,7 @@ See also 'set hidelevel'.
   SHORT_HELP   =  'Show the current call stack'
   
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, nil)
   end
   
   # This method runs the command

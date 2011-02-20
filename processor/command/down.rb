@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'up'
 
@@ -10,14 +10,14 @@ class Trepan::Command::DownCommand < Trepan::Command::UpCommand
   # Silence already initialized constant .. warnings
   old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  HELP = 
-"d(own) [count]
+  HELP = <<-HELP
+#{NAME} [count]
 
 Move the current frame down in the stack trace (to a newer frame). 0
 is the most recent frame. If no count is given, move down 1.
 
 See also 'up' and 'frame'.
-"
+  HELP
 
   ALIASES       = %w(d)
   NAME          = File.basename(__FILE__, '.rb')

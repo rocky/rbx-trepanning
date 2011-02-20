@@ -4,25 +4,25 @@ require_relative 'base/cmd'
 
 # up command. Like 'down' butthe direction (set by DIRECTION) is different.
 #
-# NOTE: The down command  subclasses this, so beware when changing!
+# NOTE: The down command  subclasses this, so beware when changing! 
 class Trepan::Command::UpCommand < Trepan::Command
 
   # Silence already initialized constant .. warnings
-  old_verbose = $VERBOSE
+  old_verbose = $VERBOSE  
   $VERBOSE    = nil
-  HELP        =
-"u(p) [count]
+  NAME        = File.basename(__FILE__, '.rb')
+  HELP        = <<-HELP
+#{NAME} [count]
 
 Move the current frame up in the stack trace (to an older frame). 0 is
 the most recent frame. If no count is given, move up 1.
 
 See also 'down' and 'frame'.
-"
+  HELP
 
   ALIASES       = %w(u)
   CATEGORY      = 'stack'
   MAX_ARGS      = 1  # Need at most this many
-  NAME          = File.basename(__FILE__, '.rb')
   NEED_STACK    = true
   SHORT_HELP    = 'Move frame in the direction of the caller of the last-selected frame'
   $VERBOSE      = old_verbose
