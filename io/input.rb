@@ -84,7 +84,10 @@ end
 def Trepan::GNU_readline?
   begin
     return @use_readline unless @use_readline.nil?
-    @use_readline ||= require 'rb-readline.rb'
+    %w(rb-readline rb-readline.rb/readline).each do |gem_name|
+      @use_readline ||= require gem_name
+      break if @use_readline
+    end
     if @use_readline
       # Returns current line buffer
       def Readline.line_buffer
@@ -136,5 +139,3 @@ if __FILE__ == $0
     end
   end
 end
-
-
