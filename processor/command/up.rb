@@ -28,7 +28,7 @@ See also 'down' and 'frame'.
   $VERBOSE      = old_verbose
 
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, @direction)
   end
   
   def initialize(proc)
@@ -51,11 +51,11 @@ See also 'down' and 'frame'.
     else
       count_str = args[1]
       name_or_id = args[1]
+      low, high = @proc.frame_low_high(@direction)
       opts = {
         :msg_on_error =>
         "The '#{NAME}' command argument must eval to an integer. Got: %s" % count_str,
-        :min_value => -@proc.stack_size,
-        :max_value => @proc.stack_size-1
+        :min_value => low, :max_value => high
       }
       count = @proc.get_an_int(count_str, opts)
       return false unless count

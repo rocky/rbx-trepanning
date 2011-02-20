@@ -29,7 +29,7 @@ See also 'up', 'down', and  'backtrace'.
   SHORT_HELP   = 'Make a specific frame in the call stack the current frame'
   
   def complete(prefix)
-    @proc.frame_complete(prefix)
+    @proc.frame_complete(prefix, nil)
   end
   
   def run(args)
@@ -64,11 +64,11 @@ See also 'up', 'down', and  'backtrace'.
       errmsg('No frames recorded.')
       return false
     end
+    low, high = @proc.frame_low_high(nil)
     opts={
       :msg_on_error => 
       "The '#{NAME}' command requires a frame number. Got: #{position_str}",
-      :min_value => -stack_size,
-      :max_value => stack_size-1
+      :min_value => low, :max_value => high
     }
     frame_num = @proc.get_an_int(position_str, opts)
     return false unless frame_num
