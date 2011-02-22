@@ -42,7 +42,7 @@ class TestFinish < Test::Unit::TestCase
     def five; 5 end
     def something(x)
       return 1 if x <= 1
-      x = 
+      x =
         if five > 5
           24
         else
@@ -63,7 +63,7 @@ class TestFinish < Test::Unit::TestCase
            '-> ',
            'return 1 if x <= 1',
            '<- ',
-           '22', '22']
+           'x =', '22']
     compare_output(out, d, cmds)
   end
   
