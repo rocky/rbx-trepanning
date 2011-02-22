@@ -8,7 +8,6 @@ class Trepan::SubSubcommand::ShowTraceBuffer < Trepan::ShowBoolSubSubcommand
   unless defined?(HELP)
     HELP         = <<-EOH
 #{CMD} [NUM]
-show trace buffer [NUM]
 
 Show the events recorded in the event buffer. If NUM is a negative
 number, events run starting from that many debugger stops back. If NUM
@@ -22,7 +21,7 @@ the earliest position recorded may move around.)
   end
 
   def parse_show_buffer_args(args)
-    marksize = @proc.eventbuf.marks.size
+    marksize = @proc.eventbuf.size
     opts = {
       :max_value    => @proc.eventbuf.size,
       :min_value    => - marksize,
@@ -31,12 +30,8 @@ the earliest position recorded may move around.)
     }
     num = @proc.get_an_int(args[0], opts)
     return nil, nil unless num
-    first = 
-      if num < 0 
-        @proc.eventbuf.marks[marksize+num] 
-      else
-        @proc.eventbuf.zero_pos + num
-      end
+    num = marksize + num  if num < 0 
+    first = @proc.eventbuf.zero_pos + num
     return first, nil
   end
 

@@ -86,6 +86,24 @@ class Trepan
       [loc, line_no, text]
     end
 
+    def format_location(event=@event, frame=@frame, frame_index=@frame_index)
+      text      = nil
+      ev        = if event.nil? || 0 != frame_index
+                    '  ' 
+                  else
+                    (EVENT2ICON[event] || event)
+                  end
+
+      @line_no  = frame.vm_location.line
+
+      loc = source_location_info
+      loc, @line_no, text = loc_and_text(loc)
+      ip_str = frame.method ? " @#{frame.next_ip}" : ''
+
+      "#{ev} (#{loc}#{ip_str})"
+    end
+
+    # FIXME: Use above format_location routine
     def print_location
       # if %w(c-call call).member?(@event)
       #   # FIXME: Fix Ruby so we don't need this workaround? 
@@ -129,6 +147,19 @@ class Trepan
         show_bytecode
       end
     end
+
+    # def print_location(event=@event, frame=@frame)
+    #   text = format_location(event, frame)
+    #   if text && !text.strip.empty?
+    #     old_maxstring = @settings[:maxstring]
+    #     @settings[:maxstring] = -1
+    #     msg text
+    #     @settings[:maxstring] = old_maxstring
+    #     @line_no -= 1
+    #   else
+    #     show_bytecode
+    #   end
+    # end
 
     def source_location_info
       filename  = @frame.vm_location.method.active_path

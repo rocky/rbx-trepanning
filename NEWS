@@ -1,3 +1,14 @@
+Feb 22, 2011  (0.0.7)
+- Add gdb "condition" command
+- More complete command completion
+- Add kill! alias to force without prompting
+- Add eval (no args) and eval? to run current source line or source line
+  expression
+- Add "set/show trace buffer on/off" to keep a history of recent places
+  we've stopped in the debugger
+- Add "show macro *" to list all macro names.
+- A number of bug fixes
+
 Feb 15, 2011  (0.0.6)
 - Repackage using rubinus platform 1.2 rather than 1.2.1
 

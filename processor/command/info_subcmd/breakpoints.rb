@@ -49,6 +49,11 @@ EOH
         if bp.condition && bp.condition != 'true'
           msg("\tstop only if %s" % bp.condition)
         end
+        if bp.hits > 0
+          ss = (bp.hits > 1) ? 's' : ''
+          msg("\tbreakpoint already hit %d time%s" %
+              [bp.hits, ss])
+        end
       end
       section 'Deferred breakpoints...'
       @proc.dbgr.deferred_breakpoints.each_with_index do |bp, i|

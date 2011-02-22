@@ -1,3 +1,164 @@
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/brkptmgr.rb, lib/trepanning.rb,
+	processor/breakpoint.rb, processor/main.rb, processor/stepping.rb,
+	test/unit/cmd-helper.rb, test/unit/test-app-brkpt.rb,
+	test/unit/test-cmd-finish.rb: Add finalization routine to remove
+	stepping and other breakpoints. Fixes the "no debugger" messages on
+	rake test.
+
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* test/functional/test-finish.rb:  Adjust test check line number. In latest rubinius release line
+	 numbers for assignment statement are better, use LHS.
+
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/condition.rb, lib/trepanning.rb,
+	processor/command/condition.rb,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/location.rb, processor/validate.rb,
+	test/unit/test-app-condition.rb: Add breakpoint conditions. Not
+	showing # of hits right now though.
+
+2011-02-21  rocky <rockyb@rubyforge.org>
+
+	* processor/command/source.rb: Add first use of filename completion
+	on "source" command
+
+2011-02-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/backtrace.rb, processor/command/down.rb,
+	processor/command/up.rb: Sync with rb-trepanning
+
+2011-02-20  rocky <rockyb@rubyforge.org>
+
+	* processor/command/frame.rb, processor/command/up.rb,
+	processor/frame.rb: Improve range checking on frame, up and down
+	commands.
+
+2011-02-20  rocky <rockyb@rubyforge.org>
+
+	* io/input.rb: Try two kinds of Readline includes. Possibly I got it
+	right this time
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb, processor/command/kill.rb,
+	processor/command/show_subcmd/alias.rb: Add kill! alias and update
+	help
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* app/eventbuffer.rb, processor/command/base/subcmd.rb,
+	processor/command/info_subcmd/files.rb,
+	processor/command/info_subcmd/line.rb,
+	processor/command/info_subcmd/ruby.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/macro.rb,
+	processor/command/show_subcmd/trace_subcmd/print.rb,
+	processor/eventbuf.rb, processor/hook.rb, processor/main.rb: 
+	Basically same as what in HEAD
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* app/eventbuffer.rb, processor/command/base/subcmd.rb,
+	processor/command/info_subcmd/files.rb,
+	processor/command/info_subcmd/line.rb,
+	processor/command/info_subcmd/ruby.rb,
+	processor/command/set_subcmd/trace_subcmd/buffer.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/macro.rb,
+	processor/command/show_subcmd/trace_subcmd/buffer.rb,
+	processor/command/show_subcmd/trace_subcmd/print.rb,
+	processor/eventbuf.rb, processor/hook.rb, processor/main.rb: Add
+	rudimentary event buffer save/print. Not fully functional. CMD
+	constant now saved automatically in subcommands. DRY some code.
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/backtrace.rb,
+	processor/command/frame.rb, processor/command/up.rb,
+	processor/frame.rb: Add frame number completion. Why not?
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/alias.rb: Add completion for "show
+	aliases"
+
+2011-02-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/show_subcmd/macro.rb, processor/msg.rb: show
+	macro improvements: add "show macro *" and long help. Sync with
+	rb-trepanning.
+
+2011-02-18  rocky <rockyb@rubyforge.org>
+
+	* processor/command/eval.rb, processor/command/macro.rb,
+	processor/command/show_subcmd/macro.rb, processor/location.rb,
+	processor/main.rb, processor/msg.rb: Add eval? alias ev? to evaluate
+	current source line without leading "if", "while" "elsif" Add show
+	macro to see macros. Syntax highight that if desired.
+
+2011-02-18  rocky <rockyb@rubyforge.org>
+
+	* app/complete.rb, app/frame.rb, lib/trepanning.rb,
+	processor/command/base/subsubcmd.rb,
+	processor/command/base/subsubmgr.rb, processor/command/complete.rb,
+	processor/command/macro.rb,
+	processor/command/set_subcmd/different.rb, processor/load_cmds.rb,
+	processor/main.rb, test/unit/test-completion.rb,
+	test/unit/test-proc-load_cmds.rb: Sync with rb-trepanning. Had
+	broken completion in code refactor.
+
+2011-02-18  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-app-complete.rb: Redo completion somewhat to be
+	more general and much input line when there are abreviations less.
+
+2011-02-16  rocky <rockyb@rubyforge.org>
+
+	* app/run.rb, interface/user.rb: Sync with rb-trepanning
+
+2011-02-16  rocky <rockyb@rubyforge.org>
+
+	* app/default.rb, app/run.rb, interface/user.rb, io/input.rb,
+	processor/load_cmds.rb, test/unit/test-app-options.rb,
+	test/unit/test-completion.rb: Completion was totally borked and so
+	was handling of Readline. Fix. Fix completion of aliases and test
+	for that now.
+
+2011-02-16  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, app/options.rb, rbx-trepanning.gemspec: Work
+	on packaging yet again. Steal from kpat's for good ideas.
+	options.rb: Correct usage one more time. In 0.0.7.dev now
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* .gemspec: Repackage using rubinius 1.2 rather than 1.2.1
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, NEWS, app/options.rb: Repackage using rubinius 1.2
+	rather than 1.2.1
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog: Update ChangeLog for release
+
 2011-02-15  rocky <rockyb@rubyforge.org>
 
 	* .gemspec, Rakefile, app/options.rb: Get ready for 0.0.5 release

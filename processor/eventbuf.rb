@@ -66,7 +66,7 @@ class Trepan
     # Show event buffer entry. If the location is the same as the previous
     # location we don't show the duplicated location information.
     def format_eventbuf_entry(item, last_container, last_location)
-      mess = "#{item.event} #{item.frame}"
+      mess = format_location(item.event, item.frame, 0)
       return nil, nil, mess
     end
       
