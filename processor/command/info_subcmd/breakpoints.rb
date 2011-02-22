@@ -46,6 +46,9 @@ EOH
       section "Num  Breakpoint"
       bpmgr.list.each do |bp|
         msg "%3d: %s" % [bp.id, bp.describe]
+        if bp.condition && bp.condition != 'true'
+          msg("\tstop only if %s" % bp.condition)
+        end
       end
       section 'Deferred breakpoints...'
       @proc.dbgr.deferred_breakpoints.each_with_index do |bp, i|

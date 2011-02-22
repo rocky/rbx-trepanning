@@ -1,32 +1,29 @@
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+
+# Breakpoint objects
 class Trepan
   class Breakpoint
-
     attr_accessor :condition # If non-nil, this is a String to be eval'd
                              # which must be true to enter the debugger
     attr_reader   :event     # Symbol. Optional type of event associated with
                              # breakpoint.
-    attr_accessor :hits      # Fixnum. The number of timea a breakpoint
+    attr_accessor :hits      # Fixnum. The number of times a breakpoint
                              # has been hit (with a true condition). Do
                              # we want to (also) record hits independent
                              # of the condition?
     attr_reader   :id        # Fixnum. Name of breakpoint
-
+    attr_reader   :ignore    # Fixnum. How many more times do we have
+                             # to encounter the breakpoint before we stop?
     @@next_id = 1
 
     BRKPT_DEFAULT_SETTINGS = {
       :condition => 'true',
       :enabled   => 'true',
+      :ignore    =>  0,
       :temp      =>  false,
       :event     =>  :Unknown,
     } unless defined?(BRKPT_DEFAULT_SETTINGS)
-
-    def self.for_ip(exec, ip, opts={})
-      name = opts[:name] || :anon
-      line = exec.line_from_ip(ip)
-
-      Breakpoint.new(name, exec, ip, line, nil, opts)
-    end
 
     def initialize(name, method, ip, line, id=nil, opts = {})
       @descriptor = name
@@ -47,6 +44,7 @@ class Trepan
       end
 
       @hits = 0
+
       # unless @id
       #   @id = @@next_id 
       #   @@next_id += 1
@@ -83,12 +81,19 @@ class Trepan
       @method.set_breakpoint @ip, self
     end
 
-    # Return true if the breakpoint is relevant. That is, the
-    # breakpoint is either not a scoped or it is scoped and test_scope
-    # matches the desired scope. We also remove the breakpoint and any
-    # related breakpoints if it was hit and temporary.
+    # FIXME: give this a better name.
+    # Return true if the breakpoint is a temporary breakpoint and is
+    # relevant. By releveant we mean that, the breakpoint is either
+    # not a scoped breakpoint or it is scoped and test_scope matches
+    # the desired scope. We also remove the breakpoint and any related
+    # breakpoints if it was hit and temporary.  
+    # 
+    # If the breakpoint is not a temporary breakpoint, return nil.
+    # 
+    # See also "condition' below which is run to determine whether or 
+    # not to stop. 
     def hit!(test_scope)
-      return true unless @temp
+      return nil unless @temp
       return false if @scope && test_scope != @scope
 
       @related_bp.each { |bp| bp.remove! }
@@ -96,26 +101,26 @@ class Trepan
       return true
     end
 
-    # def condition?(bind)
-    #   if eval(@condition, bind)
-    #     if @ignore > 0
-    #       @ignore -= 1
-    #       return false
-    #     else
-    #       @hits += 1
-    #       return true
-    #     end
-    #   else
-    #     return false
-    #   end
-    # end
+    def condition?(bind)
+      if eval(@condition, bind)
+        if @ignore > 0
+          @ignore -= 1
+          return false
+        else
+          @hits += 1
+          return true
+        end
+      else
+        return false
+      end
+    end
 
     def delete!
       remove!
     end
 
     def describe
-      "#{descriptor} - #{location}"
+      "#{@descriptor} - #{location}"
     end
 
     def disable
@@ -155,6 +160,13 @@ class Trepan
 
     def temp?
       @temp
+    end
+
+    def self.for_ip(exec, ip, opts={})
+      name = opts[:name] || :anon
+      line = exec.line_from_ip(ip)
+
+      Breakpoint.new(name, exec, ip, line, nil, opts)
     end
 
   end

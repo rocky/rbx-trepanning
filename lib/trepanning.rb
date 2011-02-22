@@ -294,7 +294,13 @@ class Trepan
       if @breakpoint
         # Some breakpoints are frame specific. Check for this.  hit!
         # also removes the breakpoint if it was temporary and hit.
-        break if @breakpoint.hit!(@vm_locations.first.variables)
+        status = @breakpoint.hit!(@vm_locations.first.variables)
+        if status
+          break
+        elsif status.nil? 
+          # A permanent breakpoint. Check the condition.
+          break if @breakpoint.condition?(@current_frame.binding)
+        end
       else
         @processor.step_bp.remove! if @processor.step_bp
         break

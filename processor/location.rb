@@ -17,7 +17,7 @@ class Trepan
     # way around.
     def current_source_text
       opts = {:reload_on_change => @reload_on_change}
-      loc, junk, text = @proc.loc_and_text(loc, opts)
+      loc, junk, text = loc_and_text(source_location_info, opts)
       text
     end
 

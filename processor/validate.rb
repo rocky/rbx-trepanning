@@ -179,6 +179,7 @@ class Trepan
                 errmsg "Cannot find method location for line #{line}"
                 return nil 
               end
+              return [meth.name.to_s, nil, '#', meth, line, nil]
             elsif valid_ip?(frame.method, ip)
               return [args.join(' '), meth.class, '#', frame.method, nil, ip]
             else
