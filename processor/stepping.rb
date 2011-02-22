@@ -2,7 +2,25 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
 class Trepan
   class CmdProcessor
-    
+
+    def stepping_initialize
+      @step_brkpts  = []
+    end
+
+    def stepping_breakpoint_finalize
+      @step_brkpts.each do |bp| 
+        bp.remove!
+      end
+    end
+
+    def remove_step_brkpt
+      return unless @step_bp
+      @step_brkpts = @step_brkpts.select do |bp| 
+        (bp != @step_bp) && bp.active?
+      end
+      @step_bp.remove!
+    end
+
     # It might be interesting to allow stepping within a parent frame
     def step_over_by(step, frame=@top_frame)
       
@@ -78,6 +96,7 @@ class Trepan
         bp.activate
         bps << bp
       end
+      @step_brkpts += bps
       first_bp = bps[0]
       bps[1..-1].each do |bp| 
         first_bp.related_with(bp) 
@@ -108,6 +127,7 @@ class Trepan
         bp2.activate
         result << bp2
       end
+      @step_brkpts += result
       return result
     end
   end

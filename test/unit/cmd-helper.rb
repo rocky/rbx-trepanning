@@ -9,6 +9,7 @@ require_relative '../../processor/frame'
 
 module UnitHelper
 
+  module_function
   def common_setup
     @dbg      = MockDebugger::MockDebugger.new(:nx => true)
     @cmdproc  = Trepan::CmdProcessor.new(@dbg)
@@ -33,13 +34,16 @@ module UnitHelper
     end
     reset_cmdproc_vars
   end
-  module_function :common_setup
+
+  def common_teardown
+    @cmdproc.finalize
+  end
   
   def reset_cmdproc_vars
     @cmdproc.instance_variable_set('@msgs', [])
     @cmdproc.instance_variable_set('@errmsgs', [])
   end
-  module_function :reset_cmdproc_vars
+
 end
 
 if __FILE__ == $0

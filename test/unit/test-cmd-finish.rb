@@ -11,6 +11,10 @@ class TestCommandFinish < Test::Unit::TestCase
     @name   = File.basename(__FILE__, '.rb').split(/-/)[2]
     @my_cmd = @cmds[@name]
   end
+
+  def teardown
+    common_teardown
+  end
   
   def test_basic
     [

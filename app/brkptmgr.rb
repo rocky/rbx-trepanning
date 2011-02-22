@@ -13,6 +13,14 @@ class Trepan
       @set = Set.new
     end
 
+    # Remove all breakpoints that we have recorded
+    def finalize
+      @list.each do |bp|
+        bp.related_bp.each { |bp| bp.remove! }
+        bp.remove!
+      end
+    end
+
     def <<(brkpt)
       @list << brkpt
       @set.add(set_key(brkpt))
@@ -111,6 +119,7 @@ if __FILE__ == $0
   meth = Rubinius::CompiledMethod.of_sender
 
   brkpts = Trepan::BreakpointMgr.new
+  ObjectSpace.define_finalizer(brkpts, Proc.new {|arg| brkpts.finalize })
   brkpts.add("<start>", meth, 0, 0, 1)
   p brkpts[2]
   bp_status(brkpts, 1)
@@ -137,4 +146,5 @@ if __FILE__ == $0
   bp_status(brkpts, 6)
   brkpts.delete_by_brkpt(b3)
   bp_status(brkpts, 7)
+  brkpts.finalize
 end

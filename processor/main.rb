@@ -116,11 +116,17 @@ class Trepan
       # load_cmds has to come first.
       ## %w(load_cmds breakpoint display eventbuf frame running validate
       ##   ).each do |submod|
-      %w(load_cmds breakpoint display eventbuf frame running validate).each do 
+      %w(load_cmds breakpoint display eventbuf frame running 
+         stepping validate).each do 
         |submod|
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
+    end
+
+    def finalize
+      breakpoint_finalize
+      stepping_breakpoint_finalize
     end
 
     def canonic_container(container)

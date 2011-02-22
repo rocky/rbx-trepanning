@@ -50,7 +50,7 @@ class Trepan
       #   @@next_id += 1
       # end
 
-      @set = false
+      @activated = false
     end
 
     attr_reader :method, :ip, :line, :descriptor
@@ -77,8 +77,12 @@ class Trepan
     end
 
     def activate
-      @set = true
+      @activated = true
       @method.set_breakpoint @ip, self
+    end
+
+    def active?
+      @activated
     end
 
     # FIXME: give this a better name.
@@ -152,9 +156,8 @@ class Trepan
     end
 
     def remove!
-      return unless @set
-
-      @set = false
+      return unless @activated
+      @activated = false
       @method.clear_breakpoint(@ip)
     end
 
@@ -224,8 +227,10 @@ end
 
 if __FILE__ == $0
   method = Rubinius::CompiledMethod.of_sender
-  bp = Trepan::Breakpoint.new '<start>', method, 1, 2, 0
+  bp = Trepan::Breakpoint.new '<start>', method, 0, 2, 0
   %w(describe location icon_char hits temp? enabled? condition).each do |field|
     puts "#{field}: #{bp.send(field.to_sym)}"
   end
+  bp.activate
+  bp.remove!
 end

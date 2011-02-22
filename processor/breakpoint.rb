@@ -19,6 +19,10 @@ class Trepan
       @brkpt  = nil
     end
 
+    def breakpoint_finalize
+      @brkpts.finalize
+    end
+
     def breakpoint?
       @brkpt = @dbgr.breakpoint
       return !!@brkpt && %w(tbrkpt brkpt).member?(@brkpt.event)

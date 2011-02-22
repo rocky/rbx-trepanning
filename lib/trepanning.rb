@@ -229,6 +229,7 @@ class Trepan
   alias debugger start
 
   def stop(settings = {})
+    @processor.finalize
     Rubinius::VM.debug_channel = nil
   end
 
@@ -302,7 +303,7 @@ class Trepan
           break if @breakpoint.condition?(@current_frame.binding)
         end
       else
-        @processor.step_bp.remove! if @processor.step_bp
+        @processor.remove_step_brkpt
         break
       end
     end
