@@ -50,7 +50,6 @@ Examples:
         errmsg("Signal name '#{sig}' is not a signal I know about.\n")
         return false
       end
-      # FIXME: reinstate
       if 'KILL' == sig || Signal['KILL'] == sig
         @proc.intf.finalize
       end
