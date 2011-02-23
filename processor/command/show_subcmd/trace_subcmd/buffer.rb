@@ -4,7 +4,7 @@ require 'rubygems'; require 'require_relative'
 require_relative '../../base/subsubcmd'
 
 class Trepan::SubSubcommand::ShowTraceBuffer < Trepan::ShowBoolSubSubcommand
-  Trepanning::Subcommand.set_name_prefix(__FILE__, self)
+  Trepanning::SubSubcommand.set_name_prefix(__FILE__, self)
   unless defined?(HELP)
     HELP         = <<-EOH
 #{CMD} [NUM]
