@@ -1,5 +1,6 @@
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
+require_relative '../../app/condition'
 require_relative '../stepping'
 
 class Trepan::Command::StepCommand < Trepan::Command
@@ -9,6 +10,7 @@ class Trepan::Command::StepCommand < Trepan::Command
   NAME         = File.basename(__FILE__, '.rb')
   HELP         = <<-HELP
 #{NAME}[+|-] [into]  [count]
+#{NAME} until EXPRESSION
 #{NAME} over [args..]
 #{NAME} out  [args..]
 
@@ -26,6 +28,7 @@ Examples:
   #{NAME} 5/5+0  # same as above
   #{NAME}+       # same but force stopping on a new line
   #{NAME}-       # same but force stopping on a new line a new frame added
+  #{NAME} until a > b
   #{NAME} over   # same as 'next'
   #{NAME} out    # same as 'finish'
 
@@ -44,15 +47,25 @@ See also the commands:
     'into' => 'step',
   }
   
-  def run(args)
+  include Trepan::Condition
+  # This method runs the command
+  def run(args) # :nodoc
+    condition = nil
+    opts = {}
     if args.size == 1
       step_count = 1
-      opts = {}
     else
       replace_cmd = Keyword_to_related_cmd[args[1]]
       if replace_cmd
         cmd = @proc.commands[replace_cmd]
         return cmd.run([replace_cmd] + args[2..-1])
+      elsif 'until' == args[1]
+        try_condition = args[2..-1].join(' ')
+        if valid_condition?(try_condition)
+          condition = try_condition
+          opts[:different_pos] = false
+          step_count = 0
+        end
       else
         step_str = args[1]
         opts = @proc.parse_next_step_suffix(args[0])
@@ -67,7 +80,7 @@ See also the commands:
       end
     end
     
-    @proc.step('step', step_count, opts)
+    @proc.step('step', step_count, opts, condition)
   end
 end
 

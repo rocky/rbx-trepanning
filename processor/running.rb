@@ -193,24 +193,23 @@ class Trepan
       end
 
       @last_pos[2] = new_pos[2] if 'nostack' == @different_pos
-      condition_met = @step_count == 0
-
-      #     if @stop_condition
-      #       puts 'stop_cond' if @settings[:'debugskip']
-      #       debug_eval_no_errmsg(@stop_condition)
-      #     elsif @to_method
-      #       puts "method #{@frame.method} #{@to_method}" if 
-      #         @settings[:'debugskip']
-      #       @frame.method == @to_method
-      #     else
-      #       puts 'uncond' if @settings[:'debugskip']
-      #       true
-      #     end
+      condition_met = 
+          if @stop_condition
+            puts "stop_cond #{@stop_condition}" if @settings[:'debugskip']
+            debug_eval_no_errmsg(@stop_condition)
+          elsif @to_method
+            puts "method #{@frame.method} #{@to_method}" if 
+              @settings[:'debugskip']
+            @frame.method == @to_method
+          else
+            puts 'uncond' if @settings[:'debugskip']
+            @step_count == 0
+          end
           
-      #   msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
-      #        "new: #{new_pos}, different #{@different_pos.inspect}") if 
-      #     @settings[:'debugskip']
-
+      msg("condition_met: #{condition_met}, last: #{@last_pos}, " +
+          "new: #{new_pos}, different #{@different_pos.inspect}") if 
+        @settings[:'debugskip']
+      
       should_skip = ((@last_pos[0..3] == new_pos[0..3] && @different_pos) ||
                   !condition_met)
 

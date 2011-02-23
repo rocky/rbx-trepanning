@@ -235,7 +235,7 @@ class Trepan
         @last_pos = [@frame.vm_location, @stack_size, @current_thread, @event] 
       else
         if stepping_skip? # || @stack_size <= @hide_level
-          step(@return_to_program, @step_count)
+          step(@return_to_program, @step_count, {}, @stop_condition)
           return true
         elsif @event == 'start'
           step('step', 0)
