@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 
@@ -11,12 +11,11 @@ class Trepan::Command::AliasCommand < Trepan::Command
 
 Add an alias for a COMMAND
 
-See also 'unalias'.
+See also 'unalias' and 'show #{NAME}'.
     HELP
 
     CATEGORY      = 'support'
     MAX_ARGS      = 2  # Need at most this many
-    NAME          = File.basename(__FILE__, '.rb')
     NEED_STACK    = true
     SHORT_HELP    = 'Add an alias for a debugger command'
   end
@@ -24,9 +23,9 @@ See also 'unalias'.
   # Run command. 
   def run(args)
     if args.size == 1
-      @proc.commands['show'].run(%w(show alias))
+      @proc.commands['show'].run(%W(show #{NAME}))
     elsif args.size == 2
-      @proc.commands['show'].run(%W(show alias #{args[1]}))
+      @proc.commands['show'].run(%W(show #{NAME} #{args[1]}))
     else
       junk, al, command = args
       old_command = @proc.aliases[al]

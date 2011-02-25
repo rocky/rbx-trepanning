@@ -10,7 +10,7 @@ class Trepan
       start = meth.first_ip_on_line(line)
       fin = meth.first_ip_on_line(line+1)
 
-      if fin == -1
+      if !fin || fin == -1
         fin = meth.iseq.size
       end
 

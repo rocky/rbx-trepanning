@@ -124,6 +124,10 @@ class Trepan
       hook_initialize(commands)
     end
 
+    def compute_prompt
+      "(#{@settings[:prompt]}): "
+    end
+
     def finalize
       breakpoint_finalize
       stepping_breakpoint_finalize
@@ -141,18 +145,7 @@ class Trepan
     end
 
     def compute_prompt
-      th = @current_thread
-      thread_str = 
-        if 2 == Thread.list.size
-          ''
-        elsif th == Thread.main
-          '@main'
-        else
-          "@#{th.current.object_id}"
-        end
-      "%s#{settings[:prompt]}%s%s: " % 
-        ['(' * @debug_nest, thread_str, ')' * @debug_nest]
-      
+      "(#{@settings[:prompt]}): " 
     end
 
     # Check that we meed the criteria that cmd specifies it needs
@@ -242,7 +235,7 @@ class Trepan
         @last_pos = [@frame.vm_location, @stack_size, @current_thread, @event] 
       else
         if stepping_skip? # || @stack_size <= @hide_level
-          step(@return_to_program, @step_count)
+          step(@return_to_program, @step_count, {}, @stop_condition)
           return true
         elsif @event == 'start'
           step('step', 0)
@@ -250,7 +243,7 @@ class Trepan
         end
       end
 
-      @prompt = "(#{@settings[:prompt]}): " # compute_prompt
+      @prompt = compute_prompt
 
       @leave_cmd_loop = false
       print_location unless @settings[:traceprint]
@@ -258,7 +251,7 @@ class Trepan
       #   msg "Note: we are stopped *after* the above location."
       # end
 
-      # @eventbuf.add_mark if @settings[:tracebuffer]
+      @eventbuf.add_mark if @settings[:tracebuffer]
       
       @return_to_program = false
       @cmdloop_prehooks.run

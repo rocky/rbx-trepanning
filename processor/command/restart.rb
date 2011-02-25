@@ -37,8 +37,8 @@ new copy of the debugger is used.
       else
         msg 'Restarting...'
         @proc.run_cmd(%w(save))
-        # FIXME: Run atexit finalize routines?
         Dir.chdir(Rubinius::OS_STARTUP_DIR)
+        @proc.finalize
         exec(*argv)
       end
     else
