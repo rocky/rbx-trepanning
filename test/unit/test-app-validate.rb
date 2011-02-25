@@ -6,8 +6,8 @@ require_relative '../../app/validate'
 class TestAppValidate < Test::Unit::TestCase
   include Trepan::Validate
   def test_line_or_ip
-    [['o1',  [1, nil]],
-     ['O2',   [2, nil]],
+    [
+     ['@2',   [2, nil]],
      ['oink', [nil, nil]],
      ['1'   , [nil, 1]],
      ['12',   [nil, 12]],

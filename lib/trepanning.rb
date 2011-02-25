@@ -155,7 +155,7 @@ class Trepan
   def skip_loader
     cmds = 
       if @settings[:skip_loader] == :Xdebug
-        ['continue Rubinius::CodeLoader#load_script',
+        ['continue Rubinius::CodeLoader.load_script',
          'continue 67',
          # 'set kernelstep off',   # eventually would like 'on'
          'step', 'set hidelevel -1'

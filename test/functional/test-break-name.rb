@@ -21,7 +21,7 @@ class TestNameBreak < Test::Unit::TestCase
     # Check that we can set breakpoints in parent, sibling and children
     # of sibling returns. We have one more 'continue' than we need
     # just in case something goes wrong.
-    cmds = ['break Object#five', 'break TestNameBreak#five?',
+    cmds = ['break Object.five', 'break TestNameBreak.five?',
             'break TestNameBreak.six=', 
             'continue', 'continue', 'continue', 'continue']
             

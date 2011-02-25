@@ -42,7 +42,14 @@ class Trepan
           raise NameError, errmsg
         end
       else
-        if m.value.chain[0] && Class == eval("#{m.value.chain[0]}.class", binding)
+        is_class = 
+          begin
+            m.value.chain[0] && 
+              Class == eval("#{m.value.chain[0]}.class", binding) 
+          rescue 
+            false
+          end
+        if is_class
           # Handles stuff like:
           #    x = File
           #    x.basename

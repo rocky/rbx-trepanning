@@ -18,7 +18,7 @@ class TestTBreak < Test::Unit::TestCase
     # Check that temporary breaks are, well, temporary.
     # The last "continue" below isn't used. It to make sure we finish
     # the test even when the breakpoint isn't temporary.
-    cmds = ['tbreak TestTBreak#foo', 'continue', 'continue', 'continue'] 
+    cmds = ['tbreak TestTBreak.foo', 'continue', 'continue', 'continue'] 
     d = strarray_setup(cmds)
     d.start
     ##############################

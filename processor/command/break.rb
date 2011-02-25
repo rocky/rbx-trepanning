@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
@@ -10,30 +10,32 @@ class Trepan::Command::SetBreakpointCommand < Trepan::Command
   HELP         = <<-HELP
 #{NAME} 
 #{NAME} [line number|offset]
-#{NAME} Class[.#]method[:line-or-offset]
+#{NAME} <method-name>[:line-or-offset]
 
 Sets a breakpoint. In the first form, a breakpoint is set at the
 current line you are stopped at. In the second form, you give a line
-number or an offset.  An offset is a number that is prefaced with 'O'
-or 'o' and represents a Rubinius VM PC offset. 
+number or an offset.  An offset is a number that is prefaced with '@'
+and represents a Rubinius VM PC offset. 
 
 The current method name is used for the start of the search. If a line
 number is given and the line number is not found in that method,
 enclosing scopes are searched for the line.
 
-The last form is the most explicit. Use '#' to specify an instance
-method and '.' to specify a class method. If a line number or offset
-is omitted, we use the first line of the method.
+A method name is can be fully qualified as needed. For example,
+'Kernel.eval' and 'eval' refer to the same thing. One can even use
+variable names which evaluate to contants such as 'myfile.basename'
+where has myfile has been assiged the class constant File. If a method
+has been specified but no line number or offset is given, we use the
+first line of the method.
 
 Examples:
 
   #{NAME}     # set breakpoint at the current line
   #{NAME} 5   # set breakpoint on line 5
-  #{NAME} O5  # set breakpoint at offset 5
-  #{NAME} o5  # same as above
+  #{NAME} @5  # set breakpoint at offset 5
   #{NAME} Array#pop::3 # Set break at instance method 'pop' in Array, line 3
   #{NAME} Trepan.start:3  # Set break in class method 'start' of Trepan, line 3
-  #{NAME} Trepan.start:o3 # Same as above but at offset 3, not line 3.
+  #{NAME} Trepan.start:@3 # Same as above but at offset 3, not line 3.
   #{NAME} Trepan.start    # Set break in class method 'start' of Trepan
 
 See also 'tbreak', 'info breakpoint', and 'delete'. 
@@ -59,14 +61,12 @@ See also 'tbreak', 'info breakpoint', and 'delete'.
         ask_deferred klass_name, which, name, line
         return
       end
-      
-      begin
-        if which == "#"
-          method = klass.instance_method(name)
-        else
-          method = klass.method(name)
-        end
-      rescue NameError
+
+      if klass && klass.instance_methods.member?(name)
+        method = klass.instance_method(name)
+      elsif klass && klass.methods.memeber?(name)
+        method = klass.method(name)
+      else
         errmsg "Unable to find method '#{name}' in #{klass}"
         ask_deferred klass_name, which, name, line
         return

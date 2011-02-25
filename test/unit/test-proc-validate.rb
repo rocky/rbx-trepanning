@@ -53,7 +53,7 @@ class TestValidate < Test::Unit::TestCase
     end
 
     assert_equal([0, 'bogus', true, 'true', nil],
-                 munge(@proc.breakpoint_position(%w(O0))))
+                 munge(@proc.breakpoint_position(%w(@0))))
     assert_equal([1, 'bogus', false, 'true', nil], 
                  munge(@proc.breakpoint_position(%w(1))))
     assert_equal([2, 'bogus', false, 'a > b', nil],
@@ -67,13 +67,14 @@ class TestValidate < Test::Unit::TestCase
     assert_equal(1, $errors.size)
   end
 
-  def no__test_method?
+  def test_method?
     def foo; 5 end
     
     # require_relative '../../lib/rbdbgr'
     # dbgr = Trepan.new(:set_restart => true)
-    # FIXME: 'foo', 'errmsg'
-    ['Array#map', 'Trepan::CmdProcessor.new'
+    # FIXME: 'foo',
+    ['Array.map', 'Trepan::CmdProcessor.new',
+     'errmsg'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
       assert @proc.method?(str), "#{str} should be known as a method"

@@ -178,14 +178,14 @@ class Trepan
         else
           ip, line = nil, nil
         end
-        return [args.join(' '), '.', '__script__', line, ip]
+        return [args.join(' '), 'self', '.', '__script__', line, ip]
       elsif args.size == 1
         meth = parse_method(args[0])
         if meth
           cm = meth.executable
           return [args[0], nil, true, cm, cm.lines[1], cm.lines[0]]
         else
-          m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.#])(\w+[!?=]?)(?:[:]([oO])?(\d+))?/.match(args[0])
+          m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.])(\w+[!?=]?)(?:[:]@?(\d+))?/.match(args[0])
           if m
             if m[4]
               return [m[0], m[1], m[2], m[3], nil, m[5] ? m[5].to_i : nil]
@@ -325,7 +325,7 @@ class Trepan
       end
 
       if show_errmsg
-        unless (allow_offset && arg.size > 0 && arg[0].downcase == 'o')
+        unless (allow_offset && arg.size > 0 && arg[0] == '@')
           errmsg("#{arg} is not a line number, filename or method " +
                  "we can get location information about")
         end
@@ -386,9 +386,7 @@ if __FILE__ == $0
     puts "#{str} should be false: #{proc.method?(str).inspect}"
   end
   puts '-' * 20
-  # require_relative '../lib/trepanning'
-  # Trepan.start
-  p proc.breakpoint_position(%w(O0))
+  p proc.breakpoint_position(%w(@0))
   p proc.breakpoint_position(%w(1))
   p proc.breakpoint_position(%w(__LINE__))
   # p proc.breakpoint_position(%w(2 if a > b))

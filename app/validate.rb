@@ -5,7 +5,7 @@ class Trepan
     def line_or_ip(arg_str)
       arg=arg_str.dup
       is_ip = 
-        if 'o' == arg[0..0].downcase
+        if '@' == arg[0..0]
           arg[0] = ''
           true
         else
@@ -24,7 +24,7 @@ end
 
 if __FILE__ == $0
   include Trepan::Validate
-  %w(o1 O2 oink 1 12 -12).each do |arg|
+  %w(@1 oink 1 12 -12).each do |arg|
     puts "line_or_ip(#{arg})=#{line_or_ip(arg).inspect}"
   end
 end

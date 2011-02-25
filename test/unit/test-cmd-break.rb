@@ -12,11 +12,16 @@ class TestCommandBreak < Test::Unit::TestCase
     @my_cmd = @cmds[@name]
   end
   
+  def five?; 5 end
+  
   def test_basic
-    place = "#{self.class}#test_basic:#{__LINE__}"
-    @my_cmd.run([@name, place])
-    assert_equal(true, @cmdproc.errmsgs.empty?,
-                 @cmdproc.errmsgs)
+    ["#{self.class}.test_basic:#{__LINE__}",
+     'TestCommandBreak.setup', 'TestCommandBreak.five?'].each do |place|
+      
+      @my_cmd.run([@name, place])
+      assert_equal(true, @cmdproc.errmsgs.empty?,
+                   @cmdproc.errmsgs)
+    end
   end
 
 end

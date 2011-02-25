@@ -60,7 +60,7 @@ class Trepan
       end
 
       if line
-        ip = cm.first_ip_on_line(line)
+        ip = cm.first_ip_on_line(line, -2)
         
         unless ip
           errmsg "Unknown line '#{line}' in method '#{cm.name}'"
