@@ -140,6 +140,8 @@ if __FILE__ == $0
     cmd.run([cmd.name, 'self.setup'])
     puts '=' * 40
     cmd.run([cmd.name, __LINE__.to_s])
+    require 'irb'
+    cmd.run([cmd.name, 'IRB.start'])
   end
   foo(cmd)
 end

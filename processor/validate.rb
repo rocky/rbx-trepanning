@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Trepan command input validation routines.  A String type is
 # usually passed in as the argument to validation routines.
@@ -6,10 +6,15 @@
 require 'rubygems'
 require 'require_relative'
 require 'linecache'
+
+require_relative '../app/condition'
 require_relative '../app/method'
+require_relative '../app/method_name'
 require_relative '../app/validate'
-## require_relative '../app/condition'
-## require_relative '../app/file'
+
+require_relative 'location' # for resolve_file_with_dir
+require_relative 'msg'      # for errmsg, msg
+
 class Trepan
   class CmdProcessor
 
@@ -19,7 +24,7 @@ class Trepan
     include Trepanning::Method
     include Trepan::Validate
     ## include Trepan::ThreadHelper
-    ## include Trepan::Condition
+    include Trepan::Condition
 
     def confirm(msg, default)
       @settings[:confirm] ? @dbgr.intf[-1].confirm(msg, default) : true
@@ -129,6 +134,26 @@ class Trepan
       end
     end
 
+    def parse_num_or_offset(position_str)
+      err_str = "argument '%s' does not seem to be an integer" % 
+        position_str.dup
+      use_offset = 
+        if position_str.size > 0 && position_str[0] == '@'
+          err_str << 'or an offset.'
+          position_str[0] = ''
+          true
+        else
+          err_str << '.'
+          false
+        end
+      opts = {
+        :msg_on_error => err_str,
+        :min_value => 0 
+      }
+      position = get_an_int(position_str, opts)
+      [position, use_offset]
+    end
+
     # Parse a breakpoint position. On success return
     #   - a string "description" 
     #   - the method the position is in - a CompiledMethod or a String
@@ -216,17 +241,28 @@ class Trepan
       raise TypeError
     end
 
-    def method?(method_string)
-      obj, type, meth = 
-        if method_string =~ /(.+)(#|::|\.)(.+)/
-          [$1, $2, $3]
-        else
-          ['self', '.', method_string]
+    include CmdParser
+
+    def get_method(method_string)
+      start_binding = 
+        begin
+          @frame.binding
+        rescue
+          binding
         end
-      ret = debug_eval_no_errmsg("#{obj}.method(#{meth.inspect})")
-      return true if ret 
-      return debug_eval_no_errmsg("#{obj}.is_a?(Class)") &&
-        debug_eval_no_errmsg("#{obj}.method_defined?(#{meth.inspect})")
+      meth_for_string(method_string, start_binding)
+    end
+
+    # FIXME: this is a ? method but we return 
+    # the method value. 
+    def method?(method_string)
+      begin
+        get_method(method_string)
+      rescue Citrus::ParseError
+        return false
+      rescue NameError
+        return false
+      end
     end
 
     # parse_position(self, arg)->(fn, container, lineno)
@@ -234,6 +270,12 @@ class Trepan
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
     def parse_position(arg, old_mod=nil, allow_offset = false)
+      if method?(arg)
+        # FIXME: DRY This code with the code in the 'else'
+        mf, container, lineno = parse_position_one_arg(arg, old_mod, false, allow_offset)
+        return nil, nil, nil unless container
+        filename = canonic_file(arg) 
+      else
         colon = arg.rindex(':') 
         if colon
           # First handle part before the colon
@@ -248,10 +290,11 @@ class Trepan
         else
           mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
         end
-
-        return mf, container, lineno
+      end
+      
+      return mf, container, lineno
     end
-
+    
     # parse_position_one_arg(self,arg)->(module/function, container, lineno)
     #
     # See if arg is a line number, function name, or module name.
@@ -268,18 +311,17 @@ class Trepan
         return nil, canonic_file(filename), lineno
       end
 
+      # How about a method name?
+      if meth = parse_method(arg)
+        cm = meth.executable
+        return arg, canonic_file(cm.active_path), cm.lines[1]
+      end
+
       # Next see if argument is a file name 
       if LineCache::cached?(arg)
         return nil, canonic_file(arg), 1 
       elsif File.readable?(arg)
         return nil, canonic_file(arg), 1 
-      end
-
-      # How about a method name with an instruction sequence?
-      meth = parse_method(arg)
-      if meth
-        cm = meth.executable
-        return arg, canonic_file(cm.active_path), cm.lines[1]
       end
 
       if show_errmsg
@@ -292,19 +334,13 @@ class Trepan
     end
     
     def parse_method(meth_str)
-      # For meth_str = "foo", try via method("foo".to_sym)
-      str = "method(#{meth_str.inspect}.to_sym)"
-      meth = debug_eval_no_errmsg(str)
-      return meth if meth
-      last_dot = meth_str.rindex('.')
-      if last_dot
-        # For meth_str = "a.b.foo",
-        # try via a.b.method("foo".to_sym)
-        try_eval = "#{meth_str[0..last_dot]}method" + 
-          "(#{meth_str[last_dot+1..-1].inspect}.to_sym)"
-        meth = debug_eval_no_errmsg(try_eval)
+      begin 
+        meth_for_string(meth_str, @frame.binding)
+      rescue NameError
+        nil
+      rescue
+        nil
       end
-      return meth
     end
 
     def validate_initialize
@@ -316,7 +352,12 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative './mock'
+
+  # FIXME have to pull in main for its initalize routine
+  DIRNAME = File.dirname(__FILE__)
+  load File.join(DIRNAME, 'main.rb')
+
+  require_relative 'mock'
   dbgr, cmd = MockDebugger::setup('exit', false)
   proc  = cmd.proc
   onoff = %w(1 0 on off)
@@ -331,7 +372,7 @@ if __FILE__ == $0
   puts proc.parse_position_one_arg('tmpdir.rb').inspect
   
   puts '=' * 40
-  ['Array#map', 'Trepan::CmdProcessor.new',
+  ['Array.map', 'Trepan::CmdProcessor.new',
    'foo', 'proc.errmsg'].each do |str|
     puts "#{str} should be true: #{proc.method?(str).inspect}"
   end
