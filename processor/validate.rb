@@ -7,9 +7,9 @@ require 'rubygems'
 require 'require_relative'
 require 'linecache'
 
+require_relative '../app/cmd_parse'
 require_relative '../app/condition'
 require_relative '../app/method'
-require_relative '../app/method_name'
 require_relative '../app/validate'
 
 require_relative 'location' # for resolve_file_with_dir

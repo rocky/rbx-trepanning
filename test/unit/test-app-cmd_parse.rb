@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
-require_relative '../../app/method_name'
+require_relative '../../app/cmd_parse'
 
-class TestAppMethodName < Test::Unit::TestCase
+class TestCmdParse < Test::Unit::TestCase
 
   module Testing
     def testing; 5 end
