@@ -5,6 +5,25 @@ require_relative '../../app/cmd_parse'
 
 class TestCmdParse < Test::Unit::TestCase
 
+  def test_parse_location
+  ['fn', 'fn 5', 'fn @5', '@5', '5', 'fn:5', 'fn:@5'].each do |location|
+      begin
+        match = MethodName.parse(location, :root => :location)
+        assert_equal location, match.to_s, "should be able to parse of #{location}"
+      rescue Citrus::ParseError
+        assert false, "should be able to parse of #{location}"
+      end
+    end
+    # %w(0 1e10 a.b).each do |location|
+    #   begin
+    #     match = MethodName.parse(location, :root => :identifier)
+    #     assert false, "should not have been able to parse of #{location}"
+    #   rescue Citrus::ParseError
+    #     assert true, "should not have been able to parse of #{location}"
+    #   end
+    # end
+  end
+
   module Testing
     def testing; 5 end
     module_function :testing
