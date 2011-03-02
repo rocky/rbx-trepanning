@@ -18,17 +18,18 @@ may be used again easily. The name of the global variable is printed
 next to the inspect output of the value.
 
 If no string is given we run the string from the current source code
-about to be run. If the command ends ? (via an alias) and no string
-is given we will also strip off any leading 'if', 'while', 'elseif', 'return',
-'case' or 'until' in the string. 
+about to be run. If the command ends ? (via an alias) and no string is
+given we will also strip off any leading 'if', 'while', 'elseif',
+'return', 'case', 'unless', or 'until' in the string.
 
 #{NAME} 1+2  # 3
 #{NAME} @v
 #{NAME}      # Run current source-code line
-#{NAME}?     # but strips off leading 'if', 'while', 'elsif' or 'until'
+#{NAME}?     # but strips off leading 'if', 'while', ..
              # from command 
 
-See also 'set autoeval'
+See also 'set autoeval'. The command helps one predict future execution.
+See 'set buffer trace' for showing what may have already been run.
       HELP
 
   ALIASES       = %w(eval? ev? ev)
@@ -41,8 +42,8 @@ See also 'set autoeval'
     if args.size == 1
       text  = @proc.current_source_text
       if  '?' == args[0][-1..-1] 
-        if text =~ /^\s*(?:if|elsif)\s+/
-          text.gsub!(/^\s*(?:if|elsif)\s+/,'') 
+        if text =~ /^\s*(?:if|elsif|unless)\s+/
+          text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
           text.gsub!(/\s+then\s*$/, '')
         elsif text =~ /^\s*(?:until|while)\s+/
           text.gsub!(/^\s*(?:until|while)\s+/,'') 

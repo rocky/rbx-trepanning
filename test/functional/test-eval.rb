@@ -31,6 +31,28 @@ class TestEval < Test::Unit::TestCase
     out = ['-- ', 'if 3 > 5 then', 'eval: 3 > 5', '$d0 = false']
     compare_output(out, d, cmds)
     
+    # See that eval? strips 'unless'
+    cmds = %w(eval? continue)
+    d = strarray_setup(cmds)
+    d.start
+    unless 3 < 5
+      assert false
+    end
+    d.stop
+    out = ['-- ', 'unless 3 < 5', 'eval: 3 < 5', '$d0 = true']
+    compare_output(out, d, cmds)
+    
+    # See that eval? strips 'unless' and 'then
+    cmds = %w(eval? continue)
+    d = strarray_setup(cmds)
+    d.start
+    unless 3 < 5 then
+      assert false
+    end
+    d.stop
+    out = ['-- ', 'unless 3 < 5 then', 'eval: 3 < 5', '$d0 = true']
+    compare_output(out, d, cmds)
+    
     # See that eval? strips 'while'
     cmds = %w(eval? continue)
     d = strarray_setup(cmds)
