@@ -19,8 +19,8 @@ next to the inspect output of the value.
 
 If no string is given we run the string from the current source code
 about to be run. If the command ends ? (via an alias) and no string
-is given we will also strip off any leading 'if', 'while', 'elseif' or
-'until' in the string. 
+is given we will also strip off any leading 'if', 'while', 'elseif', 'return',
+'case' or 'until' in the string. 
 
 #{NAME} 1+2  # 3
 #{NAME} @v
@@ -40,9 +40,20 @@ See also 'set autoeval'
   def run(args)
     if args.size == 1
       text  = @proc.current_source_text
-      text.gsub!(/^\s*(?:if|elsif|until|while)\s*/,'') if 
-        '?' == args[0][-1..-1] 
-      msg "eval: #{text}"
+      if  '?' == args[0][-1..-1] 
+        if text =~ /^\s*(?:if|elsif)\s+/
+          text.gsub!(/^\s*(?:if|elsif)\s+/,'') 
+          text.gsub!(/\s+then\s*$/, '')
+        elsif text =~ /^\s*(?:until|while)\s+/
+          text.gsub!(/^\s*(?:until|while)\s+/,'') 
+          text.gsub!(/\s+do\s*$/, '')
+        elsif text =~ /^\s*return\s+/
+          text.gsub!(/^\s*return\s+/,'')
+        elsif text =~ /^\s*case\s+/
+          text.gsub!(/^\s*case\s*/,'')
+        end
+        msg "eval: #{text}"
+      end
     else
       text = @proc.cmd_argstr
     end

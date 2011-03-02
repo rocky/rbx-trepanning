@@ -9,6 +9,10 @@ class Trepan
     attr_reader :set
 
     def initialize
+      clear
+    end
+
+    def clear
       @list = []
       @set = Set.new
     end
@@ -19,6 +23,7 @@ class Trepan
         bp.related_bp.each { |bp| bp.remove! }
         bp.remove!
       end
+      clear
     end
 
     def <<(brkpt)
