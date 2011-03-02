@@ -162,5 +162,9 @@ task :clobber_rdoc do
   FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
 end
 
+task :rm_patch_residue do
+  FileUtils.rm_rf FileList['**/*.{rej,orig}'].to_a
+end
+
 desc "Remove built files"
-task :clean => [:clobber_package, :clobber_rdoc]
+task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue]
