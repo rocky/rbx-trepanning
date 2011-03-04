@@ -6,9 +6,6 @@ raise RuntimeError, 'This package is for Rubinius 1.2.x only!' unless
   Rubinius::VERSION =~ /1\.2.+/
 
 require 'rubygems'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
-require 'rake/testtask'
 
 ROOT_DIR = File.dirname(__FILE__)
 Gemspec_filename = 'rbx-trepanning.gemspec'
@@ -18,13 +15,14 @@ def gemspec
   @gemspec ||= eval(File.read(Gemspec_filename), binding, Gemspec_filename)
 end
 
+require 'rake/gempackagetask'
 desc "Build the gem"
 task :package=>:gem
 task :gem=>:gemspec do
   Dir.chdir(ROOT_DIR) do
     sh "gem build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
-    FileUtils.mv("#{gemspec.file_name}", "pkg/")
+    FileUtils.mv gemspec.file_name, 'pkg'
   end
 end
 
@@ -34,6 +32,18 @@ task :install => :gem do
     sh %{gem install --local pkg/#{gemspec.file_name}}
   end
 end
+
+require 'rake/testtask'
+desc "Test everything."
+Rake::TestTask.new(:test) do |t|
+  t.libs << './lib'
+  t.pattern = 'test/test-*.rb'
+  t.verbose = true
+end
+task :test => :lib
+
+desc "same as test"
+task :check => :test
 
 require 'rbconfig'
 RUBY_PATH = File.join(RbConfig::CONFIG['bindir'],  
@@ -47,7 +57,7 @@ def run_standalone_ruby_files(list)
 end
 
 def run_standalone_ruby_file(directory, opts={})
-  puts ('*' * 10) + ' ' + directory + ' ' + ('*' * 10)
+  puts(('*' * 10) + ' ' + directory + ' ' + ('*' * 10))
   Dir.chdir(directory) do
     Dir.glob('*.rb').each do |ruby_file|
       puts(('-' * 20) + ' ' + ruby_file + ' ' + ('-' * 20))
@@ -82,7 +92,6 @@ Rake::TestTask.new(:'test:integration') do |t|
 end
 
 desc 'Test everything - unit tests for now.'
-task :default => :test
 task :test do
   exceptions = %w(test:unit test:functional test:integration).collect do |task|
     begin
@@ -115,19 +124,53 @@ task :'check:sub:commands' do
   end
 end
 
+desc "Run each of the sub-sub commands in standalone mode."
+task :'check:subsub:commands' do
+  subsub_files = FileList["#{ROOT_DIR}/processor/command/*_subcmd/*_subcmd/*.rb"]
+  run_standalone_ruby_files(subsub_files)
+end
+
+desc "Run each processor Ruby file in standalone mode."
+task :'check:lib' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} lib)))
+end
+
 desc "Run each processor Ruby file in standalone mode."
 task :'check:processor' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} processor)))
+end
+
+desc "Run each processor Ruby file in standalone mode."
+task :'check:unit' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
 end
 
 task :'check:functional' do
   run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test functional)))
 end
 
-desc "Run each unit test in standalone mode."
-task :'check:unit' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
+task :'check:cmd_parse' do
+  sh "kpeg --test --debug #{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}"
 end
+
+task :'cmd_parse' do
+  require 'tmpdir'
+  temp_file = 
+    File.join(Dir.tmpdir, 
+              Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
+
+  sh("kpeg --name CmdParse --verbose --stand-alone --output #{temp_file} " + 
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))}")
+end
+
+task :'check:integration' do
+  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test integration)))
+end
+
+task :check => %w(check:lib check:processor check:commands).map{|c| c.to_sym}
+
+desc "Test everything - same as test."
+task :default => :test
 
 desc "Generate the gemspec"
 task :generate do
@@ -140,10 +183,11 @@ task :gemspec do
 end
 
 # ---------  RDoc Documentation ------
+require 'rake/rdoctask'
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rbx-trepaning #{Trepan::VERSION} Documentation"
+  rdoc.title    = "Trepanning #{Trepan::VERSION} Documentation"
 
   rdoc.rdoc_files.include(%w(lib/trepanning.rb processor/*.rb
                              processor/command/*.rb
