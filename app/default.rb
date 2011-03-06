@@ -22,7 +22,6 @@ class Trepan
 
     :restart_argv    => Rubinius::OS_ARGV,
                                # Command run when "restart" is given.
-    :restore_profile => nil,   # Profile used to set/restore debugger state
     :server          => false, # Out-of-process debugging?
     :skip_loader     => false, # If run via -Xdebug or trepanx
                                # command-line we need this to skip
