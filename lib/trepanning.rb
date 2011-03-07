@@ -124,8 +124,6 @@ class Trepan
 
     # Run user debugger command startup files.
     add_startup_files unless @settings[:nx]
-    add_command_file(@settings[:restore_profile]) if 
-      @settings[:restore_profile] && File.readable?(@settings[:restore_profile])
   end
 
   # The method is called when we want to do debugger command completion
@@ -197,13 +195,19 @@ class Trepan
   # Startup the debugger, skipping back +offset+ frames. This lets you start
   # the debugger straight into callers method.
   #
-  def start(settings = {:immediate => false})
+  def debugger(settings = {:immediate => false})
     @settings = @settings.merge(settings)
     skip_loader if @settings[:skip_loader]
     spinup_thread
     @debugee_thread = @thread
     if @settings[:hide_level]
       @processor.hidelevels[@thread] = @settings[:hide_level]
+    end
+
+    unless defined?(PROG_UNRESOLVED_SCRIPT)
+      # We may later do more sophisticated things...
+     Trepan.const_set('PROG_UNRESOLVED_SCRIPT', 
+                      Rubinius::OS_ARGV.index($0) ? $0 : nil)
     end
 
     process_cmdfile_setting(settings)
@@ -225,8 +229,7 @@ class Trepan
     Thread.current.set_debugger_thread @thread
     self
   end
-  # ruby-debug compatibility
-  alias debugger start
+  alias start debugger
 
   def stop(settings = {})
     @processor.finalize

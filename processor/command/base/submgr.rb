@@ -70,8 +70,8 @@ class Trepan::SubcommandMgr < Trepan::Command
       subcmd_class = Trepan::SubSubcommand.const_get(name)
       begin
         cmd = subcmd_class.send(:new, self, parent)
-      rescue
-        puts "Subcmd #{name} is bad"
+      rescue Exception => exc
+        puts "Subcmd #{name} in #{parent.name.inspect} is bad: #{exc}"
       end
       @subcmds.add(cmd)
     end
