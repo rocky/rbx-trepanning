@@ -47,7 +47,18 @@ class TestCmdProcessorLocation < Test::Unit::TestCase
     dir = @proc.settings[:directory] = File.dirname(__FILE__)
     loc, line_no, text = @proc.loc_and_text('hi')
     assert loc and line_no.is_a?(Fixnum) and text 
+    assert @proc.current_source_text
     # FIXME test that filename remapping works.
+  end
+
+  def test_eval_current_source_text
+    eval <<-EOE
+      @proc.frame_index = 0
+      @proc.frame_initialize
+      @proc.frame_setup
+      LineCache::clear_file_cache
+      assert @proc.current_source_text
+    EOE
   end
 
 end
