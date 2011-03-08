@@ -158,10 +158,7 @@ end
 desc "Generate command parser."
 task :'cmd_parse' do
   require 'tmpdir'
-  temp_file = 
-    File.join(Dir.tmpdir, 
-              Dir::Tmpname.make_tmpname(['cmd_parser_', '.rb'], nil))
-
+  temp_file = File.join(Dir.tmpdir, "cmd_parser_#{$$}.rb")
   sh("kpeg --name CmdParse --verbose --stand-alone  " + 
      "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " + 
      "--output #{temp_file}")
