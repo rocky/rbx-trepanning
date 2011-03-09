@@ -213,6 +213,9 @@ class Trepan
             quit('exit!')
             return true
           end
+        rescue Exception => exc
+          errmsg("Internal debugger error in read: #{exc.inspect}")
+          exception_dump(exc, @settings[:debugexcept], $!.backtrace)
         end
       end
       run_command(@current_command)

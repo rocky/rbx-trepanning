@@ -166,7 +166,7 @@ class Trepan
         #   ["#{name} #{args[1..-1].join(' ')}"]
         # end
       end
-      # match_pairs.size == 1
+      # match_pairs.size <= 1
       next_complete(str, next_blank_pos, match_pairs[0][1], last_token)
     end
 
@@ -236,7 +236,7 @@ if __FILE__ == $0
   cmdproc.run_cmd('foo')  # Invalid - not an Array
   cmdproc.run_cmd([])     # Invalid - empty Array
   cmdproc.run_cmd(['list', 5])  # Invalid - nonstring arg
-  p cmdproc.complete("d")
-  p cmdproc.complete("sho d")
-  p cmdproc.complete('')
+  p cmdproc.complete("d", 'd')
+  p cmdproc.complete("sho d", 'd')
+  p cmdproc.complete('', '')
 end
