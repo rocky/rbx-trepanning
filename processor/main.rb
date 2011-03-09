@@ -3,7 +3,6 @@
 # command class and debugger command objects are pulled in from here.
 
 require 'set'
-require 'pathname'  # For cleanpath
 
 require 'rubygems'; require 'require_relative'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 

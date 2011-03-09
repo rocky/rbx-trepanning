@@ -33,7 +33,8 @@ def run_debugger(testname, ruby_file, opts={})
 
   FileUtils.rm(outfile) if File.exist?(outfile)
 
-  cmd = 
+  cmd = opts[:feed_input] ? "#{opts[:feed_input]} |" : ''
+  cmd += 
     if opts[:xdebug]
     "%s -Xdebug '%s' %s >%s 2>&1 <%s" %
         [Trepanning::ruby_path, programfile, opts[:args], outfile, cmdfile]
@@ -45,13 +46,15 @@ def run_debugger(testname, ruby_file, opts={})
         [Trepanning::ruby_path, dbgr_path, cmdfile, opts[:dbgr], 
          programfile, opts[:args], outfile]
     end
-  
+  puts cmd if opts[:verbose]
   system(cmd)
   return false unless 0 == $?.exitstatus 
   if opts[:do_diff]
     expected_lines = File.open(rightfile).readlines()
     got_lines      = File.open(outfile).readlines()
     opts[:filter].call(got_lines, expected_lines) if opts[:filter]
+    # puts "=" * 80
+    # got_lines.map{|line| puts line}
     
     # Seems to be a bug in LCS in that it will return a diff even if two
     # files are the same.
