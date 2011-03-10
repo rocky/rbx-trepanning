@@ -204,11 +204,11 @@ class Trepan
       @processor.hidelevels[@thread] = @settings[:hide_level]
     end
 
-    unless defined?(PROG_UNRESOLVED_SCRIPT)
-      # We may later do more sophisticated things...
-     Trepan.const_set('PROG_UNRESOLVED_SCRIPT', 
-                      Rubinius::OS_ARGV.index($0) ? $0 : nil)
-    end
+    # unless defined?(PROG_UNRESOLVED_SCRIPT)
+    #   # We may later do more sophisticated things...
+    #  Trepan.const_set('PROG_UNRESOLVED_SCRIPT', 
+    #                   Rubinius::OS_ARGV.index($0) ? $0 : nil)
+    # end
 
     process_cmdfile_setting(settings)
 

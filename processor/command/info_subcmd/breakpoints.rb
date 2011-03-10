@@ -4,6 +4,7 @@ require 'rubygems'; require 'require_relative'
 require_relative '../base/subcmd'
 
 class Trepan::Subcommand::InfoBreakpoints < Trepan::Subcommand
+  unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{PREFIX.join(' ')} [num1 ...] [verbose]
@@ -20,10 +21,39 @@ The "enb" column indicates whether the breakpoint is enabled.
 
 The "Where" column indicates where the breakpoint is located.
 EOH
-  MIN_ABBREV   = 'br'.size
-  SHORT_HELP   = 'Status of user-settable breakpoints'
+    MIN_ABBREV   = 'br'.size
+    SHORT_HELP   = 'Status of user-settable breakpoints'
+  end
   
+  def bpprint(bp, verbose=false)
+    disp  = bp.temp?    ? 'del  ' : 'keep '
+    disp += bp.enabled? ? 'y  '   : 'n  '
+    msg "%-4dbreakpoint    %s at %s" % [bp.id, disp, bp.describe]
+    if bp.condition && bp.condition != 'true'
+      msg("\tstop %s %s" %
+          [bp.negate ? "unless" : "only if", bp.condition])
+    end
+    if bp.hits > 0
+      ss = (bp.hits > 1) ? 's' : ''
+      msg("\tbreakpoint already hit %d time%s" %
+          [bp.hits, ss])
+    end
+
+    if bp.ignore > 0
+      msg("\tignore next %d hits" % bp.ignore)
+    end
+  end
+
   def run(args)
+    verbose = false
+    unless args.empty?
+      if 'verbose' == args[-1]
+        verbose = true
+        args.pop
+      end
+    end
+
+
     show_all = 
       if args.size > 2
         opts = {
@@ -37,23 +67,15 @@ EOH
       else
         true
       end
-
+    
     bpmgr = @proc.brkpts
     if bpmgr.empty? && @proc.dbgr.deferred_breakpoints.empty?
       msg('No breakpoints.')
     else
       # There's at least one
-      section "Num  Breakpoint"
+      section("Num Type          Disp Enb Where")
       bpmgr.list.each do |bp|
-        msg "%3d: %s" % [bp.id, bp.describe]
-        if bp.condition && bp.condition != 'true'
-          msg("\tstop only if %s" % bp.condition)
-        end
-        if bp.hits > 0
-          ss = (bp.hits > 1) ? 's' : ''
-          msg("\tbreakpoint already hit %d time%s" %
-              [bp.hits, ss])
-        end
+        bpprint(bp)
       end
       section 'Deferred breakpoints...'
       @proc.dbgr.deferred_breakpoints.each_with_index do |bp, i|

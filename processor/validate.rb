@@ -134,90 +134,71 @@ class Trepan
       end
     end
 
-    def parse_num_or_offset(position_str)
-      err_str = "argument '%s' does not seem to be an integer" % 
-        position_str.dup
-      use_offset = 
-        if position_str.size > 0 && position_str[0] == '@'
-          err_str << 'or an offset.'
-          position_str[0] = ''
-          true
-        else
-          err_str << '.'
-          false
-        end
-      opts = {
-        :msg_on_error => err_str,
-        :min_value => 0 
-      }
-      position = get_an_int(position_str, opts)
-      [position, use_offset]
+    def position_to_line_and_offset(cm, filename, position, offset_type)
+      case offset_type
+      when :line
+        vm_offset = cm.first_ip_on_line(position, -2)
+        line_no   =  position
+      when :offset
+        line_no   = cm.line_from_ip(position)
+        vm_offset = position
+      when nil
+        vm_offset, line_no = 
+          if cm.lines[0] == -1
+            [cm.lines[2], cm.lines.size > 3 ? cm.lines[3] : cm.lines[1]]
+           else
+            [cm.lines[0], cm.lines[1]]
+          end
+      else
+        errmsg "Bad parse offset_type: #{offset_type.inspect}"
+        return [nil, nil]
+      end
+      return [line_no, vm_offset]
     end
 
-    # Parse a breakpoint position. On success return
-    #   - a string "description" 
-    #   - the method the position is in - a CompiledMethod or a String
-    #   - the line - a Fixnum
-    #   - whether the position is an instance or not
-    # On failure, an error message is shown and we return nil.
-    def breakpoint_position(args)
-      ip = nil
-      if args.size == 0
-        args = [frame.line.to_s]
-      end
-      if args[0] == 'main.__script__'
-        if args.size > 2
-          errmsg 'Expecting only a line number'
-          return nil
-        elsif args.size == 2
-          ip, line = line_or_ip(args[1])
-          unless line || ip
-            errmsg ("Expecting a line or an IP offset number")
-            return nil 
-          end
+    # Parse a breakpoint position. On success return:
+    #   - the CompileMethod the position is in
+    #   - the line number - a Fixnum
+    #   - vm_offset       - a Fixnum
+    #   - the condition (by default 'true') to use for this breakpoint
+    #   - true condition should be negated. Used in *condition* if/unless
+    def breakpoint_position(position_str, allow_condition)
+      break_cmd_parse = if allow_condition
+                          parse_breakpoint(position_str)
+                        else
+                          parse_breakpoint_no_condition(position_str)
+                        end
+      return [nil] * 5 unless break_cmd_parse
+      tail = [break_cmd_parse.condition, break_cmd_parse.negate]
+      cm, file, position, offset_type = 
+        parse_position(break_cmd_parse.position)
+      if cm
+        line_no, vm_offset = 
+          position_to_line_and_offset(cm, file, position, offset_type)
+        if vm_offset && line_no
+          return [cm, line_no, vm_offset] + tail
         else
-          ip, line = nil, nil
+          errmsg("Unable to set breakpoint in #{cm}")
         end
-        return [args.join(' '), 'self', '.', '__script__', line, ip]
-      elsif args.size == 1
-        meth = parse_method(args[0])
-        if meth
-          cm = meth.executable
-          return [args[0], nil, true, cm, cm.lines[1], cm.lines[0]]
-        else
-          m = /([A-Z]\w*(?:::[A-Z]\w*)*)([.])(\w+[!?=]?)(?:[:]@?(\d+))?/.match(args[0])
-          if m
-            if m[4]
-              return [m[0], m[1], m[2], m[3], nil, m[5] ? m[5].to_i : nil]
-            else
-              return [m[0], m[1], m[2], m[3], (m[4] ? m[4].to_i : nil), nil]
-            end
-          else
-            ip, line = line_or_ip(args[0])
-            unless line || ip
-              errmsg ("Expecting a line or an IP offset number")
-              return nil 
-            end
-            if line
-              meth = find_method_with_line(frame.method, line)
-              unless meth
-                errmsg "Cannot find method location for line #{line}"
-                return nil 
-              end
-              return [meth.name.to_s, nil, '#', meth, line, nil]
-            elsif valid_ip?(frame.method, ip)
-              return [args.join(' '), meth.class, '#', frame.method, nil, ip]
-            else
-              errmsg 'Cannot parse breakpoint location'
-              return nil
-            end
-            
-            return ["#{meth.describe}", nil, '#', meth, line, nil]
-          end
-        end
+      # FIXME: Figure out what to do here.
+      # elsif file && position
+      #   if :line == offset_type
+      #     iseq = find_iseqs_with_lineno(file, position)
+      #     if iseq
+      #       junk, line_no, vm_offset = 
+      #         position_to_line_and_offset(iseq, file, position, offset_type)
+      #       return [@frame.iseq, line_no, vm_offset] + tail
+      #     else
+      #       errmsg("Unable to find instruction sequence for" + 
+      #              " position #{position} in #{file}")
+      #     end
+      #   else
+      #     errmsg "Come back later..."
+      #   end
+      else
+        errmsg("Unable to parse breakpoint position #{position_str}")
       end
-      errmsg 'Cannot parse breakpoint location'
-      return nil
+      return [nil] * 5
     end
 
     # Return true if arg is 'on' or 1 and false arg is 'off' or 0.
@@ -243,90 +224,70 @@ class Trepan
 
     include CmdParser
 
-    def get_method(method_string)
+    def get_method(meth)
       start_binding = 
         begin
           @frame.binding
         rescue
           binding
         end
-      meth_for_string(method_string, start_binding)
+      if meth.kind_of?(String)
+        meth_for_string(meth, start_binding)
+      else
+        begin
+          meth_for_parse_struct(meth, start_binding)
+        rescue NameError
+          errmsg("Can't evalute #{meth.name} to get a method")
+          return nil
+        end
+      end
     end
 
     # FIXME: this is a ? method but we return 
     # the method value. 
-    def method?(method_string)
-      get_method(method_string)
+    def method?(meth)
+      get_method(meth)
     end
 
-    # parse_position(self, arg)->(fn, container, lineno)
-    # 
+    # parse_position(self, arg)->(meth, filename, offset, offset_type)
+    # See app/cmd_parser.kpeg for the syntax of a position which
+    # should include things like:
     # Parse arg as [filename:]lineno | function | module
     # Make sure it works for C:\foo\bar.py:12
-    def parse_position(arg, old_mod=nil, allow_offset = false)
-      if method?(arg)
-        # FIXME: DRY This code with the code in the 'else'
-        mf, container, lineno = parse_position_one_arg(arg, old_mod, false, allow_offset)
-        return nil, nil, nil unless container
-        filename = canonic_file(arg) 
-      else
-        colon = arg.rindex(':') 
-        if colon
-          # First handle part before the colon
-          arg1 = arg[0...colon].rstrip
-          lineno_str = arg[colon+1..-1].lstrip
-          mf, container, lineno = parse_position_one_arg(arg1, old_mod, false, allow_offset)
-          return nil, nil, nil unless container
-          filename = canonic_file(arg1) 
-          # Next handle part after the colon
-          val = get_an_int(lineno_str)
-          lineno = val if val
+    def parse_position(info)
+      info = parse_location(info) if info.kind_of?(String)
+      case info.container_type
+      when :fn
+        if meth = method?(info.container)
+          cm = meth.executable
+          return [cm, canonic_file(cm.active_path), info.position, 
+                  info.position_type]
         else
-          mf, container, lineno = parse_position_one_arg(arg, old_mod, true, allow_offset)
+          return [nil] * 4
         end
-      end
-      
-      return mf, container, lineno
-    end
-    
-    # parse_position_one_arg(self,arg)->(module/function, container, lineno)
-    #
-    # See if arg is a line number, function name, or module name.
-    # Return what we've found. nil can be returned as a value in
-    # the triple.
-    def parse_position_one_arg(arg, old_mod=nil, show_errmsg=true, allow_offset=false)
-      name, filename = nil, nil, nil
-      begin
-        # First see if argument is an integer
-        lineno    = Integer(arg)
-      rescue
+      when :file
+        filename = canonic_file(info.container)
+        # FIXME: handle other kinds of filenames?
+        cm = @frame.file == filename ? @frame.method : nil
+        return cm, info.container,  info.position, info.position_type
+      when nil
+        if [:line, :offset].member?(info.position_type)
+          filename  = @frame.file
+          return [@frame.method, canonic_file(filename), info.position, 
+                  info.position_type]
+        elsif !info.position_type
+          errmsg "Can't parse #{arg} as a position"
+          return [nil] * 4
+        else
+          errmsg "Unknown position type #{info.position_type} for location #{arg}"
+          return [nil]  * 4
+        end
       else
-        filename  = @frame.file
-        return nil, canonic_file(filename), lineno
+        errmsg "Unknown container type #{info.container_type} for location #{arg}"
+        return [nil] * 4
       end
-
-      # How about a method name?
-      if meth = parse_method(arg)
-        cm = meth.executable
-        return arg, canonic_file(cm.active_path), cm.lines[1]
-      end
-
-      # Next see if argument is a file name 
-      if LineCache::cached?(arg)
-        return nil, canonic_file(arg), 1 
-      elsif File.readable?(arg)
-        return nil, canonic_file(arg), 1 
-      end
-
-      if show_errmsg
-        unless (allow_offset && arg.size > 0 && arg[0] == '@')
-          errmsg("#{arg} is not a line number, filename or method " +
-                 "we can get location information about")
-        end
-      end
-      return nil, nil, nil
     end
-    
+
     def parse_method(meth_str)
       begin 
         meth_for_string(meth_str, @frame.binding)
@@ -346,29 +307,34 @@ end
 
 if __FILE__ == $0
   # Demo it.
-
   # FIXME have to pull in main for its initalize routine
   DIRNAME = File.dirname(__FILE__)
   load File.join(DIRNAME, 'main.rb')
 
   require_relative 'mock'
   dbgr, cmd = MockDebugger::setup('exit', false)
-  proc  = cmd.proc
+  cmdproc  = cmd.proc
   onoff = %w(1 0 on off)
-  onoff.each { |val| puts "onoff(#{val}) = #{proc.get_onoff(val)}" }
+  onoff.each { |val| puts "onoff(#{val}) = #{cmdproc.get_onoff(val)}" }
   %w(1 1E bad 1+1 -5).each do |val| 
-    puts "get_int_noerr(#{val}) = #{proc.get_int_noerr(val).inspect}" 
+    puts "get_int_noerr(#{val}) = #{cmdproc.get_int_noerr(val).inspect}" 
   end
   def foo; 5 end
-  def proc.errmsg(msg)
+  def cmdproc.errmsg(msg)
     puts msg
   end
-  puts proc.parse_position_one_arg('tmpdir.rb').inspect
+
+  # require_relative '../lib/trepanning'
+  puts cmdproc.parse_position(__FILE__).inspect
+  puts cmdproc.parse_position('@8').inspect
+  puts cmdproc.parse_position('8').inspect
+  puts cmdproc.parse_position("#{__FILE__} #{__LINE__}").inspect
   
+  cmdproc.method?('cmdproc.errmsg')
   puts '=' * 40
   ['Array.map', 'Trepan::CmdProcessor.new',
-   'foo', 'proc.errmsg'].each do |str|
-    puts "#{str} should be true: #{proc.method?(str).inspect}"
+   'foo', 'cmdproc.errmsg'].each do |str|
+    puts "#{str} should be true: #{cmdproc.method?(str).inspect}"
   end
   puts '=' * 40
   
@@ -377,13 +343,21 @@ if __FILE__ == $0
   # Trepan::CmdProcessor.allocate should be false: true
   
   ['food', '.errmsg'].each do |str|
-    puts "#{str} should be false: #{proc.method?(str).inspect}"
+    puts "#{str} should be false: #{cmdproc.method?(str).inspect}"
   end
   puts '-' * 20
-  p proc.breakpoint_position(%w(@0))
-  p proc.breakpoint_position(%w(1))
-  p proc.breakpoint_position(%w(__LINE__))
-  # p proc.breakpoint_position(%w(2 if a > b))
-  p proc.get_int_list(%w(1+0 3-1 3))
-  p proc.get_int_list(%w(a 2 3))
+
+    puts "Trepan::CmdProcessor.allocate is: #{cmdproc.get_method('Trepan::CmdProcessor.allocate')}"
+
+  p cmdproc.breakpoint_position('foo', true)
+  p cmdproc.breakpoint_position('@0', true)
+  p cmdproc.breakpoint_position("#{__LINE__}", true)
+  p cmdproc.breakpoint_position("#{__FILE__}   @0", false)
+  p cmdproc.breakpoint_position("#{__FILE__}:#{__LINE__}", true)
+  p cmdproc.breakpoint_position("#{__FILE__} #{__LINE__} if 1 == a", true)
+  p cmdproc.breakpoint_position("cmdproc.errmsg", false)
+  p cmdproc.breakpoint_position("cmdproc.errmsg:@0", false)
+  ### p cmdproc.breakpoint_position(%w(2 if a > b))
+  p cmdproc.get_int_list(%w(1+0 3-1 3))
+  p cmdproc.get_int_list(%w(a 2 3))
 end

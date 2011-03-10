@@ -15,12 +15,16 @@ class Trepan
     attr_reader   :id        # Fixnum. Name of breakpoint
     attr_reader   :ignore    # Fixnum. How many more times do we have
                              # to encounter the breakpoint before we stop?
+    attr_reader   :negate    # Boolean. Negate sense of condition. Used in 
+                             # break if .. and break unless ..
+                             # breakpoint
     @@next_id = 1
 
     BRKPT_DEFAULT_SETTINGS = {
       :condition => 'true',
       :enabled   => 'true',
       :ignore    =>  0,
+      :negate    =>  false,
       :temp      =>  false,
       :event     =>  :Unknown,
     } unless defined?(BRKPT_DEFAULT_SETTINGS)
@@ -106,7 +110,7 @@ class Trepan
     end
 
     def condition?(bind)
-      if eval(@condition, bind)
+      if @negate != eval(@condition, bind)
         if @ignore > 0
           @ignore -= 1
           return false

@@ -2,81 +2,46 @@
 require 'rubygems'; require 'require_relative'
 require_relative './base/cmd'
 
-class Trepan::Command::SetBreakpointCommand < Trepan::Command
+class Trepan::Command::BreakCommand < Trepan::Command
 
   ALIASES      = %w(b brk)
   CATEGORY     = 'breakpoints'
   NAME         = File.basename(__FILE__, '.rb')
   HELP         = <<-HELP
-#{NAME} 
-#{NAME} [line number|offset]
-#{NAME} <method-name>[:line-or-offset]
+#{NAME} LOCATION [ {if|unless} CONDITION ]
 
-Sets a breakpoint. In the first form, a breakpoint is set at the
-current line you are stopped at. In the second form, you give a line
-number or an offset.  An offset is a number that is prefaced with '@'
-and represents a Rubinius VM PC offset. 
-
-The current method name is used for the start of the search. If a line
-number is given and the line number is not found in that method,
-enclosing scopes are searched for the line.
-
-A method name is can be fully qualified as needed. For example,
-'Kernel.eval' and 'eval' refer to the same thing. One can even use
-variable names which evaluate to contants such as 'myfile.basename'
-where has myfile has been assiged the class constant File. If a method
-has been specified but no line number or offset is given, we use the
-first line of the method.
+Set a breakpoint. In the second form where CONDITIOn is given, the
+condition is evaluated in the context of the position. We stop only If
+CONDITION evalutes to non-false/nil and the "if" form used, or it is
+false and the "unless" form used.\
 
 Examples:
+   #{NAME}
+   #{NAME} 10               # set breakpoint on line 10
+   #{NAME} 10 if 1 == a     # like above but only if a is equal to 1
+   #{NAME} 10 unless 1 == a # like above but only if a is equal to 1
+   #{NAME} me.rb:10
+   #{NAME} @20   # set breakpoint VM Instruction Sequence offset 20
+   #{NAME} Kernel.pp # Set a breakpoint at the beginning of Kernel.pp
 
-  #{NAME}     # set breakpoint at the current line
-  #{NAME} 5   # set breakpoint on line 5
-  #{NAME} @5  # set breakpoint at offset 5
-  #{NAME} Array#pop::3 # Set break at instance method 'pop' in Array, line 3
-  #{NAME} Trepan.start:3  # Set break in class method 'start' of Trepan, line 3
-  #{NAME} Trepan.start:@3 # Same as above but at offset 3, not line 3.
-  #{NAME} Trepan.start    # Set break in class method 'start' of Trepan
-
-See also 'tbreak', 'info breakpoint', and 'delete'. 
+See also condition, continue and "help location".
       HELP
   SHORT_HELP   = 'Set a breakpoint at a point in a method'
 
+  # This method runs the command
   def run(args, temp=false)
-    arg_str = args[1..-1].join(' ')
 
-    describe, klass_name, which, name, line, ip = 
-      @proc.breakpoint_position(args[1..-1])
-    event = temp ? 'tbrkpt' : 'brkpt'
-    opts={:event => event, :temp => temp}      
-    if name.kind_of?(Rubinius::CompiledMethod)
-      bp = @proc.set_breakpoint_method(describe, name, line, ip, opts)
-    else
-      return unless klass_name
-    
-      begin
-        klass = @proc.debug_eval(klass_name, settings[:maxstring])
-      rescue NameError
-        errmsg "Unable to find class/module: #{klass_name}"
-        ask_deferred klass_name, which, name, line
-        return
-      end
-
-      if klass && klass.instance_methods.member?(name)
-        method = klass.instance_method(name)
-      elsif klass && klass.methods.memeber?(name)
-        method = klass.method(name)
-      else
-        errmsg "Unable to find method '#{name}' in #{klass}"
-        ask_deferred klass_name, which, name, line
-        return
-      end
-
-      bp = @proc.set_breakpoint_method(arg_str.strip, method, line, ip, opts)
+    arg_str = args.size == 1 ? @proc.frame.line.to_s : @proc.cmd_argstr
+    cm, line, ip, condition, negate = 
+      @proc.breakpoint_position(arg_str, true)
+    if cm
+      event = temp ? 'tbrkpt' : 'brkpt'
+      opts={:event => event, :temp => temp, :condition => condition, 
+            :negate => negate}
+      bp = @proc.set_breakpoint_method(cm, line, ip, opts)
+      bp.set_temp! if temp
+      return bp
     end
-      
-    bp.set_temp! if temp
-    return bp
   end
   
   def ask_deferred(klass_name, which, name, line)
@@ -92,12 +57,22 @@ end
 if __FILE__ == $0
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
-  cmd.run([cmd.name])
-  # require 'trepanning'
-  # Trepan.start(:set_restart => true)
-  cmd.run([cmd.name, __LINE__.to_s])
-  cmd.run([cmd.name, 'foo'])
-  cmd.run([cmd.name, "MockDebugger::setup"])
+  # require_relative '../../lib/trepanning'
+  def run_cmd(cmd, args) 
+    cmd.proc.instance_variable_set('@cmd_argstr', args[1..-1].join(' '))
+    cmd.run(args)
+  end
+
+  run_cmd(cmd, [cmd.name])
+  run_cmd(cmd, [cmd.name, __LINE__.to_s])
+
+  def foo
+    5 
+  end
+  run_cmd(cmd, [cmd.name, 'foo', (__LINE__-2).to_s])
+  run_cmd(cmd, [cmd.name, 'foo'])
+  run_cmd(cmd, [cmd.name, "MockDebugger::setup"])
   require 'irb'
-  cmd.run([cmd.name, "IRB.start"])
+  run_cmd(cmd, [cmd.name, "IRB.start"])
+  run_cmd(cmd, [cmd.name, 'foo93'])
 end

@@ -3,7 +3,7 @@ require_relative './base/cmd'
 require_relative 'break'
 
 class Trepan::Command::SetTempBreakpointCommand < 
-    Trepan::Command::SetBreakpointCommand
+    Trepan::Command::BreakCommand
   ALIASES      = %w(tb tbrk)
   CATEGORY     = 'breakpoints'
   NAME         = File.basename(__FILE__, '.rb')

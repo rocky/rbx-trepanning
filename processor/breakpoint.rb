@@ -45,8 +45,9 @@ class Trepan
       bp
     end
     
-    def set_breakpoint_method(descriptor, meth, line=nil, ip=nil,
-                              opts={:event => 'brkpt',:temp => false})
+    def set_breakpoint_method(meth, line=nil, ip=nil,
+                              opts={:event => 'brkpt', :negate=>false,
+                                    :temp => false})
       cm =  
         if meth.kind_of?(Method) || meth.kind_of?(UnboundMethod)
           meth.executable 
@@ -74,7 +75,7 @@ class Trepan
       # def lines without code will have value -1.
       ip = 0 if -1 == ip
 
-      bp = @brkpts.add(descriptor, cm, ip, line, @brkpts.max+1, opts)
+      bp = @brkpts.add(meth.name, cm, ip, line, @brkpts.max+1, opts)
       bp.activate
       msg("Set %sbreakpoint #{bp.id}: #{meth.name}() at #{bp.location}" % 
           (opts[:temp] ? 'temporary ' : ''))
@@ -144,21 +145,6 @@ class Trepan
       return true
     end
 
-    # MRI 1.9.2 code
-    # # Enable or disable a breakpoint given its breakpoint number.
-    # def en_disable_breakpoint_by_number(bpnum, do_enable=true)
-    #   bp = breakpoint_find(bpnum)
-    #   return false unless bp
-          
-    #   enable_disable = do_enable ? 'en' : 'dis'
-    #   if bp.enabled? == do_enable
-    #     errmsg('Breakpoint %d previously %sabled.' % 
-    #            [bpnum, enable_disable])
-    #     return false
-    #   end
-    #   bp.enabled = do_enable
-    #   return true
-    # end
   end
 end
 

@@ -5,29 +5,31 @@ require_relative '../../app/cmd_parse'
 
 class TestCmdParse < Test::Unit::TestCase
 
-  def no__test_parse_location
-    ['fn', 'fn 5', 'fn @5', '@5', '5', 'fn:5', 'fn:@5'].each do |location|
-      begin
-        match = MethodName.parse(location, :root => :location)
-        assert_equal location, match.to_s, "should be able to parse of #{location}"
-      rescue Citrus::ParseError
-        assert false, "should be able to parse of #{location}"
-      end
+  # require_relative '../../lib/trepanning'
+  def test_parse_location
+    [['fn', [:fn, nil, nil]],
+     ['fn 2', [:fn, :line, 2]],
+     ['fn @5', [:fn, :offset, 5]],
+     ['@3',   [nil, :offset, 3]],
+     ['fn:6', [:fn, :line, 6]],
+     ["#{__FILE__}:5", [:file, :line, 5]],
+     ['fn:@15', [:fn, :offset, 15]],
+    ].each do |location, expect|
+      cp = parse_location(location)
+      assert cp, "should be able to parse #{location} as a location"
+      assert_equal(expect[0], cp.container_type, 
+                   "mismatch container_type on #{location}")
+      assert_equal(expect[1], cp.position_type, 
+                   "mismatch position_type on #{location}")
+      assert_equal(expect[2], cp.position, 
+                   "mismatch position on #{location}")
     end
     
-    # Check actual values
-    [['@5', 5, :vm_offset], ['10', 10, :line_number]].each do 
-      |position, expect, symbol|
-      match = MethodName.parse(position, :root => symbol)
-      assert_equal(expect, match.value.value, 
-                   "should be able to get value of location #{position}")
-    end
     # %w(0 1e10 a.b).each do |location|
     #   begin
-    #     match = MethodName.parse(location, :root => :identifier)
-    #     assert false, "should not have been able to parse of #{location}"
-    #   rescue Citrus::ParseError
-    #     assert true, "should not have been able to parse of #{location}"
+    #     cp = CmdParse.new(name)
+    #     assert_equal nil cp._location, 
+    #     "should be able to parse #{name} as a location"
     #   end
     # end
   end
@@ -40,7 +42,7 @@ class TestCmdParse < Test::Unit::TestCase
   def test_parse_identifier
     %w(a a1 $global __FILE__ Constant).each do |name|
       cp = CmdParse.new(name)
-      assert cp._identifier, "should be able to parse of #{name}"
+      assert cp._identifier, "should be able to parse #{name} as an identifier"
     end
     %w(0 1e10 @10).each do |name|
       cp = CmdParse.new(name)

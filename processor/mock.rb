@@ -28,12 +28,12 @@ module MockDebugger
     attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
                 :debugee_thread, :completion_proc
 
-    def initialize(settings={})
+    def initialize(settings={:start_frame=>1})
       @before_cmdloop_hooks = []
       @settings             = Trepan::DEFAULT_SETTINGS.merge(settings)
       @intf                 = [Trepan::UserInterface.new(nil, nil,
                                                          :history_save=>false)]
-      @vm_locations         = Rubinius::VM.backtrace(1, true)
+      @vm_locations         = Rubinius::VM.backtrace(settings[:start_frame], true)
       @current_frame        = Trepan::Frame.new(self, 0, @vm_locations[0])
       @debugee_thread       = Thread.current
       @frames               = []
@@ -66,7 +66,7 @@ module MockDebugger
       dbgr = Trepan.new
       dbgr.debugger
     else
-      dbgr = MockDebugger.new
+      dbgr = MockDebugger.new(:start_frame=>2)
     end
 
     cmdproc = Trepan::CmdProcessor.new(dbgr)

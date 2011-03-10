@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
 require_relative '../stepping'
@@ -7,7 +7,7 @@ class Trepan::Command::ContinueCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [breakpoint-position]
+#{NAME} [LOCATION]
 
 Leave the debugger loop and continue execution. Subsequent entry to
 the debugger however may occur via breakpoints or explicit calls, or
@@ -24,7 +24,7 @@ Examples:
    #{NAME} gcd   # continue to first instruction of method gcd
    #{NAME} IRB.start o7 # continue to IRB.start offset 7
 
-See also 'step', 'next', 'finish', and 'nexti' commands.
+See also 'step', 'next', 'finish', 'nexti' commands and "help location".
     HELP
 
     ALIASES      = %w(c cont)
@@ -39,45 +39,15 @@ See also 'step', 'next', 'finish', and 'nexti' commands.
 
     ## FIXME: DRY this code, tbreak and break.
     unless args.size == 1
-      describe, klass_name, which, name, line, ip = 
-        @proc.breakpoint_position(args[1..-1])
-      unless describe
-        errmsg "Can't parse temporary breakpoint location"
-        return 
-      end
-      if name.kind_of?(Rubinius::CompiledMethod)
-        bp = @proc.set_breakpoint_method(describe, name, line, ip,
-                                         {:temp=>true, :event =>'tbrkpt'})
-        unless bp
-          errmsg "Trouble setting temporary breakpoint"
-          return 
-        end
+      cm, line, ip, condition, negate = 
+        @proc.breakpoint_position(@proc.cmd_argstr, false)
+      if cm
+        opts={:event => 'tbrkpt', :temp => true}
+        bp = @proc.set_breakpoint_method(cm, line, ip, opts)
+        bp.set_temp!
       else
-        return unless klass_name
-        begin
-          klass = @proc.debug_eval(klass_name, settings[:maxstring])
-        rescue NameError
-          errmsg "Unable to find class/module: #{klass_name}"
-          return
-        end
-        
-        begin
-          if which == "#"
-            method = klass.instance_method(name)
-          else
-            method = klass.method(name)
-          end
-        rescue NameError
-          errmsg "Unable to find method '#{name}' in #{klass}"
-          return
-        end
-        arg_str = args[1..-1].join(' ')
-        bp = @proc.set_breakpoint_method(arg_str.strip, method, line, nil,
-                                         {:temp=>true, :event =>'tbrkpt'})
-        unless bp
-          errmsg "Trouble setting temporary breakpoint"
-          return 
-        end
+        errmsg "Trouble setting temporary breakpoint"
+        return 
       end
     end
     @proc.continue('continue')
