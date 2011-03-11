@@ -191,9 +191,13 @@ if __FILE__ == $0
   p parse_terminal(:_vm_offset, '@5').result
 
   # Location stuff
-  ['fn', 'fn 5', 'fn @5', '@5', '5'].each do |location|
+  ['fn', 'fn 5', 'fn @5', '@5', '5',
+    '../test/example/test\ fname\ with\ blank.rb'].each do |location|
     p parse_location(location)
   end
+
+  # require_relative '../lib/trepanning'; debugger
+  # parse_location('../test/example/test\ fname\ with\ blank.rb')
 
   # Location stuff
   ['fn if a > b', 'fn 5 unless c > d', 'fn:5 if x', '@5', '5'].each do |str|
