@@ -267,14 +267,24 @@ class Trepan
         end
       when :file
         filename = canonic_file(info.container)
-        # FIXME: handle other kinds of filenames?
-        cm = @frame.file == filename ? @frame.method : nil
+        # FIXME: How handle other kinds of filenames?
+        cm = 
+          if canonic_file(@frame.file) == filename 
+            cm = @frame.method
+            if :line == info.position_type
+              find_method_with_line(cm, info.position)
+            end
+          else nil
+          end
         return cm, info.container,  info.position, info.position_type
       when nil
         if [:line, :offset].member?(info.position_type)
-          filename  = @frame.file
-          return [@frame.method, canonic_file(filename), info.position, 
-                  info.position_type]
+          filename = @frame.file
+          cm = @frame.method
+          if :line == info.position_type
+            cm = find_method_with_line(cm, info.position)
+          end
+          return [cm, canonic_file(filename), info.position, info.position_type]
         elsif !info.position_type
           errmsg "Can't parse #{arg} as a position"
           return [nil] * 4

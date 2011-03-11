@@ -5,6 +5,7 @@ require_relative '../../processor/main' # Have to include before validate!
                                         # FIXME
 require_relative '../../processor/validate'
 require_relative '../../app/mock'
+require_relative 'cmd-helper'
 
 $errors = []
 $msgs   = []
@@ -13,11 +14,12 @@ $msgs   = []
 class TestValidate < Test::Unit::TestCase
 
   def setup
-    $errors = []
-    $msgs   = []
-    @proc    = Trepan::CmdProcessor.new(Trepan::MockCore.new())
+    $errors  = []
+    $msgs    = []
+    @dbg   ||= MockDebugger::MockDebugger.new(:nx => true)
+    @cmdproc = Trepan::CmdProcessor.new(@dbg)
 
-    class << @proc
+    class << @cmdproc
       def errmsg(msg)
         $errors << msg
       end
@@ -29,41 +31,77 @@ class TestValidate < Test::Unit::TestCase
     end
   end
 
-  # See that we have can load up commands
-  def test_basic
+  def test_get_int
+    [['1', 1],  ['1E', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do 
+      |arg, expected|
+      assert_equal(expected, @cmdproc.get_int_noerr(arg))
+    end
+  end
+
+  def test_get_on_off
     onoff = 
     [['1', true],  ['on', true],
      ['0', false], ['off', false]].each do |arg, expected|
-      assert_equal(expected, @proc.get_onoff(arg))
-    end
-    [['1', 1],  ['1E', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do 
-      |arg, expected|
-      assert_equal(expected, @proc.get_int_noerr(arg))
+      assert_equal(expected, @cmdproc.get_onoff(arg))
     end
   end
 
-  def no_test_breakpoint_position
-    require 'thread_frame'
-    tf = RubyVM::ThreadFrame.current
-    @proc.frame_setup(tf)
+  include UnitHelper
+  def outer_line
+    @line = __LINE__
+  end
+
+  def test_parse_position
+    common_setup
+    outer_line
+    @dbg.instance_variable_set('@current_frame',
+                               Trepan::Frame.new(self, 0,
+                                                 Rubinius::VM.backtrace(0, true)[0]))
+    @cmdproc.frame_setup
+    file = File.basename(__FILE__)
+    [
+     [__FILE__, [false, file, nil, nil]],
+     ['@8', [true, file, 8, :offset]],
+     [@line.to_s , [true, file, @line, :line]],
+     ['8' , [true, file, 8, :line]],
+     ["#{__FILE__}:#{__LINE__}" , [true, file, __LINE__, :line]],
+     ["#{__FILE__} #{__LINE__}" , [true, file, __LINE__, :line]]
+    ].each do |pos_str, expected|
+      result = @cmdproc.parse_position(pos_str)
+      result[1] = File.basename(result[1])
+      result[0] = !!result[0]
+      assert_equal(expected, result, "parsing position #{pos_str}")
+    end
+  end
+
+  def test_breakpoint_position
+    start_line = __LINE__
+    common_setup
+    outer_line
+    @dbg.instance_variable_set('@current_frame',
+                               Trepan::Frame.new(self, 0,
+                                                 Rubinius::VM.backtrace(0, true)[0]))
+    @cmdproc.frame_setup
 
     def munge(args)
-      args[1] = 'bogus'
+      args[0] = args[0].class
       args
     end
 
-    assert_equal([0, 'bogus', true, 'true', nil],
-                 munge(@proc.breakpoint_position(%w(@0))))
-    assert_equal([1, 'bogus', false, 'true', nil], 
-                 munge(@proc.breakpoint_position(%w(1))))
-    assert_equal([2, 'bogus', false, 'a > b', nil],
-                 munge(@proc.breakpoint_position(%w(2 if a > b))))
+    assert_equal([Rubinius::CompiledMethod, start_line, 0, 'true', false],
+                 munge(@cmdproc.breakpoint_position('@0', false)))
+    result = @cmdproc.breakpoint_position("outer_line:#{@line}", true)
+    result[0] = result[0].name
+    assert_equal([:outer_line, @line, 0, 'true', false], result)
+    result = @cmdproc.breakpoint_position("#{@line} unless 1 == 2", true)
+    result[0] = result[0].name
+    assert_equal([:outer_line, @line, 0, '1 == 2', true], result)
   end
 
   def test_int_list
-    assert_equal([1,2,3], @proc.get_int_list(%w(1+0 3-1 3)))
+    assert_equal([1,2,3], @cmdproc.get_int_list(%w(1+0 3-1 3)))
     assert_equal(0, $errors.size)
-    assert_equal([2,3], @proc.get_int_list(%w(a 2 3)))
+    assert_equal([2,3], @cmdproc.get_int_list(%w(a 2 3)))
     assert_equal(1, $errors.size)
   end
 
@@ -77,12 +115,12 @@ class TestValidate < Test::Unit::TestCase
      'errmsg'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
-      assert @proc.method?(str), "#{str} should be known as a method"
+      assert @cmdproc.method?(str), "#{str} should be known as a method"
     end
     ['food', '.errmsg'
     ].each do |str|
       # dbgr.debugger if 'foo' == str
-      assert_equal(false, !!@proc.method?(str),
+      assert_equal(false, !!@cmdproc.method?(str),
                    "#{str} should not be known as a method")
     end
 
