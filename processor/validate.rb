@@ -180,22 +180,6 @@ class Trepan
         else
           errmsg("Unable to set breakpoint in #{cm}")
         end
-      # FIXME: Figure out what to do here.
-      # elsif file && position
-      #   if :line == offset_type
-      #     iseq = find_iseqs_with_lineno(file, position)
-      #     if iseq
-      #       junk, line_no, vm_offset = 
-      #         position_to_line_and_offset(iseq, file, position, offset_type)
-      #       return [@frame.iseq, line_no, vm_offset] + tail
-      #     else
-      #       errmsg("Unable to find instruction sequence for" + 
-      #              " position #{position} in #{file}")
-      #     end
-      #   else
-      #     errmsg "Come back later..."
-      #   end
-      else
         errmsg("Unable to parse breakpoint position #{position_str}")
       end
       return [nil] * 5
@@ -237,7 +221,7 @@ class Trepan
         begin
           meth_for_parse_struct(meth, start_binding)
         rescue NameError
-          errmsg("Can't evalute #{meth.name} to get a method")
+          errmsg("Can't evaluate #{meth.name} to get a method")
           return nil
         end
       end
@@ -258,6 +242,10 @@ class Trepan
       info = parse_location(info) if info.kind_of?(String)
       case info.container_type
       when :fn
+        unless info.container
+          errmsg "Bad function parse #{info.container.inspect}"
+          return
+        end
         if meth = method?(info.container)
           cm = meth.executable
           return [cm, canonic_file(cm.active_path), info.position, 
@@ -267,14 +255,14 @@ class Trepan
         end
       when :file
         filename = canonic_file(info.container)
-        # FIXME: How handle other kinds of filenames?
         cm = 
           if canonic_file(@frame.file) == filename 
             cm = @frame.method
             if :line == info.position_type
               find_method_with_line(cm, info.position)
             end
-          else nil
+          else 
+            LineCache.compiled_method(filename)
           end
         return cm, info.container,  info.position, info.position_type
       when nil

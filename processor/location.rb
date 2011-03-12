@@ -1,7 +1,8 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
-require 'linecache'
 require 'pathname'  # For cleanpath
-require 'rubygems'; require 'require_relative'
+require 'rubygems'; 
+require 'linecache'
+require 'require_relative'
 require_relative 'disassemble'
 require_relative 'msg'
 require_relative 'frame'
@@ -67,10 +68,12 @@ class Trepan
                      {:reload_on_change => @reload_on_change,
                        :output => @settings[:highlight]
                      })
+
       vm_location = @frame.vm_location
       filename = vm_location.method.active_path
       line_no  = vm_location.line
       static   = vm_location.static_scope
+      opts[:compiled_method] = top_scope(@frame.method)
 
       if @frame.eval?
         file = LineCache::map_script(static.script)

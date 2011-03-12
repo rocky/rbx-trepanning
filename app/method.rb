@@ -2,6 +2,7 @@
 module Trepanning
   module Method
 
+    module_function
     ## FIXME: until the next two routines find their way back into 
     ## Rubinius::CompiledMethod...
     ##
@@ -23,7 +24,6 @@ module Trepanning
       end
       return nil
     end
-    module_function :locate_line_in_cm
 
     ## FIXME: Try using Routine in Rubinius now.
     ##
@@ -54,7 +54,6 @@ module Trepanning
       # No child method is a match - fail
       return nil
     end
-    module_function :locate_line
 
     def lines_of_method(cm)
       lines = []
@@ -63,7 +62,6 @@ module Trepanning
       end
       return lines
     end
-    module_function :lines_of_method
 
     # Return true if ip is the start of some instruction in meth.
     # FIXME: be more stringent.
@@ -71,7 +69,6 @@ module Trepanning
       size = cm.lines.size
       ip >= 0 && ip < cm.lines[size-1]
     end
-    module_function :valid_ip?
 
     # Returns a CompiledMethod for the specified line. We search the
     # current method +meth+ and then up the parent scope.  If we hit
@@ -84,13 +81,11 @@ module Trepanning
       end
       
       lines = lines_of_method(cm)
-      ## p ['++++1', cm, lines]
       return cm if lines.member?(line) 
       scope = cm.scope
       return nil unless scope.current_script
       cm  = scope.current_script.compiled_method
       lines = lines_of_method(cm)
-      ## p ['++++2', cm, lines]
       until lines.member?(line) do
         child = scope
         scope = scope.parent
@@ -103,11 +98,19 @@ module Trepanning
         end
         cm = scope.current_script.compiled_method
         lines = lines_of_method(cm)
-        ## p ['++++3', cm, lines]
       end
       return cm
     end
-    module_function :find_method_with_line
+
+    def top_scope(cm)
+      scope = cm.scope
+      while true do
+        scope = scope.parent
+        break unless scope && scope.current_script
+        cm = scope.current_script.compiled_method
+      end
+      cm
+    end
   end
 
 end
@@ -165,6 +168,7 @@ if __FILE__ == $0
   p lines_of_method(cm)
   find_line(line)
   p find_method_with_line(cm, line+2)
+  puts "top scope: #{top_scope(cm)}"
   ip = locate_line( __LINE__, cm)[1]
   puts "Line #{__LINE__} has ip #{ip}" 
   [-1, 0, 10, ip, 10000].each do |i|

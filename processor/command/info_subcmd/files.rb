@@ -65,8 +65,15 @@ EOH
     return if args.size < 2
     args << '.' if 2 == args.size 
     if '*' == args[2]
-      section 'Files names cached:'
-      msg columnize_commands(file_list.sort)
+      section 'Canonic Files names cached:'
+      primary = LineCache.class_variable_get('@@file_cache')
+      remap = LineCache.class_variable_get('@@file2file_remap')
+      msg columnize_commands(remap.keys.uniq.sort)
+      names = remap.keys - primary.keys
+      unless names.empty?
+        section 'Non-canonic names cached:'
+        msg columnize_commands(names.sort)
+      end
       return
     end
     filename = 
@@ -76,7 +83,8 @@ EOH
           return false
           nil
         else
-          File.expand_path(@proc.frame.file)
+          LineCache::map_file(@proc.frame.file) || 
+            File.expand_path(@proc.frame.file)
         end
       else
         args[2]
