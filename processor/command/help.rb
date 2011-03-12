@@ -33,7 +33,8 @@ See also 'examine' and 'whatis'.
     'running'     => 'Running the program', 
     'status'      => 'Status inquiries',
     'support'     => 'Support facilities',
-    'stack'       => 'Examining the call stack'
+    'stack'       => 'Examining the call stack',
+    'syntax'      => 'Debugger command syntax'
     }
     CATEGORY      = 'support'
     HELP_DIR      = File.join(File.dirname(RequireRelative.abs_file), 'help')
@@ -73,7 +74,6 @@ See also 'examine' and 'whatis'.
     end
     final_msg = '
 Type "help" followed by a class name for a list of commands in that class.
-Type "help syntax" for information on debugger command syntax.
 Type "help aliases" for a list of current aliases
 Type "help macros" for a list of current macros
 Type "help *" for the list of all commands, macros and aliases.
@@ -99,7 +99,7 @@ Type "help" followed by command name for full documentation.
       elsif cmd_name =~ /^macros$/i
         show_macros
       elsif cmd_name =~ /^syntax$/i
-        show_command_syntax
+        show_command_syntax(args)
       elsif cmd_name =~ /^all$/i
         CATEGORIES.sort.each do |category|
           show_category(category[0], [])
@@ -168,9 +168,23 @@ Type "help" followed by command name for full documentation.
     end
   end
 
-  def show_command_syntax
-    section "Debugger command syntax"
-    msg File.open(File.join(HELP_DIR, 'syntax.txt')).read
+  def show_command_syntax(args)
+    @files ||= Dir.glob(File.join(HELP_DIR, '*.txt')).map do |txt| 
+      basename = File.basename(txt, '.txt')
+    end
+    if args.size == 2
+      section "List of syntax help"
+      @files.each do |file|
+        msg "  #{file}"
+      end
+    else
+      args[2..-1].each do |name|
+        if @files.member?(name)
+          section "Debugger command syntax for #{name}"
+          msg File.open(File.join(HELP_DIR, "#{name}.txt")).read
+        end
+      end
+    end
   end
 
   def show_macros

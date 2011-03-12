@@ -28,7 +28,8 @@ class TestCompletion < Test::Unit::TestCase
 
      ['set auto e', 'e', ['eval']],
      ['disas', 'disas', ['disassemble']], # Another single completion
-     ['help syn', 'syn', ['syntax']],
+     ## FIXME:
+     # ['help syn', 'syn', ['syntax']],
      ['help br', 'br', ['break', 'breakpoints']],
      ['where', 'where', ['where']],  # Single alias completion
      ['set basename o', 'o', ['off', 'on']],
