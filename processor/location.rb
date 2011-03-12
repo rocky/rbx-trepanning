@@ -14,6 +14,13 @@ class Trepan
       @reload_on_change = nil
     end
 
+    def canonic_file(filename)
+      # For now we want resolved filenames 
+      @settings[:basename] ? File.basename(filename) : 
+        # Cache this?
+        File.expand_path(Pathname.new(filename).cleanpath.to_s)
+    end
+
     # Return the text to the current source line.
     # FIXME: loc_and_text should call this rather than the other
     # way around.

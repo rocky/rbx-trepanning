@@ -179,9 +179,10 @@ class Trepan
           return [cm, line_no, vm_offset] + tail
         else
           errmsg("Unable to set breakpoint in #{cm}")
+          return
         end
-        errmsg("Unable to parse breakpoint position #{position_str}")
       end
+      errmsg("Unable to get breakpoint position for #{position_str}")
       return [nil] * 5
     end
 
@@ -264,7 +265,7 @@ class Trepan
           else 
             LineCache.compiled_method(filename)
           end
-        return cm, info.container,  info.position, info.position_type
+        return cm, filename,  info.position, info.position_type
       when nil
         if [:line, :offset].member?(info.position_type)
           filename = @frame.file
@@ -322,7 +323,9 @@ if __FILE__ == $0
     puts msg
   end
 
-  # require_relative '../lib/trepanning'
+  pos = cmdproc.parse_position('../../rubies/rbx-head/bin/irb')
+  puts pos.inspect
+
   puts cmdproc.parse_position(__FILE__).inspect
   puts cmdproc.parse_position('@8').inspect
   puts cmdproc.parse_position('8').inspect
@@ -345,7 +348,11 @@ if __FILE__ == $0
   end
   puts '-' * 20
 
-    puts "Trepan::CmdProcessor.allocate is: #{cmdproc.get_method('Trepan::CmdProcessor.allocate')}"
+  puts "Trepan::CmdProcessor.allocate is: #{cmdproc.get_method('Trepan::CmdProcessor.allocate')}"
+
+  # require_relative '../lib/trepanning'; debugger
+  # pos = cmdproc.breakpoint_position('../processor/validate.rb', true)
+  # p ['breakpoint validate', pos]
 
   p cmdproc.breakpoint_position('foo', true)
   p cmdproc.breakpoint_position('@0', true)

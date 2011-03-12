@@ -136,13 +136,6 @@ class Trepan
       [container[0], canonic_file(container[1])]
     end
 
-    def canonic_file(filename)
-      # For now we want resolved filenames 
-      @settings[:basename] ? File.basename(filename) : 
-        # Cache this?
-        Pathname.new(filename).cleanpath.to_s
-    end
-
     def compute_prompt
       "(#{@settings[:prompt]}): " 
     end

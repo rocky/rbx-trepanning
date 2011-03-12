@@ -91,12 +91,13 @@ EOH
       end
     args += DEFAULT_FILE_ARGS if args.size == 3
 
-    m = filename + ' is'
-    canonic_name = LineCache::map_file(filename) || filename
+    m = filename
+    canonic_name = @proc.canonic_file(filename)
+    canonic_name = LineCache::map_file(canonic_name) || canonic_name
     if LineCache::cached?(canonic_name)
-      m += " cached in debugger"
+      m += " is cached in debugger"
       if canonic_name != filename
-        m += (' as:' + canonic_name)
+        m += (" as:\n  " + canonic_name)
       end
       m += '.'
       msg(m)
@@ -118,9 +119,11 @@ EOH
         matches.sort.each { |match_file| msg "\t%s" % match_file }
         return
       elsif 1 == matches.size
-        canonic_name = LineCache::map_file(matches[1])
+        canonic_name = LineCache::map_file(matches[0])
+        m += " matched debugger cache file:\n  "  + canonic_name
+        msg m
       else
-        msg(m + ' not cached in debugger.')
+        msg(m + ' is not cached in debugger.')
         return
       end
     end
