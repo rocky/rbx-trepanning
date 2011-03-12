@@ -9,7 +9,7 @@ require_relative '../../../app/complete'
 class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    DEFAULT_FILE_ARGS = %w(size mtime sha1)
+    DEFAULT_FILE_ARGS = %w(size mtime sha1 iseq)
 
     HELP = <<-EOH
 #{CMD} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
@@ -149,7 +149,7 @@ EOH
       if %w(all brkpts).member?(arg)
         unless seen[:brkpts]
           msg("Possible breakpoint line numbers:")
-          lines = LineCache::trace_line_numbers(canonic_name)
+          lines = LineCache.trace_line_numbers(canonic_name)
           fmt_lines = columnize_numbers(lines)
           msg(fmt_lines)
         end
@@ -164,19 +164,16 @@ EOH
         processed_arg = seen[:ctime] = true
       end
       
-      # if %w(all iseq).member?(arg) 
-      #   unless seen[:iseq]
-      #     if SCRIPT_ISEQS__.member?(canonic_name)
-      #       msg("File contains instruction sequences:")
-      #       SCRIPT_ISEQS__[canonic_name].each do |iseq|
-      #         msg("\t %s %s" % [iseq, iseq.name.inspect])
-      #       end 
-      #     else
-      #       msg("Instruction sequences not recorded; there may be some, though.")
-      #     end
-      #   end
-      #   processed_arg = seen[:iseq] = true
-      # end
+      if %w(all iseq).member?(arg) 
+        unless seen[:iseq]
+          if cm = LineCache.compiled_method(canonic_name)
+            msg("File has compiled method: #{cm}")
+          else
+            msg("Compiled method not recorded; there may be some, though.")
+          end
+        end
+        processed_arg = seen[:iseq] = true
+      end
 
       if %w(all mtime).member?(arg)
         unless seen[:mtime]
