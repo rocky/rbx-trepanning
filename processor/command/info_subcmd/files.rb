@@ -9,7 +9,7 @@ require_relative '../../../app/complete'
 class Trepan::Subcommand::InfoFiles < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    DEFAULT_FILE_ARGS = %w(size mtime sha1 iseq)
+    DEFAULT_FILE_ARGS = %w(size mtime sha1 cm)
 
     HELP = <<-EOH
 #{CMD} [{FILENAME|.|*} [all|ctime|brkpts|mtime|sha1|size|stat]]
@@ -24,6 +24,7 @@ Sub options which can be shown about a file are:
 
 brkpts -- Line numbers where there are statement boundaries. 
           These lines can be used in breakpoint commands.
+cm     -- Top-level compiled method found for this file
 ctime  -- File creation time
 mtime  -- File modification time
 sha1   -- A SHA1 hash of the source text. This may be useful in comparing
@@ -47,7 +48,7 @@ EOH
     NEED_STACK   = false
   end
 
-  # completion %w(all brkpts iseq sha1 size stat)
+  # completion %w(all brkpts cm sha1 size stat)
 
   include Trepanning
 
@@ -83,8 +84,8 @@ EOH
           return false
           nil
         else
-          LineCache::map_file(@proc.frame.file) || 
-            File.expand_path(@proc.frame.file)
+          frame_file = @proc.frame_file
+          LineCache::map_file(frame_file) || File.expand_path(frame_file)
         end
       else
         args[2]
@@ -164,15 +165,15 @@ EOH
         processed_arg = seen[:ctime] = true
       end
       
-      if %w(all iseq).member?(arg) 
-        unless seen[:iseq]
+      if %w(all cm).member?(arg) 
+        unless seen[:cm]
           if cm = LineCache.compiled_method(canonic_name)
             msg("File has compiled method: #{cm}")
           else
             msg("Compiled method not recorded; there may be some, though.")
           end
         end
-        processed_arg = seen[:iseq] = true
+        processed_arg = seen[:cm] = true
       end
 
       if %w(all mtime).member?(arg)
