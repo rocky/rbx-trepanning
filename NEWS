@@ -1,3 +1,19 @@
+March 15, 2011  (0.0.8)
+
+- Revise breakpoint location parsing
+  * Add: break <location> if/unless <condition>
+  * Add: step until <condition>
+  * VM offsets are now specified via @ rather than o or O
+  * Filenames can be quoted and blanks and characters inside escaped
+- Document command syntax by adding it as a new category with sub help
+- More controlled parsing of method names 
+- improvements to "info files"
+  show if we have a compiled method object for the file
+- eval? now strips more: 
+   * leading "return" or "case", or "unless"
+   * trailing "then"
+- Save and restore of debugger state across a restart started
+
 Feb 22, 2011  (0.0.7)
 - Add gdb "condition" command
 - More complete command completion

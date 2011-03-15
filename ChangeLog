@@ -1,3 +1,239 @@
+2011-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/help.rb, processor/command/help/command.txt,
+	processor/command/help/filename.txt,
+	processor/command/help/filenames.txt,
+	processor/command/help/location.txt: sync with rb-trepanning.
+
+2011-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/help.rb, processor/command/help/command.txt,
+	processor/command/help/filenames.txt,
+	processor/command/help/syntax.txt, processor/help.rb,
+	test/unit/test-completion.rb: Start multi-level "help syntax"
+
+2011-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/files.rb: info files: iseq -> cm.
+	Document it.
+
+2011-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/files.rb: Show compiled method
+	status in "info files" .
+
+2011-03-12  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/files.rb, processor/location.rb,
+	processor/main.rb, processor/validate.rb: Handle more cases of
+	file/line breakpoints. Improve "info files" more.
+
+2011-03-11  rocky <rockyb@rubyforge.org>
+
+	* app/method.rb, processor/command/info_subcmd/files.rb,
+	processor/location.rb, processor/validate.rb: Better "info file"
+	display. Start to handle filenames other than current one by using
+	LineCache saving the top compile method.
+
+2011-03-11  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.kpeg, app/cmd_parser.rb,
+	processor/command/help/filenames.txt,
+	processor/command/help/location.txt,
+	test/unit/test-app-cmd_parser.rb: Clean up filename parsing
+	somewhat.
+
+2011-03-10  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.rb, app/cmd_parser.rb, processor/command/help.rb,
+	processor/command/help/.gitignore,
+	processor/command/help/location.txt,
+	processor/command/help/syntax.txt: Start moving text help, to text
+	file.
+
+2011-03-10  rocky <rockyb@rubyforge.org>
+
+	* processor/command/save.rb, processor/validate.rb,
+	test/unit/test-proc-validate.rb: Cutover to KPEG for breakpoints
+	complete. What a relief! save.rb: save debugger settings for
+	restart.
+
+2011-03-10  rocky <rockyb@rubyforge.org>
+
+	* app/breakpoint.rb, app/cmd_parse.kpeg, app/cmd_parse.rb,
+	app/cmd_parser.rb, lib/trepanning.rb, processor/breakpoint.rb,
+	processor/command/break.rb, processor/command/condition.rb,
+	processor/command/continue.rb,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/tbreak.rb, processor/mock.rb,
+	processor/validate.rb, test/unit/cmd-helper.rb,
+	test/unit/test-app-cmd_parse.rb, test/unit/test-cmd-break.rb: 
+	Towards getting breakpoint refactoring complete.
+
+2011-03-09  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-09  rocky <rockyb@rubyforge.org>
+
+	* processor/load_cmds.rb, processor/main.rb: Small changes.
+
+2011-03-08  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/command/info_subcmd/frame.rb: Add "info frame"
+	command Revise "rake cmd_parse" to use TempDir.
+
+2011-03-07  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-06  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/cmd_parse.kpeg, app/cmd_parser.rb,
+	processor/location.rb, processor/main.rb,
+	test/example/debugger-stop.rb, test/integration/helper.rb,
+	test/unit/test-proc-location.rb: Largely sync with rb-trepanning -
+	no bug fixes or completed enhancements cmd_parse.kpeg: fill out for
+	location. More complete. Rakefile: add descriptions to some tasks
+	helper.rb: add feed_input option test: test some bugs that were in
+	rb-trepanning but here.
+
+2011-03-05  rvm <rocky@gnu.org>
+
+	* test/unit/test-app-options.rb: Remove tempfile in unit test
+
+2011-03-05  rvm <rocky@gnu.org>
+
+	* app/default.rb, app/options.rb, bin/trepanx, lib/trepanning.rb,
+	processor/command/base/submgr.rb, processor/command/restart.rb,
+	processor/command/set_subcmd/trace_subcmd/buffer.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/load_cmds.rb: Save/restore of debugger state across a
+	restart finally works!
+
+2011-03-04  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/cmd_parse.kpeg: Sync Rakefile with rb-trepanning
+
+2011-03-04  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.citrus, app/cmd_parse.kpeg, app/cmd_parser.rb: 
+	Citrus -> KPeg: Forgot to add new files and remove old ones
+
+2011-03-04  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.rb, processor/validate.rb, rbx-trepanning.gemspec,
+	test/unit/test-app-cmd_parse.rb: Switch from Citrus to KPeg. Thanks
+	Evan!
+
+2011-03-02  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-02  rocky <rockyb@rubyforge.org>
+
+	* processor/command/eval.rb, test/functional/test-eval.rb: Add to
+	eval? stripping "unless" and optional "then".
+
+2011-03-01  rvm <rocky@gnu.org>
+
+	* Rakefile, app/cmd_parse.citrus, app/cmd_parse.rb, doc/.gitignore,
+	doc/debugger.html, test/unit/test-app-cmd_parse.rb: Sync with
+	rb-trepanning: move forward in location parsing. Rakefile: add task
+	to remove patch residue files.
+
+2011-03-01  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-28  rvm <rocky@gnu.org>
+
+	* app/brkptmgr.rb, processor/command/eval.rb: In "eval?" extract
+	expression in "case", and echo that.
+
+2011-02-25  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.citrus, app/cmd_parse.rb,
+	test/unit/test-app-cmd_parse.rb: Start filling out location parsing.
+
+
+2011-02-25  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.citrus, app/cmd_parse.rb, app/method_name.citrus,
+	app/method_name.rb, processor/validate.rb,
+	test/unit/test-app-cmd_parse.rb, test/unit/test-app-method_name.rb: 
+	method_name -> cmd_parse to allow expansion
+
+2011-02-25  rvm <rocky@gnu.org>
+
+	* processor/command/eval.rb, test/functional/test-eval.rb: In eval?
+	we now also strip a leading 'return'.
+
+2011-02-25  rocky <rockyb@rubyforge.org>
+
+	* app/method_name.rb: Use bind instead of binding for binding
+	variable name. I think it is less likely to be confused with
+	Kernel#bind
+
+2011-02-25  rocky <rockyb@rubyforge.org>
+
+	* app/method_name.rb, app/validate.rb, lib/trepanning.rb,
+	processor/breakpoint.rb, processor/command/break.rb,
+	processor/validate.rb, test/functional/test-break-name.rb,
+	test/functional/test-tbreak.rb, test/unit/test-app-validate.rb,
+	test/unit/test-cmd-break.rb, test/unit/test-proc-validate.rb: Get
+	rid of the all-to-hacky # vs . notation for breakpoints. Also,
+	offsets are now specified with '@' rather than 'O' or 'o'. Some
+	other breakpoint bugs fixed.
+
+2011-02-24  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-24  rocky <rockyb@rubyforge.org>
+
+	* app/method_name.citrus, app/method_name.rb,
+	processor/command/break.rb, processor/command/disassemble.rb,
+	processor/validate.rb, rbx-trepanning.gemspec,
+	test/unit/test-app-method_name.rb, test/unit/test-proc-validate.rb: 
+	Use a PEG parser (citrus) to parse method names. This weay we can
+	get the method in a controlled way without having to eval and hope
+	we didn't do any damage.
+
+2011-02-23  rocky <rockyb@rubyforge.org>
+
+	* processor/command/step.rb, processor/disassemble.rb,
+	processor/main.rb, processor/running.rb: Add "step until"
+
+2011-02-23  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, processor/command/alias.rb,
+	processor/command/exit.rb, processor/command/kill.rb,
+	processor/command/restart.rb, processor/command/show.rb: Call
+	cmdproc finalization routine on exit and restart. Mention "show
+	alias" in alias help.
+
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb: Update version for release.
+
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subsubcmd.rb,
+	processor/command/show_subcmd/trace_subcmd/buffer.rb,
+	processor/main.rb, test/unit/test-base-subsubcmd.rb: Mark stopping
+	boundaries in event buffer. Test setting command CMD, NAME and
+	PREFIX. Make main more like rb-trepanning.
+
+2011-02-22  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, NEWS, Rakefile,
+	processor/command/info_subcmd/breakpoints.rb,
+	processor/command/show_subcmd/trace_subcmd/buffer.rb,
+	processor/eventbuf.rb, processor/location.rb: Now shows trace buffer
+	events and locations properly. How number of breakpoint hits. Get
+	ready for release.
+
 2011-02-22  rocky <rockyb@rubyforge.org>
 
 	* app/breakpoint.rb, app/brkptmgr.rb, lib/trepanning.rb,

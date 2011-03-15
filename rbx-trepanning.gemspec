@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.add_dependency('columnize')
   s.add_dependency('diff-lcs') # For testing only
   s.add_dependency('rbx-require-relative')
-  s.add_dependency('rbx-linecache', '~>1.0', '~>1.1')
+  s.add_dependency('rbx-linecache', '~>1.2')
   s.authors      = ['R. Bernstein']
   s.date         = Time.now
   s.description = <<-EOF
