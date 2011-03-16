@@ -12,7 +12,7 @@ March 15, 2011  (0.0.8)
 - eval? now strips more: 
    * leading "return" or "case", or "unless"
    * trailing "then"
-- Save and restore of debugger state across a restart started
+- Save and restore some debugger state across a restart
 
 Feb 22, 2011  (0.0.7)
 - Add gdb "condition" command
