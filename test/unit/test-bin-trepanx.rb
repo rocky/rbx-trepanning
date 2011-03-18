@@ -8,8 +8,8 @@ class TestBinTrepan < Test::Unit::TestCase
 
   include Trepanning
 
-  def test_ruby_path
-    rb_path = ruby_path
+  def test_RbConfig_ruby
+    rb_path = RbConfig.ruby
     assert_equal(true, File.executable?(rb_path),
                  "#{rb_path} should be an executable Ruby interpreter")
 

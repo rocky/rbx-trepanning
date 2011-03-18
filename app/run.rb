@@ -58,11 +58,6 @@ module Trepanning
     ## untrace_var(:$0, dollar_0_tracker)
   end
 
-  # Path name of Ruby interpreter we were invoked with.
-  def ruby_path
-    File.join(%w(bindir RUBY_INSTALL_NAME).map{|k| RbConfig::CONFIG[k]})
-  end
-
   # Do a shell-like path lookup for prog_script and return the results.
   # If we can't find anything return prog_script.
   def whence_file(prog_script)
@@ -79,10 +74,19 @@ module Trepanning
   end
 end
 
+# Path name of Ruby interpreter we were invoked with. Is part of 
+# 1.9 but not necessarily 1.8.
+def RbConfig.ruby
+  File.join(RbConfig::CONFIG['bindir'],  
+            RbConfig::CONFIG['RUBY_INSTALL_NAME'] + 
+            RbConfig::CONFIG['EXEEXT'])
+end unless defined? RbConfig.ruby
+
+
 if __FILE__ == $0
   # Demo it.
   include  Trepanning
   puts whence_file('irb')
   puts whence_file('probably-does-not-exist')
-  puts ruby_path
+  puts RbConfig.ruby
 end
