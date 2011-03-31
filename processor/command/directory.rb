@@ -36,8 +36,8 @@ Examples:
       msg "Source directories searched: #{settings[:directory]}"
     else
       if confirm('Reintialize source path to empty?', false)
-        settings[:directory] = '$cdir:$cwd'
-        msg 'Source directories searched: $cdir:$cwd'
+        settings[:directory] = '$rbx:$cdir:$cwd'
+        msg "Source directories searched: #{settings[:directory]}"
       end
     end
   end
