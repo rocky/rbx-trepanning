@@ -17,11 +17,11 @@ class Trepan
       @reload_on_change = nil
     end
 
-    def canonic_file(filename)
+    def canonic_file(filename, resolve=true)
       # For now we want resolved filenames 
       if @settings[:basename] 
         File.basename(filename)
-      else
+      elsif resolve
         filename = LineCache::map_file(filename)
         if File.exist?(filename) 
           filename
@@ -32,6 +32,8 @@ class Trepan
         else
           File.expand_path(Pathname.new(filename).cleanpath.to_s)
         end
+      else
+        filename
       end
     end
 
@@ -201,7 +203,7 @@ class Trepan
         if @frame.eval?
           'eval ' + safe_repr(@frame.eval_string.gsub("\n", ';').inspect, 20)
         else
-          canonic_file(filename)
+          canonic_file(filename, false)
         end
       loc = "#{canonic_filename}:#{@frame.vm_location.line}"
       return loc

@@ -42,6 +42,7 @@ See also 'step' and 'nexti'.
     end
 
     @proc.step('next', step_count)
+    # @proc.next(step_count)
   end
   
 end

@@ -35,6 +35,8 @@ class Trepan
     # # FIXME: turn line_number into a condition.
 
     def continue(return_to_program)
+      @next_level      = 32000 # I'm guessing the stack size can't
+                               # ever reach this
       @next_thread     = nil
       @step_count      = -1    # No more event stepping
       if 'step-finish' == return_to_program
@@ -46,10 +48,11 @@ class Trepan
 
     # Does whatever setup needs to be done to set to ignore stepping
     # to the finish of the current method. Elsewhere in
-    # "skipping_step?" we do the checking.
+    # "stepping_skip?" we do the checking.
     def finish(level_count=0, opts={})
       step_to_return_or_yield
       continue('finish')
+      @next_level        = @stack_size - level_count
       @next_thread       = @current_thread
 
       @step_count = 2 if 'nostack' == opts[:different_pos]
@@ -62,15 +65,16 @@ class Trepan
     def step_finish
       step_to_return_or_yield
       continue('step')
-      @next_thread       = @current_thread
+      @next_thread     = @current_thread
     end
 
-    # # Does whatever needs to be done to set to "next" program
-    # # execution.
-    # def next(step_count=1, opts={})
-    #   step(step_count, opts)
-    #   @next_thread     = Thread.current
-    # end
+    # Does whatever needs to be done to set to "next" program
+    # execution.
+    def next(step_count=1, opts={})
+      step('step', step_count, opts)
+      @next_level      = opts[:next_level] || @stack_size
+      @next_thread     = Thread.current
+    end
 
     # Does whatever needs to be done to set to step program
     # execution.
@@ -136,8 +140,16 @@ class Trepan
     # like the @settings[:different] are met.
     def stepping_skip?
 
-      debug_loc = "#{frame.vm_location.describe} #{frame.line}" if  
-        @settings[:debugskip]
+      if @settings[:'debugskip']
+        puts "diff: #{@different_pos}, event : #{@event}, #{@stop_events.inspect}" 
+        puts "step_count  : #{@step_count}" 
+        puts "next_level  : #{@next_level},    ssize : #{@stack_size}" 
+        puts "next_thread : #{@next_thread},   thread: #{Thread.current}" 
+      end
+
+      return true if 
+        !frame || (@next_level < @stack_size &&
+                   Thread.current == @next_thread)
 
       if @step_count < 0  
         # We may eventually stop for some other reason, but it's not
