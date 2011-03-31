@@ -6,7 +6,7 @@ require_relative '../base/subcmd'
 class Trepan::Subcommand::ShowDirectories < Trepan::Subcommand
   unless defined?(HELP)
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
-    HELP         = "Current search path for finding source files"
+    HELP         = "Show current search path for finding source files"
     MIN_ABBREV   = 'dir'.size
   end
 
