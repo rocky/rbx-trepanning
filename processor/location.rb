@@ -30,10 +30,11 @@ class Trepan
         elsif (try_filename = resolve_file_with_dir(filename))
           try_filename
         else
-          File.expand_path(Pathname.new(filename).cleanpath.to_s)
+          File.expand_path(Pathname.new(filename).cleanpath.to_s).
+            gsub(/\.rbc$/, '.rb')
         end
       else
-        filename
+        filename.gsub(/\.rbc$/, '.rb')
       end
     end
 

@@ -204,15 +204,10 @@ class Trepan
       @processor.hidelevels[@thread] = @settings[:hide_level]
     end
 
-    # unless defined?(PROG_UNRESOLVED_SCRIPT)
-    #   # We may later do more sophisticated things...
-    #  Trepan.const_set('PROG_UNRESOLVED_SCRIPT', 
-    #                   Rubinius::OS_ARGV.index($0) ? $0 : nil)
-    # end
-
     process_cmdfile_setting(settings)
 
-    # Feed info to the debugger thread!
+    # Feed info (breakpoint, debugged program thread, channel and backtrace 
+    # info) to the debugger thread
     locs = Rubinius::VM.backtrace(@settings[:offset] + 1, true)
 
     method = Rubinius::CompiledMethod.of_sender
@@ -226,6 +221,8 @@ class Trepan
     # wait for the debugger to release us
     channel.receive
 
+    # Now that there is a debugger on the other end, set the debugged 
+    # program thread to call us when it hits a breakpoint.
     Thread.current.set_debugger_thread @thread
     self
   end

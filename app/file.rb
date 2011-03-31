@@ -7,7 +7,8 @@ module Trepanning
     def find_load_path(filename)
       cl = Rubinius::CodeLoader.new(filename)
       if cl.verify_load_path(filename)
-        cl.instance_variable_get('@load_path')
+        path = cl.instance_variable_get('@load_path')
+        path.end_with?(filename) ? filename : nil
       else
         nil
       end
