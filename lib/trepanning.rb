@@ -301,7 +301,7 @@ class Trepan
         status = @breakpoint.hit!(@vm_locations.first.variables)
         if status
           break
-        elsif status.nil? 
+        elsif @breakpoint.enabled? && status.nil? 
           # A permanent breakpoint. Check the condition.
           break if @breakpoint.condition?(@current_frame.binding)
         end

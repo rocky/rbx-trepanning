@@ -140,6 +140,21 @@ class Trepan
       delete_breakpoint(bp)
     end
 
+    # Enable or disable a breakpoint given its breakpoint number.
+    def en_disable_breakpoint_by_number(bpnum, do_enable=true)
+      bp = breakpoint_find(bpnum)
+      return false unless bp
+          
+      enable_disable = do_enable ? 'en' : 'dis'
+      if bp.enabled? == do_enable
+        errmsg('Breakpoint %d previously %sabled.' % 
+               [bpnum, enable_disable])
+        return false
+      end
+      bp.enabled = do_enable
+      return true
+    end
+
     def delete_breakpoint(bp)
       @brkpts.delete_by_brkpt(bp)
       return true
