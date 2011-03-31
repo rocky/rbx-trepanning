@@ -9,6 +9,7 @@ require 'linecache'
 
 require_relative '../app/cmd_parse'
 require_relative '../app/condition'
+require_relative '../app/file'
 require_relative '../app/method'
 require_relative '../app/validate'
 
@@ -20,8 +21,11 @@ class Trepan
 
     attr_reader :dbgr_script_iseqs
     attr_reader :dbgr_iseqs
+    attr_reader :file_exists_proc  # Like File.exists? but checks using
+                                   # cached files
 
     include Trepanning::Method
+    include Trepanning::FileName
     include Trepan::Validate
     ## include Trepan::ThreadHelper
     include Trepan::Condition
@@ -140,6 +144,7 @@ class Trepan
         vm_offset = cm.first_ip_on_line(position, -2)
         line_no   =  position
       when :offset
+        position = position.position unless position.kind_of?(Fixnum)
         line_no   = cm.line_from_ip(position)
         vm_offset = position
       when nil
@@ -234,7 +239,7 @@ class Trepan
       get_method(meth)
     end
 
-    # parse_position(self, arg)->(meth, filename, offset, offset_type)
+    # parse_position(self)->(meth, filename, offset, offset_type)
     # See app/cmd_parser.kpeg for the syntax of a position which
     # should include things like:
     # Parse arg as [filename:]lineno | function | module
@@ -287,19 +292,17 @@ class Trepan
       end
     end
 
-    def parse_method(meth_str)
-      begin 
-        meth_for_string(meth_str, @frame.binding)
-      rescue NameError
-        nil
-      rescue
-        nil
-      end
-    end
-
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
       ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
+      @file_exists_proc = Proc.new {|filename|
+        if LineCache.cached?(filename) || LineCache.cached_script?(filename) ||
+            (File.readable?(filename) && !File.directory?(filename))
+          true
+        else
+          find_load_path(filename)
+        end
+      }
     end
   end
 end

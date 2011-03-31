@@ -68,17 +68,15 @@ class Trepan
       @list.empty?
     end
 
-    # def line_breaks(container)
-    #   result = {}
-    #   @list.each do |bp|
-    #     if bp.source_container == container
-    #       bp.source_location.each do |line|
-    #         result[line] = bp 
-    #       end
-    #     end
-    #   end
-    #   result
-    # end
+    def line_breaks(cm)
+      result = {}
+      @list.each do |bp|
+        if bp.method == cm
+          result[bp.line] = bp 
+        end
+      end
+      result
+    end
 
     def find(meth, ip)
       @list.detect do |bp| 

@@ -51,6 +51,16 @@ class TestCmdProcessorLocation < Test::Unit::TestCase
     # FIXME test that filename remapping works.
   end
 
+  def test_canonic_file
+    @proc.settings[:basename] = false
+    assert_equal __FILE__, @proc.canonic_file(__FILE__)
+    assert @proc.canonic_file('lib/compiler/ast.rb')
+    @proc.settings[:basename] = true
+    assert_equal File.basename(__FILE__), @proc.canonic_file(__FILE__)
+    assert_equal 'ast.rb', @proc.canonic_file('lib/compiler/ast.rb')
+  end
+
+
   def test_eval_current_source_text
     eval <<-EOE
       @proc.frame_index = 0

@@ -15,6 +15,8 @@ class Trepan
     attr_reader   :id        # Fixnum. Name of breakpoint
     attr_reader   :ignore    # Fixnum. How many more times do we have
                              # to encounter the breakpoint before we stop?
+    attr_reader   :line   
+    attr_reader   :method
     attr_reader   :negate    # Boolean. Negate sense of condition. Used in 
                              # break if .. and break unless ..
                              # breakpoint

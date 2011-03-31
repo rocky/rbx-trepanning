@@ -306,6 +306,19 @@ class CmdParse
   # Structure to hold list information
   List = Struct.new(:position, :num)
 
+  DEFAULT_OPTS = {
+    :debug=>false, 
+    :file_exists_proc => Proc.new{|filename|
+        File.readable?(filename) && !File.directory?(filename)
+    }
+  }
+  def initialize(str, opts={})
+    @opts = DEFAULT_OPTS.merge(opts)
+    setup_parser(str, opts[:debug])
+    @file_exists_proc = @opts[:file_exists_proc]
+  end
+
+
    
 
 
@@ -1464,7 +1477,7 @@ class CmdParse
     return _tmp
   end
 
-  # location = (position | < filename >:file &{ File.exist?(file) } file_pos_sep position:pos {       Position.new(:file, file, pos.position_type, pos.position)     } | < filename >:file &{ File.exist?(file) } {       Position.new(:file, file, nil, nil)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
+  # location = (position | < filename >:file &{ @file_exists_proc.call(file) } file_pos_sep position:pos {       Position.new(:file, file, pos.position_type, pos.position)     } | < filename >:file &{ @file_exists_proc.call(file) } {       Position.new(:file, file, nil, nil)     } | class_module_chain?:fn file_pos_sep position:pos {       Position.new(:fn, fn, pos.position_type, pos.position)     } | class_module_chain?:fn {       Position.new(:fn, fn, nil, nil)     })
   def _location
                 
     _save = self.pos
@@ -1486,7 +1499,7 @@ class CmdParse
                           break
                         end
                         _save2 = self.pos
-                        _tmp = begin;  File.exist?(file) ; end
+                        _tmp = begin;  @file_exists_proc.call(file) ; end
                         self.pos = _save2
                         unless _tmp
                           self.pos = _save1
@@ -1529,7 +1542,7 @@ class CmdParse
                           break
                         end
                         _save4 = self.pos
-                        _tmp = begin;  File.exist?(file) ; end
+                        _tmp = begin;  @file_exists_proc.call(file) ; end
                         self.pos = _save4
                         unless _tmp
                           self.pos = _save3
@@ -1760,7 +1773,7 @@ class CmdParse
     return _tmp
   end
 
-  # list_special_targets = < "." "-" > { text }
+  # list_special_targets = < ("." | "-") > { text }
   def _list_special_targets
                 
     _save = self.pos
@@ -1768,18 +1781,15 @@ class CmdParse
                       _text_start = self.pos
                   
     _save1 = self.pos
-                      while true # sequence
+                      while true # choice
                         _tmp = match_string(".")
-                        unless _tmp
-                          self.pos = _save1
-                          break
-                        end
+                        break if _tmp
+                        self.pos = _save1
                         _tmp = match_string("-")
-                        unless _tmp
-                          self.pos = _save1
-                        end
+                        break if _tmp
+                        self.pos = _save1
                         break
-                      end # end sequence
+                      end # end choice
 
                       if _tmp
                         text = get_text(_text_start)
@@ -1799,53 +1809,93 @@ class CmdParse
     return _tmp
   end
 
-  # list_stmt = (list_special_target | location):loc - integer:int? {   List.new(loc, int) }
+  # list_stmt = ((list_special_targets | location):loc - integer:int? {   List.new(loc, int) } | (list_special_targets | location):loc {   List.new(loc, nil) })
   def _list_stmt
                 
     _save = self.pos
-                    while true # sequence
+                    while true # choice
                   
     _save1 = self.pos
-                      while true # choice
-                        _tmp = apply(:_list_special_target)
-                        break if _tmp
-                        self.pos = _save1
-                        _tmp = apply(:_location)
-                        break if _tmp
-                        self.pos = _save1
-                        break
-                      end # end choice
+                      while true # sequence
+                    
+    _save2 = self.pos
+                        while true # choice
+                          _tmp = apply(:_list_special_targets)
+                          break if _tmp
+                          self.pos = _save2
+                          _tmp = apply(:_location)
+                          break if _tmp
+                          self.pos = _save2
+                          break
+                        end # end choice
 
-                      loc = @result
-                      unless _tmp
-                        self.pos = _save
-                        break
-                      end
-                      _tmp = apply(:__hyphen_)
-                      unless _tmp
-                        self.pos = _save
-                        break
-                      end
-                      _save2 = self.pos
-                      _tmp = apply(:_integer)
-                      int = @result
-                      unless _tmp
-                        _tmp = true
-                        self.pos = _save2
-                      end
-                      unless _tmp
-                        self.pos = _save
-                        break
-                      end
-                      @result = begin;                   
+                        loc = @result
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _tmp = apply(:__hyphen_)
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        _save3 = self.pos
+                        _tmp = apply(:_integer)
+                        int = @result
+                        unless _tmp
+                          _tmp = true
+                          self.pos = _save3
+                        end
+                        unless _tmp
+                          self.pos = _save1
+                          break
+                        end
+                        @result = begin;                     
   List.new(loc, int)
 ; end
-                      _tmp = true
-                      unless _tmp
-                        self.pos = _save
-                      end
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save1
+                        end
+                        break
+                      end # end sequence
+
+                      break if _tmp
+                      self.pos = _save
+                  
+    _save4 = self.pos
+                      while true # sequence
+                    
+    _save5 = self.pos
+                        while true # choice
+                          _tmp = apply(:_list_special_targets)
+                          break if _tmp
+                          self.pos = _save5
+                          _tmp = apply(:_location)
+                          break if _tmp
+                          self.pos = _save5
+                          break
+                        end # end choice
+
+                        loc = @result
+                        unless _tmp
+                          self.pos = _save4
+                          break
+                        end
+                        @result = begin;                     
+  List.new(loc, nil)
+; end
+                        _tmp = true
+                        unless _tmp
+                          self.pos = _save4
+                        end
+                        break
+                      end # end sequence
+
+                      break if _tmp
+                      self.pos = _save
                       break
-                    end # end sequence
+                    end # end choice
 
     return _tmp
   end
@@ -1853,7 +1903,7 @@ end
 if __FILE__ == $0
   # require 'rubygems'; require_relative '../lib/trepanning';
   
-  cp = CmdParse.new('', true)
+  cp = CmdParse.new('', :debug=>true)
   %w(A::B @@classvar abc01! @ivar @ivar.meth
     Object A::B::C A::B::C::D A::B.c A.b.c.d).each do |name|
     cp.setup_parser(name, true)
@@ -1873,7 +1923,7 @@ if __FILE__ == $0
   # require 'trepanning'; 
   ["#{__FILE__}:10", 'A::B  5',
    "#{__FILE__} 20"].each do |name|
-    cp.setup_parser(name, true)
+    cp.setup_parser(name, {:debug=>true})
     res = cp._location
     p res
     p cp.string
@@ -1885,7 +1935,7 @@ if __FILE__ == $0
    'C\:filename'
    ].each do |name|
     puts '-' * 10
-    cp.setup_parser(name, true)
+    cp.setup_parser(name, {:debug=>true})
     res = cp._filename
     p res
     puts cp.string

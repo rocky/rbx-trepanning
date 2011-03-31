@@ -35,17 +35,17 @@ class TestBreak < Test::Unit::TestCase
            "-- ",
            "foo",
            "max list is 2.",
-           " 30   \t    d.start      # line +  8",
-           " 31 ->\t    foo",
+           " 31  ->\t    foo",
+           " 32    \t    ##############################",
            "Set temporary breakpoint 1: foo.rb:55 (@3)",
            "x1 ",
            "a = 5      # line +  5",
-           " 26   \t    def foo      # line +  4  ",
-           " 27 ->\t      a = 5      # line +  5",
+           " 27  ->\t      a = 5      # line +  5",
+           " 28    \t      b = 6      # line +  6",
            "   ",
            "foo",
-           " 31 ->\t    foo",
-           " 32   \t    ##############################"
+           " 31  ->\t    foo",
+           " 32    \t    ##############################"
           ]
     compare_output(out, d, cmds)
   end

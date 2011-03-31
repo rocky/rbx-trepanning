@@ -6,8 +6,11 @@ require 'require_relative'
 require_relative 'disassemble'
 require_relative 'msg'
 require_relative 'frame'
+require_relative '../app/file'
 class Trepan
   class CmdProcessor
+
+    include Trepanning::FileName
     attr_accessor :reload_on_change
 
     def location_initialize
@@ -16,9 +19,20 @@ class Trepan
 
     def canonic_file(filename)
       # For now we want resolved filenames 
-      @settings[:basename] ? File.basename(filename) : 
-        # Cache this?
-        File.expand_path(Pathname.new(filename).cleanpath.to_s)
+      if @settings[:basename] 
+        File.basename(filename)
+      else
+        filename = LineCache::map_file(filename)
+        if File.exist?(filename) 
+          filename
+        elsif (try_filename = find_load_path(filename))
+          try_filename
+        elsif (try_filename = resolve_file_with_dir(filename))
+          try_filename
+        else
+          File.expand_path(Pathname.new(filename).cleanpath.to_s)
+        end
+      end
     end
 
     # Return the text to the current source line.
@@ -37,6 +51,15 @@ class Trepan
             Dir.pwd
           elsif '$cdir' == dir
             Rubinius::OS_STARTUP_DIR
+          elsif '$rbx' == dir
+            compiler_file = '/lib/compiler/compiler.rb'
+            compiler_rb_path = 
+              $LOADED_FEATURES.find{|f| f.end_with?(compiler_file)}
+            if compiler_rb_path
+              compiler_rb_path[0...-(compiler_file.size)]
+            else
+              nil
+            end
           else
             dir
           end
@@ -187,37 +210,39 @@ class Trepan
   end
 end
 
-if __FILE__ == $0 && caller.size == 0 && ARGV.size > 0
+if __FILE__ == $0 && caller.size == 0
   # Demo it.
-  require 'thread_frame'
-  require_relative 'frame'
-  require_relative '../app/mock'
   require_relative 'main'   # Have to include before defining CmdProcessor!
                             # FIXME
   class Trepan::CmdProcessor
+    attr_accessor :settings
+    def initialize(dbgr, settings={})
+      @dbgr = dbgr
+    end
     def errmsg(msg)
       puts msg
     end
-    def print_location
-      puts "#{@frame.source_container} #{frame.source_location[0]}"
-    end
+    # def print_location
+    #   puts "#{@frame.source_container} #{frame.source_location[0]}"
+    # end
   end
 
-  proc = Trepan::CmdProcessor.new(Trepan::MockCore.new())
-  proc.instance_variable_set('@settings', {})
-  proc.frame_initialize
-  #proc.frame_setup(RubyVM::ThreadFrame.current)
+  require_relative './mock'
+  dbgr = MockDebugger::MockDebugger.new
+  proc = Trepan::CmdProcessor.new(dbgr)
+  proc.settings = {:directory => '$rbx:$cdir:$cwd'}
   proc.frame_initialize
 
   proc.location_initialize
   puts proc.canonic_file(__FILE__)
-  proc.instance_variable_set('@settings', {:basename => true})
+  puts proc.canonic_file('lib/compiler/ast.rb')
+  proc.settings[:basename] = true
   puts proc.canonic_file(__FILE__)
-  puts proc.current_source_text
-  xx = eval <<-END
-     proc.frame_initialize
-     ##proc.frame_setup(RubyVM::ThreadFrame.current)
-     proc.location_initialize
-     proc.current_source_text
-  END
+  # puts proc.current_source_text
+  # xx = eval <<-END
+  #    proc.frame_initialize
+  #    ##proc.frame_setup(RubyVM::ThreadFrame.current)
+  #    proc.location_initialize
+  #    proc.current_source_text
+  # END
 end

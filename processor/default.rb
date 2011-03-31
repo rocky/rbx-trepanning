@@ -18,7 +18,7 @@ class Trepan
       :debugmacro    => false,     # debugging macros
       :debugskip     => false,     # Internal debugging of step/next skipping
       :directory     =>            # last-resort path-search for files
-                    '$cdir:$cwd',  # that are not fully qualified.
+                    '$rbx:$cdir:$cwd',  # that are not fully qualified.
 
       :hidestack     => nil,       # Fixnum. How many hidden outer
                                    # debugger stack frames to hide?
