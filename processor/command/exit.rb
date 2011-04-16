@@ -47,7 +47,6 @@ See also "kill" and "set confirm".'
     exitrc = (args.size > 1) ? exitrc = Integer(args[1]) rescue 0 : 0
 
     # FIXME: Is this the best/most general way?
-    msg "#{Trepan::PROGRAM}: That's all, folks..."
     @proc.finalize
     @proc.dbgr.intf[-1].finalize
 
