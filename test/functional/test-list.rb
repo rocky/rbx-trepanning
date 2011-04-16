@@ -42,7 +42,7 @@ class TestBreak < Test::Unit::TestCase
            "a = 5      # line +  5",
            " 27  ->\t      a = 5      # line +  5",
            " 28    \t      b = 6      # line +  6",
-           "--> #1 TestBreak#foo at test-list.rb:27",
+           "--> #1 TestBreak#test_list_frame_change at test-list.rb:31",
            "   ",
            "foo",
            " 31  ->\t    foo",

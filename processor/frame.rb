@@ -42,8 +42,8 @@ class Trepan
         @frame_index = frame_num
         unless @settings[:traceprint]
           msg "--> #%d %s" % [frame_num, 
-                              frame.describe(:show_ip => false,
-                                             :basename =>settings[:basename])]
+                              @frame.describe(:show_ip => false,
+                                              :basename =>settings[:basename])]
           print_location 
         end
         @line_no = @frame.line
