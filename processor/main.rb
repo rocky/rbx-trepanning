@@ -204,7 +204,6 @@ class Trepan
             @last_command = nil
             print_location
           else
-            msg "That's all folks..."
             ## FIXME: think of something better.
             quit('exit!')
             return true

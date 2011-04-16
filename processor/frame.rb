@@ -40,7 +40,12 @@ class Trepan
       if frame 
         @frame = @dbgr.frame(frame_num)
         @frame_index = frame_num
-        print_location unless @settings[:traceprint]
+        unless @settings[:traceprint]
+          msg "--> #%d %s" % [frame_num, 
+                              frame.describe(:show_ip => false,
+                                             :basename =>settings[:basename])]
+          print_location 
+        end
         @line_no = @frame.line
         @frame
       else

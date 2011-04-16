@@ -16,7 +16,7 @@ module FnTestHelper
                               :nx     => true}
     d                      = Trepan.new(d_opts)
 
-    d.settings[:basename]  = true
+    d.settings[:basename]  = d.processor.settings[:basename] = true
     d.settings[:different] = false
     d.settings[:autoeval]  = false
     return d

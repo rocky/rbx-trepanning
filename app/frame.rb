@@ -49,7 +49,9 @@ class Trepan
         end
       end
 
-      str = "#{recv} at #{loc.method.active_path}:#{loc.line}"
+      filename = loc.method.active_path
+      filename = File.basename(filename) if opts[:basename]
+      str = "#{recv} at #{filename}:#{loc.line}"
       if opts[:show_ip]
         str << " (@#{loc.ip})"
       end
