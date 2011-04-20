@@ -1,6 +1,6 @@
+require 'rubygems'; require 'require_relative'
 require 'diff/lcs'
 require 'fileutils'
-require 'rubygems'; require 'require_relative'
 require_relative '../../app/run' # for RbConfig.ruby
 
 DEFAULT_DEBUGGER_OPTS = {
