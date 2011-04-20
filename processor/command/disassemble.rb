@@ -77,11 +77,15 @@ Examples:
 
     # FIXME DRY with ../disassemble.rb
     if settings[:highlight]
-      require_relative '../../app/rbx-llvm'
-      @llvm_highlighter ||= CodeRay::Duo[:llvm, :term]
-      # llvm_scanner = CodeRay.scanner :llvm
-      # p llvm_scanner.tokenize(disasm)
-      disasm = @llvm_highlighter.encode(disasm)
+      begin
+        require_relative '../../app/rbx-llvm'
+        @llvm_highlighter ||= CodeRay::Duo[:llvm, :term]
+        # llvm_scanner = CodeRay.scanner :llvm
+        # p llvm_scanner.tokenize(disasm)
+        disasm = @llvm_highlighter.encode(disasm)
+      rescue LoadError
+        errmsg 'Highlighting requested but CodeRay is not installed.'
+      end
     end
       
     disasm.split("\n").each_with_index do |inst, i|
