@@ -292,6 +292,16 @@ class Trepan
       end
     end
 
+    def parse_method(meth_str)
+      begin 
+        meth_for_string(meth_str, @frame.binding)
+      rescue NameError
+        nil
+      rescue
+        nil
+      end
+    end
+
     def validate_initialize
       ## top_srcdir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
       ## @dbgr_script_iseqs, @dbgr_iseqs = filter_scripts(top_srcdir)
