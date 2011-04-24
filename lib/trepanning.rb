@@ -159,7 +159,7 @@ class Trepan
          'step', 'set hidelevel -1'
         ]
       else
-        ['next', 'next', 
+        ['next', 'next', 'next',
          # 'set kernelstep off',  # eventually would like 'on'
          'set hidelevel -1',
          'step', ]

@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'test/unit'
+require 'rubygems'; require 'require_relative'
 require_relative '../../app/cmd_parser'
 
 class TestAppCmdParser < Test::Unit::TestCase

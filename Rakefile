@@ -52,10 +52,11 @@ def RbConfig.ruby
             RbConfig::CONFIG['EXEEXT'])
 end unless defined? RbConfig.ruby
 
-def run_standalone_ruby_files(list)
+def run_standalone_ruby_files(list, opts={})
   puts '*' * 40
   list.each do |ruby_file|
-    system(Rbconfig.ruby, ruby_file)
+    system(RbConfig.ruby, ruby_file)
+    break if $?.exitstatus != 0 && !opts[:continue]
   end
 end
 
@@ -145,7 +146,7 @@ end
 
 desc "Run each processor Ruby file in standalone mode."
 task :'check:unit' do
-  run_standalone_ruby_file(File.join(%W(#{ROOT_DIR} test unit)))
+  run_standalone_ruby_files(FileList['test/unit/**/test-*.rb'])
 end
 
 desc "Run functional tests in standalone mode."

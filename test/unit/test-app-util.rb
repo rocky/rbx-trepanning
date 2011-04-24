@@ -18,10 +18,6 @@ class TestAppUtil < Test::Unit::TestCase
     locs = Rubinius::VM.backtrace(0, true)
     i = find_main_script(locs)
     assert_equal(true, !!i)
-    j = locs.size - i
-    if j > 0
-      locs = Rubinius::VM.backtrace(j, true)
-      assert_equal(false, !!find_main_script(locs))
-    end
+    assert_equal(false, !!find_main_script(locs[0..i]))
   end
 end

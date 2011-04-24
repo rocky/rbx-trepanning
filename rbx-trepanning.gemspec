@@ -34,7 +34,7 @@ EOF
   s.platform      = Gem::Platform::new ['universal', 'rubinius', '1.2']
   s.require_paths = ['lib']
   s.required_ruby_version = '~> 1.8.7'
-  s.summary      = 'Trepan Ruby Debugger for Rubinius 1.2.1 and higher'
+  s.summary      = 'Trepan Ruby Debugger for Rubinius 1.2.4 and higher'
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.version      = Trepan::VERSION
 end

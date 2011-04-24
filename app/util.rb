@@ -18,13 +18,14 @@ class Trepan
       candidate = nil
       (locs.size-1).downto(0) do |i|
         loc = locs[i]
-        if 'main.' == loc.describe_receiver &&
+        if 'Object#' == loc.describe_receiver &&
             :__script__ == loc.name
-          if loc.method.active_path =~ /\/trepanx$/
+          if loc.method.active_path =~ /\/trepanx$/ ||
+            loc.method.active_path == 'kernel/loader.rb'
             # Might have been run from standalone trepanx.
             candidate = i
           else
-            return locs.size - i - 1 
+            return locs.size - i
           end
         end
       end

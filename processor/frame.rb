@@ -138,6 +138,7 @@ class Trepan
     end
 
     def set_hide_level
+      max_stack_size = @dbgr.vm_locations.size
       @hide_level = 
         if !@settings[:hidelevel] || @settings[:hidelevel] < 0
           @settings[:hidelevel] = @hidelevels[@current_thread] =  
@@ -145,7 +146,6 @@ class Trepan
         else
           @settings[:hidelevel]
         end
-      max_stack_size = @dbgr.vm_locations.size
       @stack_size = if @hide_level >= max_stack_size  
                       max_stack_size else max_stack_size - @hide_level
                     end
