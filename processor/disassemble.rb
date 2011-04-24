@@ -8,6 +8,10 @@ class Trepan
     def show_bytecode(line=@frame.vm_location.line)
       meth = @frame.method
       start = meth.first_ip_on_line(line)
+      unless start
+        errmsg "Can't find bytecode for line #{line}"
+        return
+      end
       fin = meth.first_ip_on_line(line+1)
 
       if !fin || fin == -1
