@@ -60,7 +60,7 @@ class Trepan
         return nil
       end
 
-      if line
+      if line && line > 0
         ip = cm.first_ip_on_line(line, -2)
         
         unless ip
