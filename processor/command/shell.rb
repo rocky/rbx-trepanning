@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'irb'
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
@@ -7,7 +7,7 @@ class Trepan::Command::IRBCommand < Trepan::Command
 
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
-    HELP = <<-HELP 
+    HELP = <<-HELP
 #{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
@@ -33,9 +33,10 @@ Here then is a loop to query VM stack values:
   (-1..1).each {|i| dbgr(\"info reg sp \#{i}\")}
      HELP
 
-    CATEGORY     = 'support'
-    MAX_ARGS     = 1  # Need at most this many
-    SHORT_HELP  = "Run #{NAME} as a command subshell"
+    ALIASES    = %w(irb)
+    CATEGORY   = 'support'
+    MAX_ARGS   = 1  # Need at most this many
+    SHORT_HELP = "Run #{NAME} as a command subshell"
   end
 
   # This method runs the command

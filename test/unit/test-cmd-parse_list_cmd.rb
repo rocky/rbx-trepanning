@@ -19,8 +19,8 @@ class TestCommandParseListCmd < Test::Unit::TestCase
     line = __LINE__ - 14
     load 'tmpdir.rb'
     [['', [short_file, line, line+listsize-1]],
-     ["#{__FILE__}:10", [short_file, 10, 19]],
-     ["#{__FILE__} 10", [short_file, 10, 19]],
+     ["#{__FILE__}:10", [short_file, 5, 14]],
+     ["#{__FILE__} 10", [short_file, 5, 14]],
      ['tmpdir.rb', ['tmpdir.rb', 1, listsize]],
      ['tmpdir.rb 10', ['tmpdir.rb', 5, 5+listsize-1]],
      ['Columnize.columnize 15', ['columnize.rb', 10, 10+listsize -1]],

@@ -230,7 +230,7 @@ class Trepan
 
   def stop(settings = {})
     @processor.finalize
-    Rubinius::VM.debug_channel = nil
+    # Rubinius::VM.debug_channel = nil
   end
 
   def add_command_file(cmdfile, opts={}, stderr=$stderr)
