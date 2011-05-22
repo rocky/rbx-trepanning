@@ -59,28 +59,28 @@ unless option -c or --continue is given.
   def parse_options(options, args) # :nodoc
     seen_yes_no = false
     parser = OptionParser.new do |opts|
-      opts.on("-c", "--[no-]continue", 
-              "Continue in the face of errors") do
+      opts.on('-c', '--[no-]continue', 
+              'Continue in the face of errors') do
         |v| 
         options[:abort_on_error] = !v
       end
-      opts.on("-v", 
-              "--[no-]verbose", "echo each command as it is executed") do
+      opts.on('-v', 
+              '--[no-]verbose', 'echo each command as it is executed') do
         |v| 
         options[:verbose] = v
       end
-      opts.on("-N", "--no", "Use 'no' in any confirmation prompts") do
+      opts.on('-N', '--no', "Use 'no' in any confirmation prompts") do
         |v| 
         if seen_yes_no
-          msg("Yes/No option already seen. This option (no) ignored.")
+          msg('Yes/No option already seen. This option (no) ignored.')
         end
         options[:confirm_val] = false
       end
-      opts.on("-q", "--[no-]quiet", "Silence debugger output") do
+      opts.on('-q', '--[no-]quiet', 'Silence debugger output') do
         |v| 
         options[:quiet] = v
       end
-      opts.on("-Y", "--yes", "Use 'yes' in any confirmation prompts") do
+      opts.on('-Y', '--yes', "Use 'yes' in any confirmation prompts") do
         |v| 
         if seen_yes_no
           msg("Yes/No option already seen. This option, --yes, ignored.")

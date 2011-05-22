@@ -13,7 +13,7 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
   ALIASES       = %w(disas disassem) # Note we (will) have disable
   CATEGORY     = 'data'
   HELP         = <<-HELP
-#{NAME} [all]
+#{NAME} [--all | -a]
 #{NAME} [method|LINE-NUM]...
 
 Disassembles Rubinius VM instructions. By default, the bytecode for the
@@ -30,7 +30,7 @@ If the argument is 'all', the entire method is shown as bytecode.
 
 Examples:
    #{NAME}              # dissasemble VM for current line
-   #{NAME} all          # disassemble entire current method
+   #{NAME} --all        # disassemble entire current method
    #{NAME} [1,2].max    # disassemble max method of Array
    #{NAME} Object.is_a? # disassemble Object.is_a?
    #{NAME} is_a?        # same as above (probably)
@@ -40,6 +40,9 @@ Examples:
 
   NEED_STACK   = true
   SHORT_HELP   = 'Show the bytecode for the current method'
+  DEFAULT_OPTIONS = {
+      :all => false,
+  }
 
   def disassemble_method(cm)
     frame_ip = (@proc.frame.method == cm) ? @proc.frame.next_ip : nil
@@ -93,13 +96,29 @@ Examples:
     end
   end
 
+  def parse_options(options, args) # :nodoc
+    parser = OptionParser.new do |opts|
+      opts.on('-a', '--all', 
+              'show entire method') do
+        options[:all] = true
+      end
+    end
+    parser.parse! args
+    return options
+
+  end
+
   # Run command. 
   def run(args)
-    if 1 == args.size
-      @proc.show_bytecode
-    elsif 'all' == args[1]
-      section "Bytecode for #{@proc.frame.vm_location.describe}"
-      disassemble_method(current_method)
+    my_args = args[1..-1]
+    options = parse_options(DEFAULT_OPTIONS.dup, my_args)
+    if my_args.empty?
+      if options[:all]
+        section "Bytecode for #{@proc.frame.vm_location.describe}"
+        disassemble_method(current_method)
+      else
+        @proc.show_bytecode
+      end
     else
       args[1..-1].each do |arg|
         cm = @proc.parse_method(arg)
@@ -129,19 +148,23 @@ if __FILE__ == $0
   # Demo it.
   require_relative '../mock'
   dbgr, cmd = MockDebugger::setup
+  def five; 5 end
   def foo(cmd)
     puts "#{cmd.name}"
     cmd.run([cmd.name])
     puts '=' * 40
-    puts "#{cmd.name} all"
-    cmd.run([cmd.name, 'all'])
+    puts "#{cmd.name} --all"
+    # require_relative '../../lib/trepanning'; debugger
+    cmd.run([cmd.name, '--all'])
     puts '=' * 40
-    p cmd.proc.frame.vm_location.describe
-    cmd.run([cmd.name, 'foo'])
+    cmd.run([cmd.name, '-a'])
     puts '=' * 40
-    # require_relative '../../lib/trepanning'
-    # debugger
-    cmd.run([cmd.name, 'self.setup'])
+    cmd.run([cmd.name, 'five'])
+    ## FIXME: someday handle:
+    # puts '=' * 40
+    # cmd.run([cmd.name, '-a', 'five'])
+    puts '=' * 40
+    cmd.run([cmd.name, 'MockDebugger::setup'])
     puts '=' * 40
     cmd.run([cmd.name, __LINE__.to_s])
     require 'irb'
