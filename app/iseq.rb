@@ -61,6 +61,42 @@ class Trepan
       end
     end
 
+    def ip_ranges_for_line(lines, line)
+      result = []
+      in_range = false
+      start_ip = nil
+      total = lines.size
+      i = 1
+      while i < total
+        cur_line = lines.at(i)
+        if cur_line == line
+          start_ip = lines.at(i-1)
+          in_range = true
+        elsif cur_line > line && in_range
+          result << [start_ip, lines.at(i-1)]
+          start_ip = nil
+          in_range = false
+        end
+        i += 2
+      end
+      if in_range && start_ip
+        result << [start_ip, lines.at(total-1)]
+      end
+      result
+    end
+    
+    # Return range of ips covering ip. There will be only one of these.
+    # We surround this in another list to match the format of 
+    # ip_ranges_for_line.
+    def ip_ranges_for_ip(lines, ip)
+      total = lines.size
+      i = 0
+      while i < total and lines.at(i) <= ip
+        i += 2
+      end
+      [[lines.at(i-2), lines.at(i)]]
+    end
+  
     def next_interesting(cm, ip)
       pop = Rubinius::InstructionSet.opcodes_map[:pop]
       
@@ -69,6 +105,41 @@ class Trepan
       end
       
       return ip
+    end
+
+    # start is assumed to be on a tail code "synthesized" line, which
+    # has line number 0. Follow opcodes until we get to a line that is
+    # not 0. 
+    def tail_code_line(cm, start)
+      
+      iseq = cm.iseq
+      
+      i = start
+      fin = cm.lines.last
+      while i < fin
+        line_no = cm.line_from_ip(i)
+        return line_no if line_no > 0
+        op = iseq[i]
+        case op
+        when OP_GOTO_IF_TRUE, OP_GOTO_IF_FALSE, OP_GOTO
+        when OP_GOTO
+          i = iseq[i+1]
+        when OP_RET
+          return -2
+        when nil
+          return -1
+        else
+          # Rubinius is getting an error here sometimes. Need to figure
+          # out what's wrong.
+          begin
+            op = Rubinius::InstructionSet[op]
+          rescue TypeError
+            return -1
+          end
+          i += (op.arg_count + 1)
+        end
+      end
+      return 0
     end
     
     def yield_or_return_between(cm, start, fin)

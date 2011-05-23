@@ -3,23 +3,34 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
 
 class Trepan
+
   class CmdProcessor
 
-    def show_bytecode(line=@frame.vm_location.line)
+    def show_bytecode(line=@frame.vm_location.line, ip=@frame.next_ip)
       meth = @frame.method
-      start = meth.first_ip_on_line(line)
-      unless start
-        errmsg "Can't find bytecode for line #{line}"
-        return
+      if 0 == line 
+        start, fin = ISeq::ip_ranges_for_ip(@frame.method.lines, ip)[0]
+      else
+        start = meth.first_ip_on_line(line)
+        unless start
+          errmsg "Can't find bytecode for line #{line}"
+          return
+        end
+        fin = meth.first_ip_on_line(line+1)
       end
-      fin = meth.first_ip_on_line(line+1)
 
       if !fin || fin == -1
         fin = meth.iseq.size
       end
 
       start += 1 if start == -1
-      section "Bytecode between #{start} and #{fin-1} for line #{line}"
+      suffix = 
+        if 0 == line 
+          "tail code before line #{ISeq::tail_code_line(meth, ip)}"
+        else
+          "line #{line}"
+        end
+      section "Bytecode between #{start} and #{fin-1} for line #{suffix}"
 
       iseq_decoder = Rubinius::InstructionDecoder.new(meth.iseq)
       partial = iseq_decoder.decode_between(start, fin)

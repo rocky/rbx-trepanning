@@ -104,7 +104,7 @@ class Trepan
 
       vm_location = @frame.vm_location
       filename = vm_location.method.active_path
-      line_no  = vm_location.line
+      line_no  = @frame.line
       static   = vm_location.static_scope
       opts[:compiled_method] = top_scope(@frame.method)
 
@@ -142,26 +142,14 @@ class Trepan
 
     # FIXME: Use above format_location routine
     def print_location
-      # if %w(c-call call).member?(@event)
-      #   # FIXME: Fix Ruby so we don't need this workaround? 
-      #   # See also where.rb
-      #   opts = {}
-      #   opts[:class] = @core.hook_arg if 
-      #     'CFUNC' == @frame.type && @core.hook_arg && 0 == @frame_index 
-      #   msg format_stack_call(@frame, opts) 
-      # elsif 'raise' == @core.event
-      #   msg @core.hook_arg.inspect if @core.hook_arg # Exception object
-      # end
-
       text      = nil
-      # source_container = frame_container(@frame, false)
       ev        = if @event.nil? || 0 != @frame_index
                     '  ' 
                   else
                     (EVENT2ICON[@event] || @event)
                   end
 
-      @line_no  = @frame.vm_location.line
+      @line_no  = @frame.line
 
       loc = source_location_info
       loc, @line_no, text = loc_and_text(loc)
@@ -206,7 +194,7 @@ class Trepan
         else
           canonic_file(filename, false)
         end
-      loc = "#{canonic_filename}:#{@frame.vm_location.line}"
+      loc = "#{canonic_filename}:#{@frame.line}"
       return loc
     end 
 

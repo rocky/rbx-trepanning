@@ -72,7 +72,8 @@ class Trepan
     end
 
     def line
-      @vm_location.line
+      line_no = @vm_location.line
+      line_no == 0 ? ISeq::tail_code_line(method, next_ip) : line_no
     end
 
     def local_variables
