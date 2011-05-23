@@ -44,7 +44,7 @@ Examples:
       :all => false,
   }
 
-  completion %w(-a -all)
+  completion %w(-a --all)
 
   def disassemble_method(cm)
     frame_ip = (@proc.frame.method == cm) ? @proc.frame.next_ip : nil
@@ -105,7 +105,11 @@ Examples:
         options[:all] = true
       end
     end
-    parser.parse! args
+    begin
+      parser.parse! args
+    rescue OptionParser::InvalidOption => e
+      puts e
+    end
     return options
 
   end
