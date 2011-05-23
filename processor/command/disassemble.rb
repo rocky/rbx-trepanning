@@ -108,7 +108,7 @@ Examples:
     begin
       parser.parse! args
     rescue OptionParser::InvalidOption => e
-      puts e
+      errmsg e
     end
     return options
 
