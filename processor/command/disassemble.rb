@@ -26,7 +26,7 @@ has bytecode assocated with that line. Note that if a line has
 discontinuous regions we will show just the first region associated
 with that line.
 
-If the argument is 'all', the entire method is shown as bytecode.
+If the argument is '--all', the entire method is shown as bytecode.
 
 Examples:
    #{NAME}              # dissasemble VM for current line
@@ -43,6 +43,8 @@ Examples:
   DEFAULT_OPTIONS = {
       :all => false,
   }
+
+  completion %w(-a -all)
 
   def disassemble_method(cm)
     frame_ip = (@proc.frame.method == cm) ? @proc.frame.next_ip : nil
