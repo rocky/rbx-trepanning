@@ -20,4 +20,14 @@ class TestAppUtil < Test::Unit::TestCase
     assert_equal(true, !!i)
     assert_equal(false, !!find_main_script(locs[0..i]))
   end
+
+  def test_extract_expression
+    [['if condition("if")',        'condition("if")'],
+     ['until until_termination',   'until_termination'],
+     ['return return_value',       'return_value'],
+     ['nothing_to_be.done',         'nothing_to_be.done'],
+    ].each do |stmt, expect|
+      assert_equal expect, extract_expression(stmt)
+    end
+  end
 end

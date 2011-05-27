@@ -12,6 +12,30 @@ class Trepan
       end
     end
 
+    # extract the "expression" part of a line of source code.
+    # 
+    def extract_expression(text)
+      if text =~ /^\s*(?:if|elsif|unless)\s+/
+        text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
+        text.gsub!(/\s+then\s*$/, '')
+      elsif text =~ /^\s*(?:until|while)\s+/
+        text.gsub!(/^\s*(?:until|while)\s+/,'') 
+        text.gsub!(/\s+do\s*$/, '')
+      elsif text =~ /^\s*return\s+/
+        # EXPRESION in: return EXPRESSION
+        text.gsub!(/^\s*return\s+/,'')
+      elsif text =~ /^\s*case\s+/
+        # EXPRESSION in: case EXPESSION
+        text.gsub!(/^\s*case\s*/,'')
+      elsif text =~ /^\s*def\s*.*\(.+\)/
+        text.gsub!(/^\s*def\s*.*\((.*)\)/,'[\1]')
+      elsif text =~ /^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=[^=>]/
+        # RHS of an assignment statement.
+        text.gsub!(/^\s*[A-Za-z_][A-Za-z0-9_\[\]]*\s*=/,'')
+      end
+      return text
+    end
+
     # Find user portion of script skipping over Rubinius code loading.
     # Unless hidestack is off, we don't show parts of the frame below this.
     def find_main_script(locs)
