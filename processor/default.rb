@@ -40,7 +40,7 @@ class Trepan
       :timer         => false,     # show elapsed time between events
       :traceprint    => false,     # event tracing printing
       :tracebuffer   => false,     # save events to a trace buffer.
-      :user_cmd_dir  => File.join(Trepan::HOME_DIR, 'tepanx', 'command'),
+      :user_cmd_dir  => File.join(%W(#{Trepan::HOME_DIR} trepanx command)),
                                    # User command directory
 
       # Rubinius-specific user variables
