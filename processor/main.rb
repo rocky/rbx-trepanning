@@ -5,7 +5,6 @@
 require 'set'
 
 require 'rubygems'; require 'require_relative'
-require_relative 'virtual'
 ## %w(default display eventbuf eval load_cmds location frame hook msg 
 ##    validate).each do
 %w(default breakpoint disassemble display eval eventbuf load_cmds location 
