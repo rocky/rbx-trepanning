@@ -1,6 +1,8 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+require 'rubygems'; require 'require_relative'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
     # Command processor hooks.
     attr_reader   :autodis_hook
     attr_reader   :autoirb_hook

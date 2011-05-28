@@ -5,9 +5,10 @@
 require 'rubygems'; require 'require_relative'
 require 'linecache'
 require_relative '../app/eventbuffer'
+require_relative 'virtual'
 
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader :eventbuf
     attr_reader :event_tracefilter
@@ -84,7 +85,7 @@ class Trepan
 end
 if __FILE__ == $0
   # Demo it.
-  cmdproc = Trepan::CmdProcessor.new
+  cmdproc = Trepan::CmdProcessor.new([])
   cmdproc.eventbuf_initialize(5)
 
   def cmdproc.msg(mess)

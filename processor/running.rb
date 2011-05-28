@@ -1,10 +1,9 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
-require 'rubygems'; require 'require_relative'
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'set'
-## require_relative '../app/core'
+require 'rubygems'; require 'require_relative'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
-
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_accessor :ignore_file_re  # Hash[file_re] -> String
                                    # action. File re's we don't want

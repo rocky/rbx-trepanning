@@ -1,9 +1,10 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
+require_relative 'virtual'
 require_relative '../app/brkptmgr'
 class Trepan
 
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader   :brkpts          # BreakpointManager. 
 
@@ -164,6 +165,6 @@ class Trepan
 end
 
 if __FILE__ == $0
-  cmdproc = Trepan::CmdProcessor.new
+  cmdproc = Trepan::CmdProcessor.new([])
   cmdproc.breakpoint_initialize
 end

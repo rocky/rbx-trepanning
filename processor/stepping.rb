@@ -1,7 +1,8 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     def stepping_initialize
       @step_brkpts  = []

@@ -7,8 +7,9 @@ require 'tmpdir'
 # Sets @commands, @aliases, @macros
 require 'rubygems'; require 'require_relative'
 require_relative '../app/complete'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     attr_reader   :aliases         # Hash[String] of command names
                                    # indexed by alias name

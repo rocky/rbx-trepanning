@@ -3,8 +3,9 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/complete'
 require_relative '../app/frame'
 require_relative '../app/util'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     include Util
     attr_reader   :current_thread

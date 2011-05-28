@@ -1,10 +1,11 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../app/iseq'
+require_relative 'virtual'
 
 class Trepan
 
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     def show_bytecode(line=@frame.vm_location.line, ip=@frame.next_ip)
       meth = @frame.method

@@ -7,8 +7,9 @@ require_relative 'disassemble'
 require_relative 'msg'
 require_relative 'frame'
 require_relative '../app/file'
+require_relative 'virtual'
 class Trepan
-  class CmdProcessor
+  class CmdProcessor < VirtualCmdProcessor
 
     include Trepanning::FileName
     attr_accessor :reload_on_change
