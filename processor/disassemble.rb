@@ -8,7 +8,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   def show_bytecode(line=@frame.vm_location.line, ip=@frame.next_ip)
     meth = @frame.method
     if 0 == line 
-      start, fin = ISeq::ip_ranges_for_ip(@frame.method.lines, ip)[0]
+      start, fin = Trepan::ISeq::ip_ranges_for_ip(@frame.method.lines, ip)[0]
     else
       start = meth.first_ip_on_line(line)
       unless start
@@ -25,7 +25,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     start += 1 if start == -1
     suffix = 
       if 0 == line 
-        "tail code before line #{ISeq::tail_code_line(meth, ip)}"
+        "tail code before line #{Trepan::ISeq::tail_code_line(meth, ip)}"
       else
         "line #{line}"
       end
@@ -39,7 +39,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     prefixes = []
     disasm = partial.inject('') do |result, ins|
       inst = Rubinius::CompiledMethod::Instruction.new(ins, meth, ip)
-      prefixes << ISeq::disasm_prefix(ip, frame.next_ip, meth)
+      prefixes << Trepan::ISeq::disasm_prefix(ip, frame.next_ip, meth)
       ip += ins.size
       result += "#{inst}\n"
     end
