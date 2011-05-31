@@ -59,7 +59,7 @@ See also 'up', 'down', and  'backtrace'.
     #   ## @proc.find_and_set_debugged_frame(frame, thread_id)
     end
 
-    stack_size = @proc.dbgr.vm_locations.size
+    stack_size = @proc.frame.stack_size
     if stack_size == 0
       errmsg('No frames recorded.')
       return false
