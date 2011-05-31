@@ -5,11 +5,14 @@ class Trepan
       @intf            = interfaces[-1]
       @settings        = settings
     end
-    def errmsg(msg)
-      puts msg
+    def errmsg(message)
+      puts "Error: #{message}"
     end
-    def msg(msg)
-      puts msg
+    def msg(message)
+      puts message
+    end
+    def section(message, opts={})
+      puts "Section: #{message}"
     end
   end
 end

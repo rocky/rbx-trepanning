@@ -14,15 +14,15 @@ the debugger however may occur via breakpoints or explicit calls, or
 exceptions.
 
 If a parameter is given, a temporary breakpoint is set at that position
-before continuing. Offset are numbers prefixed with an "O" otherwise
+before continuing. Offset are numbers prefixed with an "@" otherwise
 the parameter is taken as a line number.
 
 Examples:
    #{NAME}
    #{NAME} 10    # continue to line 10
-   #{NAME} o20   # continue to VM Instruction Sequence offset 20
+   #{NAME} @20   # continue to VM Instruction Sequence offset 20
    #{NAME} gcd   # continue to first instruction of method gcd
-   #{NAME} IRB.start o7 # continue to IRB.start offset 7
+   #{NAME} IRB.start @7 # continue to IRB.start offset 7
 
 See also 'step', 'next', 'finish', 'nexti' commands and "help location".
     HELP
