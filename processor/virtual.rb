@@ -5,5 +5,11 @@ class Trepan
       @intf            = interfaces[-1]
       @settings        = settings
     end
+    def errmsg(msg)
+      puts msg
+    end
+    def msg(msg)
+      puts msg
+    end
   end
 end

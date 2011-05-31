@@ -204,12 +204,7 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative 'main'   # Have to include before defining CmdProcessor!
-                            # FIXME
   class Trepan::CmdProcessor
-    def errmsg(msg)
-      puts msg
-    end
     def print_location
       puts "frame location: #{frame.file} #{frame.line}"
     end
