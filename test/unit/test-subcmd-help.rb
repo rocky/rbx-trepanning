@@ -3,10 +3,6 @@ require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require_relative '../../processor/main'
 
-# Mock debugger stub. FIXME: put in comment helper routine.
-class Trepan
-end
-
 # Test Trepan::CmdProcessor
 class TestSubCmdHelp < Test::Unit::TestCase
 

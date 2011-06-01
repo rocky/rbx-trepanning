@@ -4,10 +4,6 @@ require_relative 'cmd-helper'
 require_relative '../../processor/main'
 ## require_relative '../../app/core'
 
-# Mock debugger stub. FIXME: put in comment helper routine.
-class Trepan
-end
-
 # Test Trepan:CmdProcessor
 class TestCmdProcessor < Test::Unit::TestCase
 

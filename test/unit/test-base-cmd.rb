@@ -3,12 +3,10 @@ require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require_relative '../../processor/command/base/cmd'
 
-class Trepan
-  class Command::Test < Trepan::Command
-    NAME = 'test'
-    CATEGORY = 'testcategory'
-    completion %w(a aa ab ba aac)
-  end
+class Trepan::Command::Test < Trepan::Command
+  NAME = 'test'
+  CATEGORY = 'testcategory'
+  completion %w(a aa ab ba aac)
 end
 
 class TestBaseCommand < Test::Unit::TestCase

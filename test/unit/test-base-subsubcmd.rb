@@ -3,10 +3,6 @@ require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require_relative '../../processor/command/base/subsubcmd'
 
-# Mock debugger stub. FIXME: put in common helper routine.
-class Trepan
-end
-
 $errors = []
 class TestBaseSubCommand < Test::Unit::TestCase
 
