@@ -2,8 +2,6 @@
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
 require 'linecache'
-require_relative '../../processor/main' # Have to include before frame!
-                                        # FIXME
 require_relative '../../processor/location'
 require_relative '../../processor/mock'
 
