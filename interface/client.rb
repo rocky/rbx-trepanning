@@ -46,6 +46,10 @@ class Trepan::ClientInterface < Trepan::Interface
       end
   end
 
+  def closed?
+    @inout.closed?
+  end
+
   def confirm(prompt, default)
     @user.confirm(prompt, default)
   end
