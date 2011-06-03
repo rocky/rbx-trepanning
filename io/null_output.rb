@@ -8,34 +8,32 @@
 require 'rubygems'; require 'require_relative'
 require_relative 'base_io'
 
-class Trepan
-  class OutputNull < Trepan::OutputBase
-    def initialize(out, opts={})
-      @closed = false
-      super
-    end
-
-    def close
-      @closed = true
-    end
-
-    def closed?
-      !!@closed
-    end
-
-    def flush
-    end
-
-    # Use this to set where to write to. output can be a 
-    # file object or a string. This code raises IOError on error.
-    def write(*args)
-    end
-
-    # used to write to a debugger that is connected to this
-    # `str' written will have a newline added to it
-    #
-    def writeline( msg)
-    end
+class Trepan::OutputNull < Trepan::OutputBase
+  def initialize(out, opts={})
+    @closed = false
+    super
+  end
+  
+  def close
+    @closed = true
+  end
+  
+  def closed?
+    !!@closed
+  end
+  
+  def flush
+  end
+  
+  # Use this to set where to write to. output can be a 
+  # file object or a string. This code raises IOError on error.
+  def write(*args)
+  end
+  
+  # used to write to a debugger that is connected to this
+  # `str' written will have a newline added to it
+  #
+  def writeline( msg)
   end
 end
 
