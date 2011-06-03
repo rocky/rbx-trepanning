@@ -132,7 +132,7 @@ class Trepan
                     (EVENT2ICON[event] || event)
                   end
 
-      @line_no  = frame.vm_location.line
+      @line_no  = frame.line
 
       loc = source_location_info
       loc, @line_no, text = loc_and_text(loc)
