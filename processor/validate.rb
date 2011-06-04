@@ -150,7 +150,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     when nil
       vm_offset, line_no = 
         if cm.lines[0] == -1
-          [cm.lines[2], cm.lines.size > 3 ? cm.lines[3] : cm.lines[1]]
+          [cm.lines[0], cm.lines.size > 3 ? cm.lines[3] : cm.lines[1]]
         else
           [cm.lines[0], cm.lines[1]]
         end

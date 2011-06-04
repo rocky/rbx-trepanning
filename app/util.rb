@@ -12,6 +12,16 @@ class Trepan
       end
     end
 
+    # name is String and list is an Array of String.
+    # If name is a unique leading prefix of one of the entries of list,
+    # then return that. Otherwise return name.
+    def uniq_abbrev(list, name)
+      candidates = list.select do |try_name| 
+        try_name.start_with?(name)
+      end
+      candidates.size == 1 ? candidates.first : name
+    end
+
     # extract the "expression" part of a line of source code.
     # 
     def extract_expression(text)
@@ -70,5 +80,11 @@ if __FILE__ == $0
   locs.each_with_index do |l, i| 
     puts "#{i}: #{l.describe}"
   end
-  puts "main script in above is #{locs.size() - 1 - find_main_script(locs)}"
+  ## puts "main script in above is #{locs.size() - 1 - find_main_script(locs)}"
+
+  list = %w(disassemble disable distance up)
+  p list
+  %w(dis disa u upper foo).each do |name|
+    puts "uniq_abbrev of #{name} is #{uniq_abbrev(list, name)}"
+  end
 end

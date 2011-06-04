@@ -79,7 +79,7 @@ module FnTestHelper
     #   Set breakpoint 1: test/functional/test-tbreak.rb:10 (@0)
     # becomes :
     #   Set breakpoint 1: foo.rb:55 (@3)
-     a3 = a2.map do |s|
+    a3 = a2.map do |s|
       s.gsub(/^Set (temporary )?breakpoint (\d+): .+:(\d+) \(@\d+\)/, 
              'Set \1breakpoint \2: foo.rb:55 (@3)')
     end
