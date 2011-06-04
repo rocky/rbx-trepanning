@@ -11,11 +11,7 @@ require_relative 'virtual'
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
 
-    include Trepanning::FileName
-    attr_accessor :reload_on_change
-
     def location_initialize
-      @reload_on_change = nil
     end
 
     def canonic_file(filename, resolve=true)
@@ -43,7 +39,7 @@ class Trepan
     # FIXME: loc_and_text should call this rather than the other
     # way around.
     def current_source_text
-      opts = {:reload_on_change => @reload_on_change}
+      opts = {:reload_on_change => settings[:reload_on_change]}
       loc, junk, text = loc_and_text(source_location_info, opts)
       text
     end
@@ -78,7 +74,7 @@ class Trepan
     # there was a problem. Leading blanks are stripped off.
     def line_at(filename, line_number, 
                 opts = {
-                  :reload_on_change => @reload_on_change,
+                  :reload_on_change => @settings[:reload_on_change],
                   :output => @settings[:highlight]
                 })
       # We use linecache first to give precidence to user-remapped
@@ -99,7 +95,7 @@ class Trepan
     end
 
     def loc_and_text(loc, opts=
-                     {:reload_on_change => @reload_on_change,
+                     {:reload_on_change => @settings[:reload_on_change],
                        :output => @settings[:highlight]
                      })
 
