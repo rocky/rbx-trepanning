@@ -30,7 +30,7 @@ issues two commands 'finish' followed by 'step':
 
   macro fin+ Proc.new{|*args| %w(finish step)}
 
-See also 'show macro'.
+See also 'info macro'.
     HELP
 
     CATEGORY      = 'support'
