@@ -60,7 +60,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     end
     
     if line && line > 0
-      ip = cm.first_ip_on_line(line, -2)
+      ip = cm.first_ip_on_line(line, -2) unless ip
       
       unless ip
         errmsg "Unknown line '#{line}' in method '#{cm.name}'"
