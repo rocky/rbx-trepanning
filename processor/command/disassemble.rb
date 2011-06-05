@@ -10,7 +10,7 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
   include Trepanning::Method
 
   NAME         = File.basename(__FILE__, '.rb')
-  ALIASES       = %w(disas disassem) # Note we (will) have disable
+  ALIASES      = %w(disasm) # Note we have disable
   CATEGORY     = 'data'
   HELP         = <<-HELP
 #{NAME} [--all | -a]

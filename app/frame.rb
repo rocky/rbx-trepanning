@@ -3,8 +3,8 @@ class Trepan
 
   # Call-Stack frame methods
   class Frame
-    def initialize(debugger, number, vm_location)
-      @debugger = debugger
+    def initialize(dbgr, number, vm_location)
+      @debugger = dbgr
       @number = number
       @vm_location = vm_location
     end
@@ -86,6 +86,10 @@ class Trepan
 
     def scope
       @vm_location.variables
+    end
+
+    def stack_size
+      @debugger.vm_locations.size
     end
 
     def eval?

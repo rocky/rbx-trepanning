@@ -28,7 +28,7 @@ class Trepan::ScriptInterface < Trepan::Interface
     @input           = opts[:input] || 
       Trepan::UserInput.open(script_name, :line_edit => false)
     @buffer_output   = []
-    unless opts[:verbose] or out
+    unless @opts[:verbose] or out
       out = Trepan::StringArrayOutput.open(@buffer_output)
     end
     super(@input, out, @opts)
@@ -64,7 +64,7 @@ class Trepan::ScriptInterface < Trepan::Interface
     msg(mess)
     # FIXME: should we just set a flag and report eof? to be more
     # consistent with File and IO?
-    raise IOError if @opts[:abort_on_error]
+    raise ScriptError if @opts[:abort_on_error]
   end
 
   def interactive? ; false end
