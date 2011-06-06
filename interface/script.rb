@@ -11,11 +11,13 @@ require_relative '../io/string_array'
 
 # Interface when reading debugger scripts
 class Trepan::ScriptInterface < Trepan::Interface
+  attr_accessor :opts, :output
 
   DEFAULT_OPTS = {
     :abort_on_error => true,
     :confirm_val    => false,
-    :verbose        => false
+    :verbose        => false,
+    :basename       => false
   } unless defined?(DEFAULT_OPTS)
   
   def initialize(script_name, out=nil, opts={})
@@ -75,7 +77,13 @@ class Trepan::ScriptInterface < Trepan::Interface
     @input_lineno += 1
     line = readline
     if @opts[:verbose]
-      location = "%s line %s" % [@script_name, @input_lineno]
+      script_name = 
+        if @opts[:basename] 
+          File.basename(@script_name)
+        else 
+          @script_name
+        end
+      location = "%s line %s" % [script_name, @input_lineno]
       msg('+ %s: %s' % [location, line])
     end
     # Do something with history?

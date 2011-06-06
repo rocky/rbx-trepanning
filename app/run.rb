@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 require 'rubygems'; require 'require_relative'
 module Trepanning
@@ -81,7 +81,6 @@ def RbConfig.ruby
             RbConfig::CONFIG['RUBY_INSTALL_NAME'] + 
             RbConfig::CONFIG['EXEEXT'])
 end unless defined? RbConfig.ruby
-
 
 if __FILE__ == $0
   # Demo it.

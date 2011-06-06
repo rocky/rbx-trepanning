@@ -66,8 +66,14 @@ EOB
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
         end
       end
-      opts.on('-d', '--debug', "Set $DEBUG=true") {$DEBUG = true}
-      opts.on('--[no-]highlight',
+      opts.on('--basename', 
+              'Show only file basename in file locations') do 
+        options[:basename] = true
+      end
+      opts.on('-d', '--debug', 'Set $DEBUG=true') do 
+        $DEBUG = true
+      end
+     opts.on('--[no-]highlight',
               'Use [no] syntax highlight output') do |v|
         options[:highlight] = ((v) ? :term : nil)
       end
