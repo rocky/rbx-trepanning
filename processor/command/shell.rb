@@ -8,10 +8,12 @@ class Trepan::Command::IRBCommand < Trepan::Command
   unless defined?(HELP)
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [-d]\tstarts an Interactive Ruby (IRB) session.
+#{NAME} [-d]
+
+starts an Interactive Ruby (IRB) session.
 
 If -d is added you can get access to debugger frame the global variables
-$trepanx_frame and $trepanx_cmdproc. 
+$trepan_frame and $trepan_cmdproc. 
 
 #{NAME} is extended with methods 'cont', 'ne', and, 'q', 'step' which 
 run the corresponding debugger commands 'continue', 'next', 'exit' and 'step'. 
@@ -54,17 +56,17 @@ Here then is a loop to query VM stack values:
     # end
 
     save_trap = trap('SIGINT') do
-      throw :IRB_EXIT, :cont if $trepanx_in_irb
+      throw :IRB_EXIT, :cont if $trepan_in_irb
     end
 
-    $trepanx = @proc.dbgr 
+    $trepan = @proc.dbgr 
     if add_debugging
-      $trepanx_cmdproc  = @proc
-      $trepanx_frame    = @proc.frame
+      $trepan_cmdproc  = @proc
+      $trepan_frame    = @proc.frame
     end
-    $trepanx_in_irb = true
-    $trepanx_irb_statements = nil
-    $trepanx_command = nil
+    $trepan_in_irb = true
+    $trepan_irb_statements = nil
+    $trepan_command = nil
 
     conf = {:BACK_TRACE_LIMIT => settings[:maxstack],
             :RC => true}
@@ -115,7 +117,7 @@ Here then is a loop to query VM stack values:
       @proc.print_location
     end
   ensure
-    $trepanx_in_irb = false
+    $trepan_in_irb = false
     # restore old trap if any
     trap('SIGINT', save_trap) if save_trap
   end

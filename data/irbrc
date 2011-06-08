@@ -1,13 +1,13 @@
 # -*- Ruby -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 # We use this as the default startup file for irb inside trepan
 # Down the line we will have a way for folks to add/override this
 # with their own file.
 IRB.conf[:PROMPT_MODE] = :SIMPLE
 IRB.conf[:PROMPT][:SIMPLE] = 
-    {:PROMPT_C=>"trepanx ?> ",
-     :PROMPT_I=>"trepanx >> ",
-     :PROMPT_N=>"trepanx >> ",
+    {:PROMPT_C=>"trepan ?> ",
+     :PROMPT_I=>"trepan >> ",
+     :PROMPT_N=>"trepan >> ",
      :PROMPT_S=>nil,
      :RETURN=>"=> %s\n"}
 
@@ -20,22 +20,22 @@ IRB.conf[:PROMPT][:SIMPLE] =
 puts "You are in a trepan session. You should have access to program scope."
 puts "'dbgr', 'step', 'ne', 'q', 'cont' commands have been added."
 
-if defined?($trepanx) && $trepanx
-   puts 'You should have access to debugger state via global variable $trepanx'
+if defined?($trepan) && $trepan
+   puts 'You should have access to debugger state via global variable $trepan'
 end
-if defined?($trepanx_frame) && $trepanx_frame
-   puts 'You should have access to the program frame via global variable $trepanx_frame'
+if defined?($trepan_frame) && $trepan_frame
+   puts 'You should have access to the program frame via global variable $trepan_frame'
 end
-if defined?($trepanx_cmdproc) && $trepanx_cmdproc
-   puts 'You should have access to the command processor via global variable $trepanx_cmdproc'
+if defined?($trepan_cmdproc) && $trepan_cmdproc
+   puts 'You should have access to the command processor via global variable $trepan_cmdproc'
 end
 
 # Monkeypatch to save the current IRB statement to be run.
 class IRB::Context
-  alias_method :_trepanx_original_evaluate, :evaluate
+  alias_method :_trepan_original_evaluate, :evaluate
   def evaluate(line, line_no)
-    $trepanx_irb_statements = line
-    _trepanx_original_evaluate(line, line_no)
+    $trepan_irb_statements = line
+    _trepan_original_evaluate(line, line_no)
   end
 end
 
