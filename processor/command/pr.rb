@@ -2,7 +2,6 @@
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
-require_relative '../eval'
 class Trepan::Command::PrCommand < Trepan::Command
 
   unless defined?(HELP)
