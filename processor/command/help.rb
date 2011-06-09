@@ -188,7 +188,7 @@ Type "help" followed by command name for full documentation.
           @syntax_help ||= {}
           @syntax_help[name] = 
             File.open(File.join(HELP_DIR, "#{name}.txt")).readlines[2..-1].join
-          section "Debugger syntax for a #{name}:"
+          section "Help for #{name}:"
           msg @syntax_help[name]
         else
           errmsg "No syntax help for #{name}"

@@ -1,3 +1,16 @@
+June 12, 2011  (0.0.8) Fleetwood release
+- Add debugger commands
+  * parsetree 
+  * pp
+  * info locals
+  * info stack (same as backtrace)
+- Add trepanx options
+  * --cd
+  * --include
+  * --require 
+  * --debug
+- fix bugs, and improrve help
+
 March 15, 2011  (0.0.8)
 
 - Revise breakpoint location parsing

@@ -206,16 +206,16 @@ desc 'Same as rdoc'
 task :doc => :rdoc
 
 task :clobber_package do
-  FileUtils.rm_rf File.join(ROOT_DIR, 'pkg')
+  FileUtils.rm_rf File.join(ROOT_DIR, 'pkg'), :verbose => true
 end
 
 task :clobber_rdoc do
-  FileUtils.rm_rf File.join(ROOT_DIR, 'doc')
+  FileUtils.rm_rf File.join(ROOT_DIR, 'doc'), :verbose => true
 end
 
 desc 'Remove residue from running patch'
 task :rm_patch_residue do
-  FileUtils.rm_rf FileList['**/*.{rej,orig}'].to_a
+  FileUtils.rm_rf Dir.glob('**/*.{rej,orig}'), :verbose => true
 end
 
 desc 'Remove ~ backup files'

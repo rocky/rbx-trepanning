@@ -1,4 +1,4 @@
-syntax for indicating a filename
+Syntax for indicating a filename
 
 There are two ways you can give a file name:
   - unadorned (without double-quotes) with possible escapes
