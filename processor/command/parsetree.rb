@@ -34,9 +34,10 @@ HELP
     end
     expanded_file = File.expand_path(file)
     if File.readable?(expanded_file)
+      section "ParseTree for file: #{@proc.canonic_file(file)}"
       msg File.to_sexp(expanded_file).pretty_inspect
     else
-      errmsg "File #{File} is not readable."
+      errmsg "File #{@proc.canonic_file} is not readable."
     end
   end
   
