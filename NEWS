@@ -1,4 +1,4 @@
-June 12, 2011  (0.0.8) Fleetwood release
+June 12, 2011  (0.0.9) Fleetwood release
 - Add debugger commands
   * parsetree 
   * pp
@@ -9,7 +9,7 @@ June 12, 2011  (0.0.8) Fleetwood release
   * --include
   * --require 
   * --debug
-- fix bugs, and improrve help
+- fix bugs, and improve help
 
 March 15, 2011  (0.0.8)
 
