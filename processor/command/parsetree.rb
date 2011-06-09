@@ -32,12 +32,12 @@ HELP
     else
       errmsg 'Expecting a file name'
     end
-    expanded_file = File.expand_path(file)
+    expanded_file = @proc.canonic_file(file)
     if File.readable?(expanded_file)
-      section "ParseTree for file: #{@proc.canonic_file(file)}"
+      section "ParseTree for file: #{expanded_file}"
       msg File.to_sexp(expanded_file).pretty_inspect
     else
-      errmsg "File #{@proc.canonic_file} is not readable."
+      errmsg "File #{expanded_file} is not readable."
     end
   end
   
