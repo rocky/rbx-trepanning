@@ -37,7 +37,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     :prompt         => 'trepanx', # core part of prompt. Additional info like
                                   # debug nesting and thread name is fixed
                                   # and added on.
-    :reload_on_change => false,   # Reread source file if we determine
+    :reload         => false,     # Reread source file if we determine
                                   # it has changed?
     :save_cmdfile  => nil,        # If set, debugger command file to be
                                   # used on restart

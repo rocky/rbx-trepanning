@@ -14,7 +14,7 @@
 # parts as below.
 class Trepan
   class VirtualCmdProcessor
-    attr_reader :settings
+    attr_accessor :settings
     def initialize(interfaces, settings={})
       @interfaces      = interfaces
       @intf            = interfaces[-1]

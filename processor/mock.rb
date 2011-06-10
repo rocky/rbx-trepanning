@@ -26,7 +26,7 @@ module MockDebugger
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
     attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
-                :debugee_thread, :completion_proc
+                :debugee_thread, :completion_proc, :settings
 
     def initialize(settings={:start_frame=>1})
       @before_cmdloop_hooks = []

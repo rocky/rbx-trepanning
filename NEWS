@@ -1,10 +1,16 @@
 June 12, 2011  (0.0.9) Fleetwood release
-- Add debugger commands
-  * parsetree 
-  * pp
-  * info locals
-  * info stack (same as backtrace)
-- Add trepanx options
+- Add debugger commands:
+  * tbreak       (is in gdb)
+  * info globals
+  * info locals  (is in gdb)
+  * info source  (is in gdb)
+  * info stack   (is in gdb, same as backtrace)
+  * info macro   (in in gdb; remove show macro)
+  * show timer   (set timer was already there)
+  * parsetree    (somewhat buggy)
+  * pp           (is in ruby-debug)
+
+- Add options from ruby-debug:
   * --cd
   * --include
   * --require 
