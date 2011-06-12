@@ -1,3 +1,41 @@
+2011-06-10  rocky <rockyb@rubyforge.org>
+
+	* NEWS, processor/command/set_subcmd/reload.rb,
+	processor/command/show_subcmd/reload.rb: Add set/show reload. This
+	time, for sure!
+
+2011-06-10  rocky <rockyb@rubyforge.org>
+
+	* NEWS, processor/command/list.rb, processor/default.rb,
+	processor/location.rb, processor/mock.rb, processor/virtual.rb: Add
+	set/show reload. Sync location better with rb8-trepanning
+
+2011-06-09  rvm <rocky@gnu.org>
+
+	* processor/command/info_subcmd/globals.rb,
+	processor/command/info_subcmd/locals.rb,
+	processor/command/info_subcmd/source.rb,
+	processor/command/set_subcmd/timer.rb,
+	processor/command/show_subcmd/timer.rb: Add "info globals", "info
+	source" set/show "timer".
+
+2011-06-09  rocky <rockyb@rubyforge.org>
+
+	* NEWS, processor/command/help/suffixes.txt: Small changes.
+
+2011-06-09  rvm <rocky@gnu.org>
+
+	* processor/command/parsetree.rb: parsetree command bug
+
+2011-06-09  rvm <rocky@gnu.org>
+
+	* ChangeLog, NEWS, Rakefile, processor/command/help.rb,
+	processor/command/help/command.txt,
+	processor/command/help/examples.txt,
+	processor/command/help/filename.txt,
+	processor/command/help/suffixes.txt: Add more command syntax help.
+	Specifically describe suffixes and break out examples.
+
 2011-06-09  rvm <rocky@gnu.org>
 
 	* Rakefile: Better file cleanup. Sync with rb8-trepanning.
@@ -11,8 +49,14 @@
 
 2011-06-08  rvm <rocky@gnu.org>
 
-	* : commit 256a08096a2cee3120b36097d03a7c73d53c648c Author: rvm
-	<rocky@gnu.org> Date:   Wed Jun 8 15:00:25 2011 -0400
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-06-08  rvm <rocky@gnu.org>
+
+	* processor/command/info_subcmd/files.rb,
+	processor/command/parsetree.rb, processor/command/pr.rb: Add
+	rudimentary "parsetree" command. pr doesn't need to require "eval".
+	Wrong way to get file name in "files.rb".
 
 2011-06-07  rocky <rockyb@rubyforge.org>
 
@@ -34,11 +78,17 @@
 
 2011-06-05  rvm <rocky@gnu.org>
 
-	* : I hate conflicted merges
+	I hate conflicted merges
+
+2011-06-04  rocky <rockyb@rubyforge.org>
+
+	* interface/script.rb, processor/command/edit.rb: Work on edit
+	command via rb8-trepanning.
 
 2011-06-04  rvm <rocky@gnu.org>
 
 	* processor/command/help/command.txt: command syntax help yet again.
+
 
 2011-06-04  rocky <rockyb@rubyforge.org>
 
@@ -63,6 +113,7 @@
 
 	* processor/command/info_subcmd/macro.rb,
 	processor/command/macro.rb: show macro -> info macro as gdb has it.
+
 
 2011-06-04  rvm <rocky@gnu.org>
 
@@ -191,7 +242,13 @@
 
 2011-05-27  rocky <rockyb@rubyforge.org>
 
-	* : merge in eval changes
+	merge in eval changes
+
+2011-05-27  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, processor/command/eval.rb, processor/load_cmds.rb,
+	test/unit/test-app-util.rb: Handle eval? completion for the empty
+	string.
 
 2011-05-27  rvm <rocky@gnu.org>
 
@@ -200,8 +257,12 @@
 
 2011-05-26  rocky <rockyb@rubyforge.org>
 
-	* : commit 2bbbd6bb4ffc3cd19996007649fbdb815fb38393 Author: rocky
-	<rockyb@rubyforge.org> Date:   Thu May 26 22:18:28 2011 -0400
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-05-26  rocky <rockyb@rubyforge.org>
+
+	* processor/default.rb: Correct mispelling for a (currently) unused
+	directory
 
 2011-05-22  rvm <rocky@gnu.org>
 
@@ -266,15 +327,19 @@
 
 2011-04-23  rocky <rockyb@rubyforge.org>
 
-	* : commit d165fb163a519dfb5a47a8439d2b45aab3472e85 Author: rocky
-	<rockyb@rubyforge.org> Date:   Sat Apr 23 21:07:20 2011 -0400
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-04-23  rocky <rockyb@rubyforge.org>
+
+	* processor/validate.rb: parse_method is still needed for
+	disassemble.
 
 2011-04-23  rocky <rockyb@rubyforge.org>
 
 	* Rakefile, app/util.rb, lib/trepanning.rb, processor/frame.rb,
 	rbx-trepanning.gemspec, test/unit/test-app-cmd_parser.rb,
 	test/unit/test-app-util.rb: Track various internal Rubinius changes
-	in startup.  Rakefile: fix check:unit target to run only tests.
+	in startup. Rakefile: fix check:unit target to run only tests.
 	test-appu-util.rb needs require-relative if run standalone.
 
 2011-04-20  rocky <rockyb@rubyforge.org>
@@ -291,12 +356,13 @@
 	processor/command/info_subcmd/ruby.rb: Add min/max argument checking
 	to subcommands. Add min/max parameters for various "info" commands.
 
+
 2011-04-16  rocky <rockyb@rubyforge.org>
 
 	* app/options.rb, interface/base_intf.rb, io/null_output.rb,
 	processor/command/exit.rb, processor/command/kill.rb,
 	test/data/fname-with-blank.right: Add termination message to
-	interface finalization routine.  Implement NullOutput closed?
+	interface finalization routine. Implement NullOutput closed?
 
 2011-04-16  rocky <rockyb@rubyforge.org>
 
@@ -312,6 +378,7 @@
 	test/unit/test-proc-frame.rb: Offer termintation message. Show frame
 	number and indication when switching frames. Useful for front-ends.
 
+
 2011-03-31  rocky <rockyb@rubyforge.org>
 
 	* processor/command/eval.rb: Add LHS assignment stripping to eval?
@@ -319,7 +386,7 @@
 2011-03-31  rocky <rockyb@rubyforge.org>
 
 	* app/file.rb, lib/trepanning.rb, processor/location.rb: 
-	app/file.rb: Make sure filenames don't end .rbc.  location.rb: more
+	app/file.rb: Make sure filenames don't end .rbc. location.rb: more
 	comments.
 
 2011-03-31  rocky <rockyb@rubyforge.org>
@@ -329,8 +396,14 @@
 
 2011-03-31  rocky <rockyb@rubyforge.org>
 
-	* : commit 8bc892de9ae1852e99ff8543994ed176701360b6 Author: rocky
-	<rockyb@rubyforge.org> Date:   Thu Mar 31 07:06:28 2011 -0400
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-31  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, processor/command/next.rb, processor/location.rb,
+	processor/main.rb, processor/running.rb: Add option to canonic_file
+	to not resolve filename; used by source_location_info. Start
+	mechanism to simulate "next" via "step"
 
 2011-03-31  rocky <rockyb@rubyforge.org>
 
@@ -468,8 +541,11 @@
 
 2011-03-09  rocky <rockyb@rubyforge.org>
 
-	* : commit 4e44a6fa91fa7276bc70a612d108bc561a526079 Author: rocky
-	<rockyb@rubyforge.org> Date:   Wed Mar 9 15:27:04 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-09  rocky <rockyb@rubyforge.org>
+
+	* processor/load_cmds.rb, processor/main.rb: Small changes.
 
 2011-03-08  rocky <rockyb@rubyforge.org>
 
@@ -478,8 +554,18 @@
 
 2011-03-07  rocky <rockyb@rubyforge.org>
 
-	* : commit 7aece7a6607d28ae8136289818d4d7507f887953 Author: rocky
-	<rockyb@rubyforge.org> Date:   Sun Mar 6 20:34:49 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-06  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/cmd_parse.kpeg, app/cmd_parser.rb,
+	processor/location.rb, processor/main.rb,
+	test/example/debugger-stop.rb, test/integration/helper.rb,
+	test/unit/test-proc-location.rb: Largely sync with rb-trepanning -
+	no bug fixes or completed enhancements cmd_parse.kpeg: fill out for
+	location. More complete. Rakefile: add descriptions to some tasks
+	helper.rb: add feed_input option test: test some bugs that were in
+	rb-trepanning but here.
 
 2011-03-05  rvm <rocky@gnu.org>
 
@@ -511,25 +597,34 @@
 
 2011-03-02  rocky <rockyb@rubyforge.org>
 
-	* : commit 7fea8fe6929ad4d7ec19c956091951e521d8a556 Author: rocky
-	<rockyb@rubyforge.org> Date:   Wed Mar 2 18:58:06 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-03-02  rocky <rockyb@rubyforge.org>
+
+	* processor/command/eval.rb, test/functional/test-eval.rb: Add to
+	eval? stripping "unless" and optional "then".
 
 2011-03-01  rvm <rocky@gnu.org>
 
 	* Rakefile, app/cmd_parse.citrus, app/cmd_parse.rb, doc/.gitignore,
 	doc/debugger.html, test/unit/test-app-cmd_parse.rb: Sync with
-	rb-trepanning: move forward in location parsing.  Rakefile: add task
+	rb-trepanning: move forward in location parsing. Rakefile: add task
 	to remove patch residue files.
 
 2011-03-01  rocky <rockyb@rubyforge.org>
 
-	* : commit 2831a02ef4c8e9cfad111ea703f828f3095495f0 Author: rvm
-	<rocky@gnu.org> Date:   Mon Feb 28 07:31:01 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-28  rvm <rocky@gnu.org>
+
+	* app/brkptmgr.rb, processor/command/eval.rb: In "eval?" extract
+	expression in "case", and echo that.
 
 2011-02-25  rocky <rockyb@rubyforge.org>
 
 	* app/cmd_parse.citrus, app/cmd_parse.rb,
 	test/unit/test-app-cmd_parse.rb: Start filling out location parsing.
+
 
 2011-02-25  rocky <rockyb@rubyforge.org>
 
@@ -562,8 +657,17 @@
 
 2011-02-24  rocky <rockyb@rubyforge.org>
 
-	* : commit 778528dae8b0f322a5788d45c48507b19d340ff9 Author: rocky
-	<rockyb@rubyforge.org> Date:   Thu Feb 24 20:50:23 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-24  rocky <rockyb@rubyforge.org>
+
+	* app/method_name.citrus, app/method_name.rb,
+	processor/command/break.rb, processor/command/disassemble.rb,
+	processor/validate.rb, rbx-trepanning.gemspec,
+	test/unit/test-app-method_name.rb, test/unit/test-proc-validate.rb: 
+	Use a PEG parser (citrus) to parse method names. This weay we can
+	get the method in a controlled way without having to eval and hope
+	we didn't do any damage.
 
 2011-02-23  rocky <rockyb@rubyforge.org>
 
@@ -645,13 +749,31 @@
 
 2011-02-19  rocky <rockyb@rubyforge.org>
 
-	* : commit 5db8e7b55bce3e3738d6bb81efb643abb0a7cf91 Author: rocky
-	<rockyb@rubyforge.org> Date:   Sat Feb 19 12:22:00 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
 
 2011-02-19  rocky <rockyb@rubyforge.org>
 
-	* : commit b37051946750630746f67098416e4818e1cae8ff Author: rocky
-	<rockyb@rubyforge.org> Date:   Sat Feb 19 10:00:53 2011 -0500
+	* processor/command/exit.rb, processor/command/kill.rb,
+	processor/command/show_subcmd/alias.rb: Add kill! alias and update
+	help
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-19  rocky <rockyb@rubyforge.org>
+
+	* app/eventbuffer.rb, processor/command/base/subcmd.rb,
+	processor/command/info_subcmd/files.rb,
+	processor/command/info_subcmd/line.rb,
+	processor/command/info_subcmd/ruby.rb,
+	processor/command/set_subcmd/trace_subcmd/print.rb,
+	processor/command/show_subcmd/alias.rb,
+	processor/command/show_subcmd/auto_subcmd/irb.rb,
+	processor/command/show_subcmd/macro.rb,
+	processor/command/show_subcmd/trace_subcmd/print.rb,
+	processor/eventbuf.rb, processor/hook.rb, processor/main.rb: 
+	Basically same as what in HEAD
 
 2011-02-19  rocky <rockyb@rubyforge.org>
 
@@ -752,8 +874,13 @@
 
 2011-02-15  rocky <rockyb@rubyforge.org>
 
-	* : commit ab7ded01cf22e55258b02198d7d4b2e8249fc613 Author: rocky
-	<rockyb@rubyforge.org> Date:   Tue Feb 15 09:34:11 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-15  rocky <rockyb@rubyforge.org>
+
+	* bin/trepanx, processor/validate.rb: Small bugs. validate: handling
+	get_an_int error msg. trepanx: option name is now highlight, not
+	readline
 
 2011-02-15  rocky <rockyb@rubyforge.org>
 
@@ -780,8 +907,8 @@
 	processor/command/break.rb, processor/command/disassemble.rb,
 	processor/stepping.rb, processor/validate.rb,
 	test/unit/test-proc-validate.rb: first_line_on_ip's "not found" is
-	now nil for next rubinius release.  Remove citrus-related code and
-	Method name lookup.  Will reinstate after a release with kpeg.
+	now nil for next rubinius release. Remove citrus-related code and
+	Method name lookup. Will reinstate after a release with kpeg.
 	Prevent breakpoint resolve! from getting in an infinite loop.
 
 2011-02-14  rocky <rockyb@rubyforge.org>
@@ -792,9 +919,9 @@
 
 	* processor/command/help.rb, processor/command/macro.rb,
 	processor/main.rb: macro.rb: Macros are more useful now. An array of
-	strings pushes additional commands on the command queue.  help.rb:
+	strings pushes additional commands on the command queue. help.rb:
 	Show aliases and macros in help *. Add help for exach of these
-	individually.  3
+	individually. 3
 
 2011-02-13  rocky <rockyb@rubyforge.org>
 
@@ -810,8 +937,8 @@
 	io/tcpclient.rb, processor/command/break.rb,
 	processor/command/disassemble.rb, processor/validate.rb,
 	test/unit/test-io-tcpclient.rb, test/unit/test-proc-validate.rb: Use
-	citus to parse method names avoiding use of eval which is safer.
-	Add disconnected? to tcpclient.
+	citus to parse method names avoiding use of eval which is safer. Add
+	disconnected? to tcpclient.
 
 2011-02-12  rocky <rockyb@rubyforge.org>
 
@@ -876,8 +1003,17 @@
 
 2011-02-10  rocky <rockyb@rubyforge.org>
 
-	* : commit 715d8afd29618ccd4eac05fdb1ad7557c622a2b7 Author: rocky
-	<rockyb@rubyforge.org> Date:   Thu Feb 10 11:42:20 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+	Conflicts: 	interface/base_intf.rb 	interface/user.rb
+	processor/command/irb.rb 	processor/main.rb
+
+2011-02-10  rocky <rockyb@rubyforge.org>
+
+	* app/irb.rb, interface/base_intf.rb, interface/user.rb,
+	processor/command/irb.rb, processor/main.rb, processor/mock.rb,
+	test/unit/test-intf-user.rb, test/unit/test-proc-eval.rb: Work on
+	history reading and saving and in between irb sessions although
+	somewhat disabled for now.
 
 2011-02-09  rocky <rockyb@rubyforge.org>
 
@@ -962,24 +1098,28 @@
 
 	* README.textile: Nope ```ruby does not work for README on gitub :-/
 
-2011-02-04  rocky <rockyb@rubyforge.org>
-
-	* README.textile: Nope ```ruby does not work for README on gitub :-/
 
 2011-02-04  rocky <rockyb@rubyforge.org>
 
 	* README.textile: Nope ```ruby does not work for README on gitub :-/
 
+
 2011-02-04  rocky <rockyb@rubyforge.org>
 
 	* README.textile: Nope ```ruby does not work for README on gitub :-/
+
+
+2011-02-04  rocky <rockyb@rubyforge.org>
+
+	* README.textile: Nope ```ruby does not work for README on gitub :-/
+
 
 2011-02-04  rocky <rockyb@rubyforge.org>
 
 	* README.textile, io/input.rb, lib/trepanning.rb,
 	processor/command/complete.rb, processor/command/set_subcmd/max.rb,
 	processor/load_cmds.rb: Back off of trying to complete anything
-	other than the last token in completion.  io/input.rb Remove
+	other than the last token in completion. io/input.rb Remove
 	Readline.rl_line_buffer= READE.textile: cooler code formatting.
 
 2011-02-04  rocky <rockyb@rubyforge.org>
@@ -992,13 +1132,24 @@
 
 	* interface/user.rb, io/input.rb, processor/command/help.rb,
 	processor/command/set_subcmd/max.rb, processor/load_cmds.rb: More
-	completion work: for help and help command <complete>.  Bug in not
+	completion work: for help and help command <complete>. Bug in not
 	setting prompt in readline fixed.
 
 2011-02-04  rocky <rockyb@rubyforge.org>
 
-	* : commit 410583720fdef4c8156ca3f59b2007ac5cb72f31 Author: rocky
-	<rockyb@rubyforge.org> Date:   Fri Feb 4 12:12:18 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+	Conflicts: 	processor/command/base/subsubmgr.rb
+	processor/load_cmds.rb
+
+2011-02-04  rocky <rockyb@rubyforge.org>
+
+	* app/complete.rb, app/util.rb, interface/comcodes.rb,
+	io/tcpfns.rb, processor/command/base/cmd.rb,
+	processor/command/base/submgr.rb,
+	processor/command/base/subsubmgr.rb, processor/command/help.rb,
+	processor/command/info_subcmd/file.rb, processor/load_cmds.rb,
+	processor/subcmd.rb, test/unit/test-app-util.rb: Expand completion
+	one level down. Needs refactoring. Sync with rb-trepanning.
 
 2011-02-04  rocky <rockyb@rubyforge.org>
 
@@ -1041,8 +1192,13 @@
 
 2011-02-02  rocky <rockyb@rubyforge.org>
 
-	* : commit dc7e7e7d8c96d8119bf32b03a77265b305179e08 Author: rocky
-	<rockyb@rubyforge.org> Date:   Wed Feb 2 03:39:48 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-02-02  rocky <rockyb@rubyforge.org>
+
+	* interface/user.rb, io/input.rb, lib/trepanning.rb,
+	processor/command/complete.rb, processor/load_cmds.rb: Start tab
+	completion. Correct setting for line edit via Readline.
 
 2011-02-01  rocky <rockyb@rubyforge.org>
 
@@ -1082,15 +1238,26 @@
 
 2011-01-28  rocky <rockyb@rubyforge.org>
 
-	* : Add debugger command syntax help.
+	Add debugger command syntax help.
 
 2011-01-28  rocky <rockyb@rubyforge.org>
 
-	* : I hate conflicted merges
+	Describe debugger command syntax in help.
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	I hate conflicted merges
+
+2011-01-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/help.rb, processor/default.rb,
+	test/unit/cmd-helper.rb, test/unit/test-proc-main.rb: Sync with
+	trepanning.
 
 2011-01-24  rocky <rockyb@rubyforge.org>
 
 	* processor/msg.rb: Error messages are underlined when in term mode.
+
 
 2011-01-24  rocky <rockyb@rubyforge.org>
 
@@ -1102,6 +1269,7 @@
 2011-01-24  rocky <rockyb@rubyforge.org>
 
 	* processor/command/complete.rb: Rudimentary gdb "complete" commnd.
+
 
 2011-01-24  rocky <rockyb@rubyforge.org>
 
@@ -1169,8 +1337,11 @@
 
 2011-01-21  rocky <rockyb@rubyforge.org>
 
-	* : commit 91a86c4e17ff787c6e2382636f68db5e7e751df4 Author: rocky
-	<rockyb@rubyforge.org> Date:   Fri Jan 21 20:35:51 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-01-21  rocky <rockyb@rubyforge.org>
+
+	* processor/command/disassemble.rb: One more Trepanning->Trepan
 
 2011-01-21  rocky <rockyb@rubyforge.org>
 
@@ -1188,6 +1359,7 @@
 2011-01-21  rocky <rockyb@rubyforge.org>
 
 	* app/iseq.rb: Trepan::ISeq needs only to be a module, not a class.
+
 
 2011-01-21  rocky <rockyb@rubyforge.org>
 
@@ -1365,6 +1537,7 @@
 	Previous change removed some bugs which changed integration-test
 	output. Start adding --port and --host options for remote debugging.
 
+
 2011-01-09  rocky <rockyb@rubyforge.org>
 
 	* ChangeLog, test/data/inline-call.right,
@@ -1379,10 +1552,12 @@
 	test/data/inline-call.cmd, test/example/gcd-inline-call.rb,
 	test/example/gcd-server.rb, test/example/gcd-xx.rb,
 	test/example/gcd1.rb: A number of small enhancements and little bug
-	fixes.  trepanning.rb: 1. set default input/output correctly.                 2. add debugger alias for start                3. Allow cmdfile specification in start/debugger                4. Allow script options in cmdfile specification via
-	               tuple directory.rb: Expand help string
-	example/gcd-*.rb: Start examples of above changes. No integration
-	tests yet :-(
+	fixes. trepanning.rb: 1. set default input/output correctly.
+	2. add debugger alias for start                3. Allow cmdfile
+	specification in start/debugger                4. Allow script
+	options in cmdfile specification via tuple directory.rb: Expand help
+	string example/gcd-*.rb: Start examples of above changes. No
+	integration tests yet :-(
 
 2011-01-09  rocky <rockyb@rubyforge.org>
 
@@ -1398,7 +1573,7 @@
 	interface/server.rb, interface/user.rb, io/tcpserver.rb,
 	lib/trepanning.rb, processor/command/continue.rb,
 	processor/main.rb, test/unit/test-app-options.rb: First hint that
-	remote debugging will work someday.  options.rb, default.rb: Add
+	remote debugging will work someday. options.rb, default.rb: Add
 	--client and --server options client.rb: front-end client read loop
 	continue.rb: fix docstring
 
@@ -1422,8 +1597,16 @@
 
 2011-01-08  rocky <rockyb@rubyforge.org>
 
-	* : commit 4022a1fae34aff4202f7edd7e76a85f5285dd146 Author: rocky
-	<rockyb@rubyforge.org> Date:   Sat Jan 8 08:23:48 2011 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2011-01-08  rocky <rockyb@rubyforge.org>
+
+	* interface/comcodes.rb, interface/server.rb, io/base_io.rb,
+	io/tcpfns.rb, io/tcpserver.rb, test/unit/test-io-tcpfns.rb,
+	test/unit/test-io-tcpserver.rb: Start working on remote or
+	out-of-process debugging, staring with TCP connections. Server IO
+	started. Still need client, more of the interface and setup side.
+	That is, much much more work is needed.
 
 2011-01-01  rocky <rockyb@rubyforge.org>
 
@@ -1466,8 +1649,9 @@
 
 	* processor/stepping.rb, test/integration/helper.rb,
 	test/integration/test-quit.rb: stepping.rb: Address another bug in
-	stepping from the begging of a file.  test-quit.rb: Simple check of
+	stepping from the begging of a file. test-quit.rb: Simple check of
 	.rbxrc for calling Trepan.start helper.rb: redirect stderr to stdout
+
 
 2010-12-26  rocky <rockyb@rubyforge.org>
 
@@ -1490,8 +1674,11 @@
 
 2010-12-23  rocky <rockyb@rubyforge.org>
 
-	* : commit b1d2605001d04ff6672c1c567fe887a2485a2b1b Author: rocky
-	<rockyb@rubyforge.org> Date:   Thu Dec 23 11:46:30 2010 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2010-12-23  rocky <rockyb@rubyforge.org>
+
+	* .gemspec, Rakefile, THANKS: Administrivia updates.
 
 2010-12-23  rocky <rockyb@rubyforge.org>
 
@@ -1519,6 +1706,7 @@
 	* test/data/quit-Xdebug.right, test/integration/helper.rb,
 	test/integration/test-quit.rb: Add minimal -Xdebug integration test
 
+
 2010-12-15  rocky <rockyb@rubyforge.org>
 
 	* .gemspec, Rakefile, app/options.rb, lib/trepanning.rb,
@@ -1536,8 +1724,8 @@
 2010-12-15  rocky <rockyb@rubyforge.org>
 
 	* lib/trepanning.rb: Turn of kernelstep for now and leave that for
-	the user to turn on.  When things go wrong, we need this on. So
-	until everything is more robust leave out.
+	the user to turn on. When things go wrong, we need this on. So until
+	everything is more robust leave out.
 
 2010-12-14  rocky <rockyb@rubyforge.org>
 
@@ -1555,7 +1743,7 @@
 	processor/command/info_subcmd/program.rb,
 	processor/command/nexti.rb, processor/disassemble.rb,
 	processor/location.rb, processor/stepping.rb: Adapt to recent ip
-	changes - need to use next_ip rather than ip sometimes.  Rakefile:
+	changes - need to use next_ip rather than ip sometimes. Rakefile:
 	Require newer linecache and Rubinius; make gem Rubinius specific.
 
 2010-12-05  rocky <rockyb@rubyforge.org>
@@ -1700,8 +1888,12 @@
 
 2010-11-20  rocky <rockyb@rubyforge.org>
 
-	* : commit a8f1ffc2c3c2d3c4417ffb9c931af78ad7b6c0c8 Author: rocky
-	<rockyb@rubyforge.org> Date:   Sat Nov 20 21:08:40 2010 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2010-11-20  rocky <rockyb@rubyforge.org>
+
+	* processor/frame.rb, processor/location.rb: Remap eval strings to
+	temporary files. Use a better eval location indicator.
 
 2010-11-19  rvm <rocky@gnu.org>
 
@@ -1722,7 +1914,7 @@
 	to ignored list of filtered fns command/disassemble.rb: reorganize
 	so we can handle disassemble of individual methods command/up.rb:
 	fix comment processor/disassemble.rb: use
-	 Rubinius::CompiledMethod::Instruction to shorten code and get
+	Rubinius::CompiledMethod::Instruction to shorten  code and get
 	comments in output frame.rb: common routine to get parent frame.
 	processor/running.rb: remove bug in method filter test.
 	processor/stepping.rb: better generalization of related breakpoint
@@ -1741,9 +1933,9 @@
 
 	* .gemspec, processor/command/list.rb, processor/location.rb,
 	processor/validate.rb, test/functional/test-break-name.rb: Use
-	script caching recently added to linecache for eval-like things.  As
-	a result, "list" now works.  validate: bug in regexp was not
-	catching !,? or = at the end.
+	script caching recently added to linecache for eval-like things. As
+	a result, "list" now works. validate: bug in regexp was not catching
+	!,? or = at the end.
 
 2010-11-15  rvm <rocky@gnu.org>
 
@@ -1771,8 +1963,8 @@
 
 	* app/util.rb, lib/trepanning.rb,
 	processor/command/set_subcmd/hidelevel.rb, processor/frame.rb: 
-	Hiding levels below "main" for -Xdebug and trepanx better.  util.rb:
-	Don't need dollar_0 routine anymore.  set_subcmd/hidelevel.rb:
+	Hiding levels below "main" for -Xdebug and trepanx better. util.rb:
+	Don't need dollar_0 routine anymore. set_subcmd/hidelevel.rb:
 	recalculate level on resetting.
 
 2010-11-12  rvm <rocky@gnu.org>
@@ -1823,7 +2015,7 @@
 2010-11-08  rocky <rockyb@rubyforge.org>
 
 	* processor/command/backtrace.rb: Wasn't starting from top if we had
-	adjusted the frame.  Add position indicator in backtrace and make it
+	adjusted the frame. Add position indicator in backtrace and make it
 	look more like trepan (and gdb).
 
 2010-11-08  rvm <rocky@gnu.org>
@@ -1841,14 +2033,14 @@
 	processor/command/show_subcmd/trace_subcmd/.gitignore,
 	processor/command/show_subcmd/trace_subcmd/print.rb,
 	processor/command/source.rb, processor/frame.rb: bin/trepanx now
-	stops in user script rather than the loader.  It does this by rather
-	hacky means, but it's the best I can find for now.  Added a null
+	stops in user script rather than the loader. It does this by rather
+	hacky means, but it's the best I can find for now. Added a null
 	output routine and the -q (silence) option on the source command.
 
 2010-11-08  rvm <rocky@gnu.org>
 
 	* processor/command/finish.rb, processor/command/list.rb: list.rb:
-	make it I hope more rational.  finish.rb: some cut-and-past typos.
+	make it I hope more rational. finish.rb: some cut-and-past typos.
 
 2010-11-07  rvm <rocky@gnu.org>
 
@@ -1858,8 +2050,13 @@
 
 2010-11-07  rvm <rocky@gnu.org>
 
-	* : commit de520fc0cd97e910e70ee6db496a0fc13344a815 Author: rvm
-	<rocky@gnu.org> Date:   Sun Nov 7 10:09:00 2010 -0500
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2010-11-07  rvm <rocky@gnu.org>
+
+	* app/run.rb, app/util.rb, lib/trepanning.rb: Pick up $0 from
+	Rubinius::Location#script when we are called via -Xdebug since it
+	hasn't been defined before.
 
 2010-11-06  rocky <rockyb@rubyforge.org>
 
@@ -1885,8 +2082,8 @@
 	processor/command/nexti.rb, processor/stepping.rb,
 	test/functional/test-finish.rb, test/functional/test-next.rb: Allow
 	breakpoints to be scoped. Fixes bugs in handling recursive "next"
-	and "finish".  Based on Rubinius commit # 3a1c111. See issue
-	Rubinius issue #558
+	and "finish". Based on Rubinius commit # 3a1c111. See issue Rubinius
+	issue #558
 
 2010-11-06  rocky <rockyb@rubyforge.org>
 
@@ -1941,7 +2138,7 @@
 	processor/command/show_subcmd/max_subcmd/string.rb,
 	processor/command/show_subcmd/max_subcmd/width.rb,
 	processor/default.rb, processor/frame.rb, processor/validate.rb: 
-	Replace "set debug stack" with more general "set hidelevel".  Fix up
+	Replace "set debug stack" with more general "set hidelevel". Fix up
 	some standalone code running. Use SubSubcommand where appropriate.
 
 2010-11-04  rvm <rocky@gnu.org>
@@ -1977,13 +2174,13 @@
 	test/functional/test-next.rb: Fix bug in breakpoint numbering. Fix
 	bug in restart when running bin/trepan breakpoint allows forms
 	nothing (current line) line as well as previous forms.
-	app/brkptmgr.rb: max should start off 0.  app/method.rb: routines
-	for working with compiled methods app/run.rb: use dbgr passed in.
-	            Don't smash restart_args, via set_restart, allow opts to be passed
-	in lib/trepanning merge dbussink's fix in rbx-head to reference
-	debugger command/disassemble.rb: had tropped off section header for
-	"all" processor/validate.rb: common routine to parse a breakpoint
-	position.
+	app/brkptmgr.rb: max should start off 0. app/method.rb: routines for
+	working with compiled methods app/run.rb: use dbgr passed in. Don't
+	smash restart_args, via set_restart,             allow opts to be
+	passed in lib/trepanning merge dbussink's fix in rbx-head to
+	reference debugger command/disassemble.rb: had tropped off section
+	header for "all" processor/validate.rb: common routine to parse a
+	breakpoint position.
 
 2010-10-19  rvm <rocky@gnu.org>
 
@@ -2007,7 +2204,7 @@
 
 	* test/functional/.gitignore, test/functional/fn_helper.rb,
 	test/functional/test-fn_helper.rb: Baby steps toward adding
-	functional test: test the test helper.  Some RDoc appeasements.
+	functional test: test the test helper. Some RDoc appeasements.
 
 2010-10-19  rocky <rockyb@rubyforge.org>
 
@@ -2015,8 +2212,8 @@
 	processor/command/finish.rb, processor/running.rb,
 	processor/stepping.rb: Add finish (step out) command.
 	app/breakpoint.rb: generalize paired breakpoints to more than two
-	which is needed for finish.  processor/breakpoint.rb: fix bugs
-	caused by refactoring
+	which is needed for finish. processor/breakpoint.rb: fix bugs caused
+	by refactoring
 
 2010-10-18  rvm <rocky@gnu.org>
 
@@ -2037,7 +2234,7 @@
 	* app/run.rb, lib/trepanning.rb, processor/command/disassemble.rb,
 	processor/frame.rb, processor/main.rb, processor/running.rb,
 	processor/stepping.rb: Hide level only if it makes sense. Start work
-	on finish. (Not complete).  Fix But in stepping test.
+	on finish. (Not complete). Fix But in stepping test.
 
 2010-10-17  rvm <rocky@gnu.org>
 
@@ -2070,10 +2267,25 @@
 	processor/command/pr.rb, processor/command/show.rb: DRY code with
 	respect to Mock setup. less hard-coding of command names via #{NAME}
 
+
 2010-10-16  rvm <rocky@gnu.org>
 
-	* : commit 3309874e7bfd623ce4c93e08812ee343f4f98d16 Author: rvm
-	<rocky@gnu.org> Date:   Sat Oct 16 10:16:11 2010 -0400
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+
+2010-10-16  rvm <rocky@gnu.org>
+
+	* processor/command/alias.rb, processor/command/backtrace.rb,
+	processor/command/base/cmd.rb, processor/command/continue.rb,
+	processor/command/directory.rb, processor/command/down.rb,
+	processor/command/eval.rb, processor/command/exit.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/info.rb, processor/command/irb.rb,
+	processor/command/kill.rb, processor/command/list.rb,
+	processor/command/next.rb, processor/command/ps.rb,
+	processor/command/restart.rb, processor/command/set.rb,
+	processor/command/show.rb, processor/command/source.rb,
+	processor/command/unalias.rb, processor/command/up.rb: Add
+	Trepan::Command#name and dry code with it.
 
 2010-10-14  rocky <rockyb@rubyforge.org>
 
@@ -2086,8 +2298,8 @@
 	processor/command/show_subcmd/debug_subcmd/dbgr.rb,
 	processor/command/step.rb, processor/main.rb, processor/running.rb,
 	test/unit/test-base-subcmd.rb: running.rb, step.rb: More work trying
-	to put into a normal command loop.  Add "set debug dbgr". Add test
-	of base commands.
+	to put into a normal command loop. Add "set debug dbgr". Add test of
+	base commands.
 
 2010-10-14  rvm <rocky@gnu.org>
 
@@ -2185,7 +2397,7 @@
 2010-10-08  rocky <rockyb@rubyforge.org>
 
 	* processor/command/info_subcmd/breakpoints.rb,
-	test/unit/test-cmd-exit.rb: Add unit test for exit.  Add help for
+	test/unit/test-cmd-exit.rb: Add unit test for exit. Add help for
 	"info breakpoints". Copied from rb-trepanning - Not quite accurate
 	yet.
 
@@ -2213,9 +2425,9 @@
 	processor/command/info_subcmd/breakpoints.rb,
 	processor/command/tbreak.rb, test/unit/test-app-brkptmgr.rb: More
 	better tests of breakpoint manager. There is some breakage remaining
-	though.  info_subcmd/breakpoints.rb: work on this. Again there's
-	some breakage from the bp manager merge Rakefile: add task
-	check:app. Correct check:command.
+	though. info_subcmd/breakpoints.rb: work on this. Again there's some
+	breakage from the bp manager merge Rakefile: add task check:app.
+	Correct check:command.
 
 2010-10-07  rocky <rockyb@rubyforge.org>
 
@@ -2228,7 +2440,7 @@
 	processor/command/next.rb, processor/command/nexti.rb,
 	processor/location.rb, processor/main.rb: lib/trepanning.rb,
 	nexti.rb, next.rb: make event names match rb-trepanning. Use string
-	not symbol.  location.rb: Reinstate print_location.
+	not symbol. location.rb: Reinstate print_location.
 
 2010-10-07  rocky <rockyb@rubyforge.org>
 
@@ -2250,7 +2462,7 @@
 
 	* app/breakpoint.rb, lib/trepanning.rb, test/unit/test-app-brkpt.rb: 
 	breakpoint.rb: respect setting id value when passed. Add some demo
-	code.  Add unit test for app/breakpoint.rb
+	code. Add unit test for app/breakpoint.rb
 
 2010-10-04  rocky <rockyb@rubyforge.org>
 
@@ -2385,8 +2597,9 @@
 
 	* .gemspec, AUTHORS, Rakefile, THANKS, app/options.rb, app/run.rb,
 	bin/.gitignore, bin/trepan, processor/command/break.rb: Add code to
-	invoke from outset. Complete with debugger options.  Needs
-	improvement to skip over the crap before main.__script__ starts.  Numerous other small changes.
+	invoke from outset. Complete with debugger options. Needs
+	improvement to skip over the crap before main.__script__ starts.
+	Numerous other small changes.
 
 2010-09-25  rocky <rockyb@rubyforge.org>
 
@@ -2431,11 +2644,12 @@
 	processor/command/delete.rb, processor/command/source.rb,
 	processor/frame.rb, processor/main.rb, test/unit/cmd-helper.rb,
 	test/unit/test-unit-exit.rb: debugger.rb : remove show_ip option.
-		      Goes in processor.  bang on breakpoint code. move some to
+	Goes in processor. 	      bang on breakpoint code. move some to
 	processor/breakpoint.rb processor/breakpoint.rb: more error checking
-	info app/frame.rb: describe() pass in options - add show IP parameter.                remove duplicate ip location app/breakpoint.rb: change
-	IP location indicator from + to @. Is this right? base/cmd.rb:
-	run_code() was wrong.  Other misc bugs fixed.
+	info  app/frame.rb: describe() pass in options - add show IP
+	parameter.               remove duplicate ip location
+	app/breakpoint.rb: change IP location indicator from + to @. Is this
+	right? base/cmd.rb: run_code() was wrong.  Other misc bugs fixed.
 
 2010-09-24  rocky <rockyb@rubyforge.org>
 
@@ -2469,7 +2683,7 @@
 	processor/command/show_subcmd/max_subcmd/width.rb,
 	processor/default.rb, processor/eval.rb, processor/main.rb: Add max
 	set/show subcommands "info program" processor eval now sets filename
-	and we now store breakpoint ids.  prompt is more inline with other
+	and we now store breakpoint ids. prompt is more inline with other
 	debuggers :-(
 
 2010-09-23  rocky <rockyb@rubyforge.org>
@@ -2504,7 +2718,7 @@
 	processor/command/set_subcmd/different.rb,
 	processor/command/show_subcmd/different.rb, processor/default.rb,
 	processor/mock.rb, processor/subcmd.rb: Finish up last of commands
-	to be converted from reference debugger.  Add some of routines from
+	to be converted from reference debugger. Add some of routines from
 	trepan for 1.9.2.
 
 2010-09-23  rocky <rockyb@rubyforge.org>
@@ -2616,8 +2830,8 @@
 	processor/mock.rb, test/unit/.gitignore, test/unit/cmd-helper.rb,
 	test/unit/test-cmd-help.rb, test/unit/test-cmd-kill.rb,
 	test/unit/test-io-input.rb, test/unit/test-proc-load_cmds.rb: Get
-	command loading boilerplate. Help is there now. Interface added.
-	And even some of the unit tests!
+	command loading boilerplate. Help is there now. Interface added. And
+	even some of the unit tests!
 
 2010-09-21  rocky <rockyb@rubyforge.org>
 
@@ -2638,7 +2852,7 @@
 	debugger/command/set.rb, debugger/command/show.rb,
 	debugger/command/step.rb, debugger/command/tb.rb,
 	debugger/commands.rb, debugger/display.rb, debugger/frame.rb: Put
-	all commands in the 'command' directory.  Add temporary hack to keep
+	all commands in the 'command' directory. Add temporary hack to keep
 	Command.command singleton array from growing on running each
 	debugger command.
 
