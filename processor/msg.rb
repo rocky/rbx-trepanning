@@ -3,10 +3,9 @@
 require 'rubygems'; require 'require_relative'
 require_relative '../app/util'
 require_relative 'virtual'
-class Trepan:: CmdProcessor < Trepan::VirtualCmdProcessor
 
+class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   attr_accessor :ruby_highlighter
-  
   def errmsg(message, opts={})
     if message.kind_of?(Array)
       message.each do |mess|
