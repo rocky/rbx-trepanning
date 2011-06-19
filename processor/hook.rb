@@ -66,9 +66,9 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     @cmdloop_prehooks       = Hook.new
     @unconditional_prehooks = Hook.new
     
-    irb_cmd = commands['irb']
+    irb_cmd = commands['shell']
     @autoirb_hook  = ['autoirb', 
-                      Proc.new{|*args| irb_cmd.run(['irb']) if irb_cmd}]
+                      Proc.new{|*args| irb_cmd.run(['shell']) if irb_cmd}]
     
     @debug_dbgr_hook = ['dbgdbgr',
                         Proc.new{|*args| 

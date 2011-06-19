@@ -28,10 +28,8 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
             gsub(/\.rbc$/, '.rb')
         end
       end
-      return filename
-    else
-      filename.gsub(/\.rbc$/, '.rb')
     end
+    return filename.gsub(/\.rbc$/, '.rb')
   end
 
   # Return the text to the current source line.

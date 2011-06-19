@@ -2,10 +2,10 @@
 require 'irb'
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
-require_relative '../../app/irb'
 class Trepan::Command::IRBCommand < Trepan::Command
 
   unless defined?(HELP)
+    require_relative '../../app/irb'
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME} [-d]
@@ -108,11 +108,11 @@ Here then is a loop to query VM stack values:
     when :finish
       @proc.finish 
     when :next
-      @proc.next # (1, {})
+      @proc.step ('next', 1, {})
     when :quit
       @proc.quit
     when :step
-      @proc.step # (1, {})
+      @proc.step ('step', 1, {})
     else
       @proc.print_location
     end
