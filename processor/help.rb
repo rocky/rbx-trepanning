@@ -59,8 +59,9 @@ class Trepan
 
     # Error message when subcommand asked for but doesn't exist
     def undefined_subcmd(cmd, subcmd)
-      errmsg(('Undefined "%s" subcommand: "%s". ' + 
-              'Try "help %s *".') % [cmd, subcmd, cmd])
+      ambig = settings[:abbrev] ? 'or ambiguous ' : ''
+      errmsg(['Undefined %s"%s" subcommand: "%s". ' % [ambig, cmd, subcmd],
+              'Try "help %s *".' % cmd])
     end
 
   end

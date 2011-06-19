@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
-require 'columnize'
-require_relative '../base/subcmd'
-require_relative '../../../app/frame'
+require_relative 'locals'
 
-class Trepan::Subcommand::InfoGlobals < Trepan::Subcommand
-  unless defined?(HELP)
+class Trepan::SubSubcommand::InfoVariablesGlobals < Trepan::SubSubcommand
+  Trepan::Util.suppress_warnings {
     Trepanning::Subcommand.set_name_prefix(__FILE__, self)
     HELP         = <<-EOH
 #{CMD}
@@ -19,34 +17,39 @@ EOH
     SHORT_HELP   = 'Show global variables'
     MIN_ARGS     = 0
     MAX_ARGS     = 1
-    MIN_ABBREV   = 'gl'.size 
     NEED_STACK   = true
+  }
+
+  def get_names
+    global_variables.sort
   end
 
   def run(args)
-    if args.size == 3
+    if args.size == 2
       if 0 == 'names'.index(args[-1].downcase)
-        if global_variables.empty?
+        names = get_names()
+        if names.empty?
             msg "No global variables defined."
         else
           section "Global variable names:"
           width = settings[:maxwidth]
-          mess = Columnize::columnize(global_variables.sort, 
+          mess = Columnize::columnize(names, 
                                       @proc.settings[:maxwidth], '  ',
                                       false, true, ' ' * 2).chomp
           msg mess
         end
       else
-        errmsg("unrecognized argument #{args[2]}")
+        errmsg("unrecognized argument: #{args[-1]}")
       end
-    elsif args.size == 2
-      if global_variables.empty?
+    elsif args.size == 1
+      names = get_names
+      if names.empty?
         msg "No global variables defined."
       else
         section "Global variables:"
-        global_variables.sort.each do |var_name| 
-          s = @proc.debug_eval(var_name)
-          msg("#{var_name} = #{s.inspect}")
+        names.each do |var_name| 
+          s = @proc.debug_eval(var_name.to_s)
+          msg("#{var_name} = #{s.inspect}", :code=>true)
         end
       end
     else
@@ -57,8 +60,10 @@ end
 
 if __FILE__ == $0
   # Demo it.
-  require_relative '../../mock'
-  cmd = MockDebugger::sub_setup(Trepan::Subcommand::InfoGlobals, false)
+  require_relative '../../../mock'
+  require_relative '../variables'
+  cmd = MockDebugger::subsub_setup(Trepan::Subcommand::InfoVariables, 
+                                   Trepan::SubSubcommand::InfoVariablesGlobals)
   cmd.run(cmd.prefix)
   cmd.run(cmd.prefix + ['name'])
 end

@@ -16,17 +16,19 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       return File.basename(filename)
     end
     if resolve
-      filename = LineCache::map_file(filename)
+      try_filename = LineCache::map_file(filename)
+      filename = try_filename || filename
       if !File.exist?(filename) 
         if (try_filename = find_load_path(filename))
-          try_filename
+          return try_filename
         elsif (try_filename = resolve_file_with_dir(filename))
-          try_filename
+          return try_filename
         else
-          File.expand_path(Pathname.new(filename).cleanpath.to_s).
+          return File.expand_path(Pathname.new(filename).cleanpath.to_s).
             gsub(/\.rbc$/, '.rb')
         end
       end
+      return filename
     else
       filename.gsub(/\.rbc$/, '.rb')
     end

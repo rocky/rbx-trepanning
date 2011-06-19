@@ -2,6 +2,7 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'base/cmd'
+require_relative '../../app/util'
 require_relative '../breakpoint'
 require_relative '../../app/breakpoint'
 
@@ -12,21 +13,18 @@ require_relative '../../app/breakpoint'
 # NOTE: The enable command  subclasses this, so beware when changing! 
 class Trepan::Command::DisableCommand < Trepan::Command
 
-  # Silence already initialized constant .. warnings
-  old_verbose = $VERBOSE  
-  $VERBOSE    = nil
-  NAME = File.basename(__FILE__, '.rb')
-  HELP = <<-HELP
+  Trepan::Util.suppress_warnings {
+    NAME = File.basename(__FILE__, '.rb')
+    HELP = <<-HELP
 #{NAME} [display] bpnumber [bpnumber ...]
     
 Disables the breakpoints given as a space separated list of breakpoint
 numbers. See also "info break" to get a list.
   HELP
 
-  CATEGORY      = 'breakpoints'
-  SHORT_HELP    = 'Disable some breakpoints'
-
-  $VERBOSE      = old_verbose 
+    CATEGORY      = 'breakpoints'
+    SHORT_HELP    = 'Disable some breakpoints'
+  }
 
   def initialize(proc)
     super
