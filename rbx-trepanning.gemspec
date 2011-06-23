@@ -8,7 +8,7 @@ require File.dirname(__FILE__) + "/app/options" unless
 
 Gem::Specification.new do |s|
   s.add_dependency('columnize')
-  s.add_dependency('diff-lcs') # For testing only
+  s.add_development_dependency('diff-lcs') # For testing only
   s.add_dependency('rbx-require-relative', '>=0.0.4')
   s.add_dependency('rbx-linecache', '~>1.2')
   s.authors      = ['R. Bernstein']

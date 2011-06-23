@@ -15,7 +15,7 @@ Show class constants of the current stack frame.
 Normally for each which show both the name and value. If you just
 want a list of names add parameter 'names'.
 EOH
-    SHORT_HELP   = 'Show instance variables of the current stack frame'
+    SHORT_HELP   = 'Show class constants via the current stack frame'
     MIN_ABBREV   = 'co'.size
     MIN_ARGS     = 0
     MAX_ARGS     = 1
