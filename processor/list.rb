@@ -20,15 +20,16 @@ class Trepan
     # Parse a list command. On success return:
     #   - the line number - a Fixnum
     #   - file name
+    #   - last line
     def parse_list_cmd(position_str, listsize, center_correction=0)
-      iseq = nil
+      cm = nil
       if position_str.empty?
         filename = frame.file
         first = [1, frame.line - center_correction].max
       else
         list_cmd_parse = parse_list(position_str,
                                     :file_exists_proc => file_exists_proc)
-        return [nil] * 4 unless list_cmd_parse
+        return [nil] * 3 unless list_cmd_parse
         last = list_cmd_parse.num
         position = list_cmd_parse.position
 
@@ -50,18 +51,16 @@ class Trepan
         else
           meth_or_frame, filename, offset, offset_type = 
             parse_position(position)
-          return [nil] * 4 unless filename
+          return [nil] * 3 unless filename
           if offset_type == :line
             first = offset
           elsif meth_or_frame
-            if iseq = meth_or_frame.iseq
-              iseq, first, vm_offset = 
-                position_to_line_and_offset(meth_or_frame, filename, position, 
-                                            offset_type)
-              unless first
+            first, vm_offset = 
+              position_to_line_and_offset(meth_or_frame, filename, position, 
+                                          offset_type)
+            unless first
               errmsg("Unable to get location in #{meth_or_frame}")
-                return [nil] * 4 
-              end
+              return [nil] * 4 
             end
           elsif !offset 
             first = 1
@@ -79,12 +78,12 @@ class Trepan
         last = first + listsize - 1 unless last
       end
       LineCache::cache(filename) unless LineCache::cached?(filename)
-      return [iseq, filename, first, last]
+      return [filename, first, last]
     end
     
     def no_frame_msg_for_list
       errmsg("No Ruby program loaded.")
-      return nil, nil, nil, nil
+      return nil, nil, nil
     end
     
   end

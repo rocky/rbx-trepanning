@@ -4,7 +4,7 @@ require 'rubygems'
 require 'require_relative'
 require 'linecache'
 require_relative 'base/cmd'
-require_relative '../../app/cmd_parse'
+require_relative '../list'
 
 class Trepan::Command::ListCommand < Trepan::Command
   unless defined?(HELP)
@@ -43,8 +43,9 @@ A LOCATION is a either
 If the location form is used with a subsequent parameter, the
 parameter is the starting line number.  When there two numbers are
 given, the last number value is treated as a stopping line unless it
-is less than the start line, in which case it is taken to mean the
-number of lines to list instead.
+is positive and less than the start line. In this case, it is taken to
+mean the number of lines to list instead. If last is negative, we start
+that many lines back from first and list to first.
 
 Wherever a number is expected, it does not need to be a constant --
 just something that evaluates to a positive integer.
@@ -60,6 +61,7 @@ Some examples:
 #{NAME} foo.rb  5 6  # list lines 5 and 6 of foo.rb
 #{NAME} foo.rb  5 2  # Same as above, since 2 < 5.
 #{NAME} foo.rb:5 2   # Same as above
+#{NAME} foo.rb 15 -5 # List lines 10..15 of foo
 #{NAME} FileUtils.cp # List lines around the FileUtils.cp function.
 #{NAME} .            # List lines centered from where we currently are stopped
 #{NAME} . 3          # List 3 lines starting from where we currently are stopped
@@ -83,89 +85,12 @@ enabled, while at line 255 there is an breakpoint 2 which is
 disabled.
     HELP
 
-    ALIASES       = %W(l #{NAME}> l>)
+    ALIASES       = %W(l #{NAME}> l> cat)
     CATEGORY      = 'files'
     MAX_ARGS      = 3
     SHORT_HELP    = 'List source code'
   end
 
-  include Trepan::CmdParser
-  
-  # If last is less than first, assume last is a count rather than an
-  # end line number.
-  def adjust_last(first, last)
-    last < first ? first + last - 1 : last
-  end
-
-  # What a f*cking mess. Necessitated I suppose because we want to 
-  # allow somewhat flexible parsing with either module names, files or none
-  # and optional line counts or end-line numbers.
-  
-  # Parses arguments for the "list" command and returns the tuple:
-  # filename, start, last
-  # or sets these to nil if there was some problem.
-  def parse_list_cmd(arg_str, listsize, center_correction)
-
-    cm = nil
-    if arg_str.empty?
-      filename = @proc.frame.file
-      first = [1, @proc.frame.line - center_correction].max
-    else
-      list_cmd_parse = parse_list(arg_str, 
-                                  :file_exists_proc => @proc.file_exists_proc)
-      last = list_cmd_parse.num
-      position  = list_cmd_parse.position
-
-      if position.is_a?(String)
-        if position == '-'
-          return no_frame_msg unless @proc.line_no
-          first = [1, @proc.line_no - 2*listsize - 1].max
-        elsif position == '.'
-          return no_frame_msg unless @proc.line_no
-          if (second = list_cmd_parse.num)
-            first = @proc.frame.line 
-            last = adjust_last(first, second)
-          else
-            first = [1, @proc.frame.line - center_correction].max
-            last = first + listsize - 1
-          end
-        end
-        filename = @proc.frame.file
-      else
-        cm, filename, offset, offset_type = @proc.parse_position(position)
-        return unless filename
-        if offset_type == :line
-          first = offset
-        elsif cm
-          first, vm_offset = 
-            @proc.position_to_line_and_offset(cm, filename,
-                                              position,  offset_type)
-          return [nil] * 3 unless first
-        elsif !offset 
-          # Have just a filename. Go with line 1
-          first = 1
-        else
-          errmsg "Dunno what to do here"
-          return [nil] * 3
-        end
-      end
-    end
-
-    if last
-      last = adjust_last(first, last)
-    else
-      first = [1, first - center_correction].max 
-      last = first + listsize - 1 unless last
-    end
-    LineCache::cache(filename) unless LineCache::cached?(filename)
-    return cm, filename, first, last
-  end
-
-  def no_frame_msg
-    errmsg("No Ruby program loaded.")
-    return nil, nil, nil
-  end
-    
   def run(args)
     if args.empty? and not frame
       errmsg("No Ruby program loaded.")
@@ -179,10 +104,11 @@ disabled.
         (listsize-1) / 2
       end
 
-    cm, filename, first, last = 
-      parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
+    filename, first, last = 
+      @proc.parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
     return unless filename
-    breaklist = @proc.brkpts.line_breaks(cm)
+    # FIXME: add back in breaklist
+    breaklist = [] # @proc.brkpts.line_breaks(cm)
 
     # We now have range information. Do the listing.
     max_line = LineCache::size(filename)
