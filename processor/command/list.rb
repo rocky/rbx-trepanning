@@ -123,7 +123,7 @@ disabled.
         elsif position == '.'
           return no_frame_msg unless @proc.line_no
           if (second = list_cmd_parse.num)
-            first = @proc.frame_line 
+            first = @proc.frame.line 
             last = adjust_last(first, second)
           else
             first = [1, @proc.frame.line - center_correction].max
