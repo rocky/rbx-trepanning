@@ -104,11 +104,10 @@ disabled.
         (listsize-1) / 2
       end
 
-    filename, first, last = 
+    cm, filename, first, last = 
       @proc.parse_list_cmd(@proc.cmd_argstr, listsize, center_correction)
     return unless filename
-    # FIXME: add back in breaklist
-    breaklist = [] # @proc.brkpts.line_breaks(cm)
+    breaklist = @proc.brkpts.line_breaks(cm)
 
     # We now have range information. Do the listing.
     max_line = LineCache::size(filename)
@@ -219,16 +218,11 @@ if __FILE__ == $0
   # Start line finish line 
   run_cmd2(cmd, %W(#{cmd.name} Columnize.columnize 40 50))
 
-  # puts '--' * 10
-  # run_cmd2([cmd.name, os.path.abspath(__file__)+':3', '4'])
-  # puts '--' * 10
-  # run_cmd2([cmd.name, os.path.abspath(__file__)+':3', '12-10'])
-  # run_cmd2([cmd.name, 'os.path:5'])
-
-  brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
-  brkpt_cmd.run(['break'])
   line = __LINE__
-  run_cmd2(cmd, [cmd.name, __LINE__.to_s])
+  brkpt_cmd = cmd.proc.instance_variable_get('@commands')['break']
+  cmd.proc.instance_variable_set('@cmd_argstr', "#{__FILE__} #{line}")
+  brkpt_cmd.run(['break', __FILE__, line.to_s])
+  run_cmd2(cmd, [cmd.name, line.to_s])
 
   # disable_cmd = cmd.proc.instance_variable_get('@commands')['disable']
   # disable_cmd.run(['disable', '1'])

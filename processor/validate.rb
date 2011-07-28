@@ -263,9 +263,10 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
       filename = canonic_file(info.container)
       cm = 
         if canonic_file(@frame.file) == filename 
-          cm = @frame.method
           if :line == info.position_type
-            find_method_with_line(cm, info.position)
+            find_method_with_line(@frame.method, info.position)
+          else
+            @frame.method
           end
         else 
           LineCache.compiled_method(filename)

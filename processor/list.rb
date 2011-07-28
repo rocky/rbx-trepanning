@@ -18,6 +18,7 @@ class Trepan
     end
 
     # Parse a list command. On success return:
+    #   - compiled method
     #   - the line number - a Fixnum
     #   - file name
     #   - last line
@@ -29,7 +30,7 @@ class Trepan
       else
         list_cmd_parse = parse_list(position_str,
                                     :file_exists_proc => file_exists_proc)
-        return [nil] * 3 unless list_cmd_parse
+        return [nil] * 4 unless list_cmd_parse
         last = list_cmd_parse.num
         position = list_cmd_parse.position
 
@@ -48,15 +49,17 @@ class Trepan
             end
           end
           filename = frame.file
+          cm = frame.method
         else
-          meth_or_frame, filename, offset, offset_type = 
+          cm, filename, offset, offset_type = 
             parse_position(position)
-          return [nil] * 3 unless filename
+
+          return [nil] * 4 unless filename
           if offset_type == :line
             first = offset
-          elsif meth_or_frame
+          elsif cm
             first, vm_offset = 
-              position_to_line_and_offset(meth_or_frame, filename, position, 
+              position_to_line_and_offset(cm, filename, position, 
                                           offset_type)
             unless first
               errmsg("Unable to get location in #{meth_or_frame}")
@@ -78,12 +81,12 @@ class Trepan
         last = first + listsize - 1 unless last
       end
       LineCache::cache(filename) unless LineCache::cached?(filename)
-      return [filename, first, last]
+      return [cm, filename, first, last]
     end
     
     def no_frame_msg_for_list
       errmsg("No Ruby program loaded.")
-      return nil, nil, nil
+      return [nil] * 4
     end
     
   end
@@ -109,8 +112,11 @@ if __FILE__ == $0
   p cmdproc.parse_list_cmd('@0', 10)
   p cmdproc.parse_list_cmd("#{__LINE__}", 10)
   p cmdproc.parse_list_cmd("#{__FILE__}   @0", 10)
+  p '-' * 40
+  # require_relative '../lib/trepanning'; debugger
   p cmdproc.parse_list_cmd("#{__FILE__}:#{__LINE__}", 10)
   p cmdproc.parse_list_cmd("#{__FILE__} #{__LINE__}", 10)
+  p '-' * 40
   p cmdproc.parse_list_cmd("cmdproc.errmsg", 10)
   p cmdproc.parse_list_cmd("cmdproc.errmsg:@0", 10)
   p cmdproc.parse_list_cmd("cmdproc.errmsg:@0", -10)
