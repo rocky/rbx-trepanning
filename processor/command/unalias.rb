@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
-require_relative 'base/cmd'
+require_relative '../command'
 
 class Trepan::Command::UnaliasCommand < Trepan::Command
 

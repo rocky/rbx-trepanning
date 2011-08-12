@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'; require 'require_relative'
 require_relative 'cmd-helper'
-require_relative '../../processor/main'
+require_relative '../../processor'
 ## require_relative '../../app/core'
 
 # Test Trepan:CmdProcessor

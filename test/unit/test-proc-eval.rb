@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'; require 'require_relative'
 require_relative 'cmd-helper'
-require_relative '../../processor/main' # Have to include before frame!
-                                        # FIXME
+require_relative '../../processor'
 require_relative '../../app/frame'
 require_relative '../../processor/eval'
 require_relative '../../processor/mock'

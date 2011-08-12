@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Simulate I/O using lists of strings.
 
 require 'rubygems'; require 'require_relative'
-require_relative 'base_io'
+require_relative '../io'
 
 # Simulate I/O using an array of strings. Sort of like StringIO, but
 # even simplier.

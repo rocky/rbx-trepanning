@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
-require_relative 'cmd'
+require_relative '../../command'
 require_relative '../../subcmd'
 require_relative '../../help'
 require_relative '../../../app/complete'

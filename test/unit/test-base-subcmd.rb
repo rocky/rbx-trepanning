@@ -2,7 +2,7 @@
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
 # require_relative '../../app/core'
-require_relative '../../processor/main'
+require_relative '../../processor'
 require_relative '../../processor/command/exit'
 require_relative '../../processor/command/base/subcmd'
 

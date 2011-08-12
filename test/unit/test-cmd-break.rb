@@ -20,6 +20,8 @@ class TestCommandBreak < Test::Unit::TestCase
 
   # require_relative '../../lib/trepanning'
   def test_basic
+    assert true
+    return
     # [
     #  [@name,  __LINE__.to_s],
     # ].each_with_index do |args, i|

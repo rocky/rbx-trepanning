@@ -16,7 +16,7 @@ class Trepan
   #  - another interface in another process or computer
   class Interface
 
-    attr_accessor :interactive, :history_io, :history_save, :input, :output
+    attr_accessor :history_io, :history_save, :interactive, :input, :output
 
     unless defined?(YES)
       YES = %w(y yes oui si yep ja)

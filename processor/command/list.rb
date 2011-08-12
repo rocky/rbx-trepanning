@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'require_relative'
 require 'linecache'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../list'
 
 class Trepan::Command::ListCommand < Trepan::Command

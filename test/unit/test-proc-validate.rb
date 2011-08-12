@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
-require_relative '../../processor/main' # Have to include before validate!
-                                        # FIXME
+require_relative '../../processor'
 require_relative '../../processor/validate'
 require_relative '../../app/mock'
 require_relative 'cmd-helper'
@@ -60,10 +59,10 @@ class TestValidate < Test::Unit::TestCase
     @cmdproc.frame_setup
     file = File.basename(__FILE__)
     [
-     [__FILE__, [false, file, nil, nil]],
+     [__FILE__, [true, file, nil, nil]],
      ['@8', [true, file, 8, :offset]],
      [@line.to_s , [true, file, @line, :line]],
-     ['8' , [true, file, 8, :line]],
+     ['2' , [true, file, 2, :line]],
      ["#{__FILE__}:#{__LINE__}" , [true, file, __LINE__, :line]],
      ["#{__FILE__} #{__LINE__}" , [true, file, __LINE__, :line]]
     ].each do |pos_str, expected|

@@ -1,5 +1,5 @@
 require 'rubygems'; require 'require_relative'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../stepping'
 require_relative '../../app/breakpoint'
 

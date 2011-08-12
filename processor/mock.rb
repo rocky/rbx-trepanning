@@ -2,7 +2,7 @@
 # Mock setup for commands.
 require 'rubygems'; require 'require_relative'
 
-require_relative 'main'
+require_relative '../processor'
 
 # require_relative '../app/core'
 require_relative '../app/default'

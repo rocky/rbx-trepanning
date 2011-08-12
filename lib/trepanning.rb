@@ -8,7 +8,7 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/complete'       # command completion
 require_relative '../app/frame'
 require_relative '../app/util'           # get_dollar_0
-require_relative '../processor/main'
+require_relative '../processor'
 require_relative '../app/breakpoint'
 require_relative '../app/default'        # default debugger settings
 require_relative '../app/breakpoint'

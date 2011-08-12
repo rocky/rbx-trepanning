@@ -3,7 +3,7 @@
 
 # Our local modules
 require 'rubygems'; require 'require_relative'
-require_relative 'base_intf'
+require_relative '../interface'
 require_relative 'comcodes'
 require_relative '../io/input'
 require_relative '../io/tcpserver'

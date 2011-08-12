@@ -2,7 +2,7 @@
 # Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require 'pp'
-require_relative 'base/cmd'
+require_relative '../command'
 require_relative '../../app/cmd_parse'
 class Trepan::Command::ParseTreeCommand < Trepan::Command
   

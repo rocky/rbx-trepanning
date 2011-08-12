@@ -102,7 +102,7 @@ class Trepan
     end
 
     def list
-      @subcmds.keys.sort
+      @subcmds.keys.map{|k| k.to_s}.sort
     end
   end
 end
@@ -112,7 +112,7 @@ if __FILE__ == $0
 
   require 'rubygems'; require 'require_relative'
   require_relative 'mock'
-  require_relative 'command/base/cmd'
+  require_relative 'command'
 
   class Trepan::TestCommand < Trepan::Command
     

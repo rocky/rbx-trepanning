@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
-require_relative '../../processor/main' # Have to include before frame!
-                                        # FIXME
+require_relative '../../processor'
 require_relative '../../processor/frame'
 require_relative '../../processor/list'
 require_relative '../../processor/mock'

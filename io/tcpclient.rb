@@ -4,7 +4,7 @@
 
 require 'socket'
 require 'rubygems'; require 'require_relative'
-require_relative 'base_io'
+require_relative '../io'
 require_relative 'tcpfns'
 
 class Trepan 

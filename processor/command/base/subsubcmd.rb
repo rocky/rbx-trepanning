@@ -10,7 +10,7 @@
 # functions for command from module cmdfns.
 
 require 'rubygems'; require 'require_relative'
-require_relative 'cmd'
+require_relative '../../command'
 require_relative 'subcmd'
 
 class Trepan

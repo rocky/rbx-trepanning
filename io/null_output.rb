@@ -6,7 +6,7 @@
 # 
 
 require 'rubygems'; require 'require_relative'
-require_relative 'base_io'
+require_relative '../io'
 
 class Trepan::OutputNull < Trepan::OutputBase
   def initialize(out, opts={})

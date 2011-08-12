@@ -10,9 +10,9 @@ require 'rubygems'; require 'require_relative'
 %w(default breakpoint disassemble display eval eventbuf load_cmds location 
    frame hook msg running stepping validate).each do
   |mod_str|
-  require_relative mod_str
+  require_relative "processor/#{mod_str}"
 end
-## require_relative '../app/brkptmgr'
+require_relative 'app/brkptmgr'
 
 class Trepan
   class CmdProcessor < VirtualCmdProcessor
@@ -367,6 +367,7 @@ class Trepan
         end
       end
       undefined_command(cmd_name)
+      return false
     end
 
     # Error message when a command doesn't exist
@@ -389,7 +390,7 @@ end
 
 if __FILE__ == $0
   $0 = 'foo' # So we don't get here again
-  require_relative '../lib/trepanning'
+  require_relative 'lib/trepanning'
   dbg =  Trepan.new(:nx => true)
   cmdproc = dbg.instance_variable_get('@processor')
   cmdproc.msg('I am main')

@@ -10,7 +10,7 @@ class Trepan
     # Return an Array of String found from Array of String
     # +complete_ary+ which start out with String +prefix+.
     def complete_token(complete_ary, prefix)
-      complete_ary.select { |cmd| cmd.to_s.start_with?(prefix) }.sort
+      complete_ary.select { |cmd| cmd.to_s.start_with?(prefix) }.map{|cmd| cmd.to_s}.sort
     end
     
     def complete_token_with_next(complete_hash, prefix, cmd_prefix='')
