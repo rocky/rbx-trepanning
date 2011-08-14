@@ -3,9 +3,7 @@
 require 'rake'
 require 'rubygems' unless 
   Object.const_defined?(:Gem)
-require File.dirname(__FILE__) + "/app/options" unless 
-  Object.const_defined?(:'Trepan')
-
+require File.dirname(__FILE__) + "/app/options"
 Gem::Specification.new do |s|
   s.add_dependency('columnize')
   s.add_development_dependency('diff-lcs') # For testing only
@@ -31,7 +29,8 @@ EOF
   s.homepage      = 'http://wiki.github.com/rocky/rbx-trepanning'
   s.name          = 'rbx-trepanning'
   s.license       = 'MIT'
-  s.platform      = Gem::Platform::new ['universal', 'rubinius', '1.2']
+  s.platform      = Gem::Platform::new ['universal', 'rubinius', 
+                                        1.2]
   s.require_paths = ['lib']
   s.required_ruby_version = '~> 1.8.7'
   s.summary      = 'Trepan Ruby Debugger for Rubinius 1.2.4 and higher'
