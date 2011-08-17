@@ -7,7 +7,6 @@ require_relative '../interface/comcodes'  # communication codes
 module Trepanning
   include Trepanning::RemoteCommunication
   def start_client(options)
-    puts "Client option given"
     dbgr = Trepan.new(:client      => true,
                       :cmdfiles    => [],
                       :initial_dir => options[:chdir],
