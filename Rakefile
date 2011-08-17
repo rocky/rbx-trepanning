@@ -1,10 +1,11 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
-# Are we Rubinius? We'll test by checking the specific function we need.
-raise RuntimeError, 'This package is for Rubinius 1.2.x only!' unless
+# Are we Rubinius? The right versions of it? 
+raise RuntimeError, 
+'This package is for Rubinius 1.2.[34] or 2.0.x only!' unless
   Object.constants.include?('Rubinius') && 
   Rubinius.constants.include?('VM') && 
-  Rubinius::VERSION =~ /1\.2.+/
+  Rubinius::VERSION =~ /1\.2\.[34]/ || Rubinius::VERSION =~ /2\.0/
 
 require 'rubygems'
 
@@ -24,6 +25,20 @@ task :gem=>:gemspec do
     sh "gem build #{Gemspec_filename}"
     FileUtils.mkdir_p 'pkg'
     FileUtils.mv gemspec.file_name, 'pkg'
+
+    # Now make a 2.0 package by changing 1.2 to 2.0 in the gemspec
+    # and creating another gemspec and moving that accordingly
+    lines = File.open(Gemspec_filename).readlines.map{|line|
+      line.gsub(/'universal', 'rubinius', '1\.2'/,
+                "'universal', 'rubinius', '2.0'");
+    }
+
+    two_filename = gemspec.file_name.gsub(/1\.2/, '2.0')
+    gemspec_filename2 = "rbx-trepanning.gemspec"
+    f = File.open(gemspec_filename2, "w")
+    f.write(lines); f.close
+    sh "gem build #{gemspec_filename2}"
+    FileUtils.mv("#{two_filename}", "pkg/")
   end
 end
 

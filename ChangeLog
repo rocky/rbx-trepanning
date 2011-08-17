@@ -1,3 +1,131 @@
+2011-08-15  rocky <rockyb@rubyforge.org>
+
+	* processor/command/exit.rb: Test for valid exit return code and
+	update help doc. Sync with MRI 1.9 and Perl.
+
+2011-08-14  rocky <rockyb@rubyforge.org>
+
+	* processor.rb, processor/msg.rb, processor/validate.rb: Sync with
+	rb-trepanning and Perl version.
+
+2011-08-14  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb, rbx-trepanning.gemspec: Go over version numbering
+	yet again.
+
+2011-08-14  rocky <rockyb@rubyforge.org>
+
+	* processor/command/kill.rb, test/unit/test-app-options.rb: 
+	test-app-options.rb: testing help/version options was killing the
+	rest of the tests Speaking of killing.. add more robust kill
+	checking and fix an outright bug in name-to-number access. Sync with
+	rb-trepanning.
+
+2011-08-11  rocky <rockyb@rubyforge.org>
+
+	* app/complete.rb, interface.rb, interface/base_intf.rb,
+	interface/script.rb, interface/server.rb, interface/user.rb, io.rb,
+	io/base_io.rb, io/input.rb, io/null_output.rb, io/string_array.rb,
+	io/tcpclient.rb, io/tcpserver.rb, lib/trepanning.rb, processor.rb,
+	processor/command.rb, processor/command/alias.rb,
+	processor/command/backtrace.rb, processor/command/base/cmd.rb,
+	processor/command/base/subcmd.rb, processor/command/base/submgr.rb,
+	processor/command/base/subsubcmd.rb, processor/command/break.rb,
+	processor/command/complete.rb, processor/command/condition.rb,
+	processor/command/continue.rb, processor/command/delete.rb,
+	processor/command/directory.rb, processor/command/disable.rb,
+	processor/command/disassemble.rb, processor/command/display.rb,
+	processor/command/edit.rb, processor/command/eval.rb,
+	processor/command/exit.rb, processor/command/finish.rb,
+	processor/command/frame.rb, processor/command/help.rb,
+	processor/command/kill.rb, processor/command/list.rb,
+	processor/command/macro.rb, processor/command/next.rb,
+	processor/command/nexti.rb, processor/command/parsetree.rb,
+	processor/command/pr.rb, processor/command/ps.rb,
+	processor/command/restart.rb, processor/command/save.rb,
+	processor/command/server.rb, processor/command/shell.rb,
+	processor/command/source.rb, processor/command/step.rb,
+	processor/command/tbreak.rb, processor/command/unalias.rb,
+	processor/command/undisplay.rb, processor/command/up.rb,
+	processor/main.rb, processor/mock.rb, processor/subcmd.rb,
+	test/unit/test-base-cmd.rb, test/unit/test-base-subcmd.rb,
+	test/unit/test-cmd-break.rb, test/unit/test-cmd-parse_list_cmd.rb,
+	test/unit/test-command.rb, test/unit/test-proc-eval.rb,
+	test/unit/test-proc-frame.rb, test/unit/test-proc-list.rb,
+	test/unit/test-proc-load_cmds.rb, test/unit/test-proc-main.rb,
+	test/unit/test-proc-validate.rb, test/unit/test-subcmd-help.rb: 
+	Nicer file names for base classes.
+
+2011-07-28  rocky <rockyb@rubyforge.org>
+
+	* processor/command/list.rb, processor/list.rb,
+	processor/validate.rb: Listing again shows breakpoints. Some bugs in
+	higher-level (non-kpeg) parsing fixed.
+
+2011-07-27  rvm <rocky@gnu.org>
+
+	* processor/command/list.rb, processor/list.rb: Sync list with
+	trepanning. Thre are some bugs to be worked out still...
+
+2011-07-27  rvm <rocky@gnu.org>
+
+	* app/cmd_parse.kpeg, app/cmd_parser.rb, processor/command/list.rb,
+	processor/list.rb, test/unit/test-proc-list.rb: Sync with
+	rb-trepanning - break out list validation and generalize what we
+	allow.
+
+2011-06-22  rocky <rockyb@rubyforge.org>
+
+	* processor/command/info_subcmd/variables_subcmd/constant.rb,
+	processor/help.rb, processor/subcmd.rb, rbx-trepanning.gemspec: 
+	rbx-trepanning.gemspec: diff-lcs dependency is only a development
+	dependency. Rest: small changes.
+
+2011-06-19  rocky <rockyb@rubyforge.org>
+
+	* processor/msg.rb: Sync with rb8-trepanning
+
+2011-06-19  rocky <rockyb@rubyforge.org>
+
+	* processor/msg.rb: Sync with rb8-trepanning
+
+2011-06-19  rocky <rockyb@rubyforge.org>
+
+	Merge branch 'master' of github.com:rocky/rbx-trepanning
+	Conflicts: 	processor/location.rb
+
+2011-06-19  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, processor/command/base/subsubmgr.rb,
+	processor/command/disable.rb, processor/command/down.rb,
+	processor/command/enable.rb, processor/command/help.rb,
+	processor/command/info.rb,
+	processor/command/info_subcmd/globals.rb,
+	processor/command/info_subcmd/locals.rb,
+	processor/command/info_subcmd/variables.rb,
+	processor/command/info_subcmd/variables_subcmd/.gitignore,
+	processor/command/info_subcmd/variables_subcmd/class.rb,
+	processor/command/info_subcmd/variables_subcmd/constant.rb,
+	processor/command/info_subcmd/variables_subcmd/globals.rb,
+	processor/command/info_subcmd/variables_subcmd/instance.rb,
+	processor/command/info_subcmd/variables_subcmd/locals.rb,
+	processor/command/up.rb, processor/help.rb, processor/location.rb,
+	processor/msg.rb, processor/subcmd.rb: Add/move "info variables
+	class, constants, locals, globals. Colorize output if highlght.
+	Correct abbreviation testing and have it respect abbrev mode. Use
+	Better way to silence warnings. Sync with rb8-trepanning.
+
+2011-06-16  rvm <rocky@gnu.org>
+
+	* app/irb.rb, app/options.rb, processor/command/shell.rb,
+	processor/hook.rb, processor/location.rb, test/unit/cmd-helper.rb,
+	test/unit/test-proc-location.rb: Fix bugs in "set autolist" and
+	"step/next" inside irb. sync with rb8-trepanning.
+
+2011-06-12  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, app/options.rb, processor/mock.rb: Release 0.0.9
+
 2011-06-10  rocky <rockyb@rubyforge.org>
 
 	* NEWS, processor/command/set_subcmd/reload.rb,
