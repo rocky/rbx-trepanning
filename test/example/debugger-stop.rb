@@ -12,5 +12,5 @@ module Foo
     5
   end
 end
-debugger
+debugger(:immediate=>true)
 Foo::five

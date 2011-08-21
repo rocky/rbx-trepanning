@@ -61,34 +61,6 @@ class Trepan
                                   #  current_thread, pc_offset]
 
 
-    unless defined?(EVENT2ICON)
-      # Event icons used in printing locations.
-      EVENT2ICON = {
-        'brkpt'          => 'xx',
-        'tbrkpt'         => 'x1',
-        'c-call'         => 'C>',
-        'c-return'       => '<C',
-        'step-call'      => '->',
-        'call'           => '->',
-        'class'          => '::',
-        'coverage'       => '[]',
-        'debugger-call'  => ':o',
-        'end'            => '-|',
-        'line'           => '--',
-        'raise'          => '!!',
-        'return'         => '<-',
-        'start'          => '>>',
-        'switch'         => 'sw',
-        'trace-var'      => '$V',
-        'unknown'        => '?!',
-        'vm'             => 'VM',
-        'vm-insn'        => '..',
-      } 
-      # These events are important enough event that we always want to
-      # stop on them.
-      UNMASKABLE_EVENTS = Set.new(['end', 'raise', 'unknown'])
-    end
-
     def initialize(dbgr, settings={})
       @cmd_queue       = []
       @dbgr            =  dbgr
