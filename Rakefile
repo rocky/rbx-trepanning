@@ -33,8 +33,9 @@ task :gem=>:gemspec do
                 "'universal', 'rubinius', '2.0'");
     }
 
-    two_filename = gemspec.file_name.gsub(/1\.2/, '2.0')
-    gemspec_filename2 = "rbx-trepanning.gemspec"
+    two_filename = gemspec.dup.file_name.gsub(/1\.2/, '2.0')
+    FileUtils.cp("rbx-trepanning.gemspec", "rbx-trepanning-2.0.gemspec")
+    gemspec_filename2 = "rbx-trepanning-2.0.gemspec"
     f = File.open(gemspec_filename2, "w")
     f.write(lines); f.close
     sh "gem build #{gemspec_filename2}"

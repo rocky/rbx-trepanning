@@ -29,7 +29,7 @@ EOF
   s.homepage      = 'http://wiki.github.com/rocky/rbx-trepanning'
   s.name          = 'rbx-trepanning'
   s.license       = 'MIT'
-  s.platform      = Gem::Platform::new ['universal', 'rubinius', '2.0']
+  s.platform      = Gem::Platform::new ['universal', 'rubinius', '1.2']
   s.require_paths = ['lib']
   # s.required_ruby_version = '~> 1.8.7'
   s.summary      = 'Trepan Ruby Debugger for Rubinius 1.2.4 and higher'
