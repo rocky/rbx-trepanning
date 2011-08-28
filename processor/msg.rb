@@ -4,6 +4,8 @@ require 'rubygems'; require 'require_relative'
 require_relative '../app/util'
 require_relative 'virtual'
 
+begin require 'term/ansicolor'; rescue LoadError; end
+
 class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
   attr_accessor :ruby_highlighter
 
