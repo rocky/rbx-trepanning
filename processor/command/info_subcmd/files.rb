@@ -53,9 +53,10 @@ EOH
   include Trepanning
 
   def file_list
-    (LineCache.class_variable_get('@@file_cache').keys +
+    (LineCache.cached_files + 
      LineCache.class_variable_get('@@file2file_remap').keys).uniq
   end
+
   def complete(prefix)
     completions = ['.'] + file_list
     Trepan::Complete.complete_token(completions, prefix)
