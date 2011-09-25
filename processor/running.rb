@@ -148,7 +148,7 @@ class Trepan
 
       return true if 
         !frame || (@next_level < @stack_size &&
-                   Thread.current == @next_thread)
+                   Thread.current == @next_thread && @event != 'raise')
 
       if @step_count < 0  
         # We may eventually stop for some other reason, but it's not

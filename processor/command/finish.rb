@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../command'
 
 class Trepan::Command::FinishCommand < Trepan::Command
 
   unless defined?(HELP)
+    ALIASES      = %w(fin finish+ fin+)
+    CATEGORY     = 'running'
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
 #{NAME}
@@ -28,9 +30,7 @@ Examples:
 See also commands:
 'continue', 'break', 'next', 'nexti', 'step' for other ways to continue.
     HELP
-    ALIASES      = %w(fin finish+ fin+)
-    CATEGORY     = 'running'
-    # execution_set = ['Running']
+    NEED_RUNNING = true
     MAX_ARGS     = 1   # Need at most this many. 
     NEED_STACK   = true
     SHORT_HELP   = 'Step to end of current method (step out)'
