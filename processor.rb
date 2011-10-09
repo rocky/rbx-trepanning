@@ -97,6 +97,8 @@ class Trepan
         self.send("#{submod}_initialize")
       end
       hook_initialize(commands)
+      # unconditional_prehooks.insert_if_new(-1, *@trace_hook) if
+      # settings[:traceprint]
     end
 
     def compute_prompt
@@ -234,9 +236,13 @@ class Trepan
       skip_command = before_cmdloop
       while not @leave_cmd_loop do
         begin
-          if !skip_command 
-            break if process_command_and_quit?()
-          end
+#          if settings[:traceprint]
+#            @return_to_program = 'step'
+#          else
+            if !skip_command 
+              break if process_command_and_quit?()
+            end
+#          end
           if @return_to_program
             after_cmdloop
             if @step_count >= 0 && 'finish' != @return_to_program

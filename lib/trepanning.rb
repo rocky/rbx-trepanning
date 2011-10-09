@@ -50,7 +50,8 @@ class Trepan
     @input  = @settings[:input] || STDIN
     @output = @settings[:output] || STDOUT
 
-    cmdproc_settings = {:highlight => @settings[:highlight]}
+    cmdproc_settings = {:highlight  => @settings[:highlight],
+                        :traceprint => @settings[:traceprint]}
 
     @processor = CmdProcessor.new(self, cmdproc_settings)
     @completion_proc = method(:completion_method)
