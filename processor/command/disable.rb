@@ -16,14 +16,16 @@ class Trepan::Command::DisableCommand < Trepan::Command
   Trepan::Util.suppress_warnings {
     NAME = File.basename(__FILE__, '.rb')
     HELP = <<-HELP
-#{NAME} [display] bpnumber [bpnumber ...]
-    
-Disables the breakpoints given as a space separated list of breakpoint
-numbers. See also "info break" to get a list.
+#{NAME} [display] NUM1 [NUM2 ...]
+
+Disables the breakpoints or display given as a space separated list of
+numbers. 
+
+See also "enable" and "info break".
   HELP
 
     CATEGORY      = 'breakpoints'
-    SHORT_HELP    = 'Disable some breakpoints'
+    SHORT_HELP    = 'Disable some breakpoints or displays'
   }
 
   def initialize(proc)
@@ -33,12 +35,18 @@ numbers. See also "info break" to get a list.
   
   def run(args)
     if args.size == 1
-      errmsg('No breakpoint number given.')
+      errmsg('No breakpoint or display number given.')
       return
     end
-#   if args[1] == 'display'
-#     display_enable(args[2:], 0)
-#   end
+  if args[1] == 'display'
+    args.shift
+    first = args.shift
+    args.each do |num_str|
+      i = @proc.get_an_int(num_str)
+      success = @proc.en_disable_display_by_number(i, @enable_parm) if i
+      msg("Display %s #{@name}d." % i) if success
+    end
+  end
     first = args.shift
     args.each do |num_str|
       i = @proc.get_an_int(num_str)
