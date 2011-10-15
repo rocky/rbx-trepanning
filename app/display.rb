@@ -95,6 +95,10 @@ Num Enb Expression"
     @list.map{|disp| disp.number}.max
   end
 
+  def nums
+    @list.map{|disp| disp.number}
+  end
+
   def size
     @list.size
   end
