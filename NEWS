@@ -1,3 +1,5 @@
+Oct 27, 2011   (0.1.0)
+
 June 12, 2011  (0.0.9) Fleetwood release
 - Add debugger commands:
   * tbreak          (is in gdb)
