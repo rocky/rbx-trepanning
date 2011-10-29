@@ -80,6 +80,19 @@ class Trepan
       method.local_names
     end
 
+    # Return true if frame1 and frame2 are at the same place.
+    # We use this for example in detecting tail recursion.
+    def location_equal(other_frame)
+      # if self && other_frame 
+      #   puts(self.vm_location.line, other_frame.vm_location.line, 
+      #        self.vm_location.ip, other_frame.vm_location.ip, 
+      #        self.vm_location.method.active_path, other_frame.vm_locaion.method.actionve_path)
+      # end
+      self && other_frame && self.vm_location.line == other_frame.vm_location.line &&
+        self.vm_location.ip == other_frame.vm_location.ip && 
+        self.vm_location.method.active_path == other_frame.vm_location.method.active_path
+    end
+
     def method
       @vm_location.method
     end

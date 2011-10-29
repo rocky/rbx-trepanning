@@ -137,6 +137,43 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     frame
   end
   
+  def print_stack_trace(frame=top_frame, opts={})
+    last_frame = nil
+    # TODO: handle indirect recursion.
+    direct_recursion_count = 0
+    count = opts[:count]
+    verbose = opts[:verbose]
+    
+    dbgr.each_frame(frame) do |frame|
+      if count and frame.number >= count
+        msg "(More stack frames follow...)" if count != stack_size
+        return 
+      end
+      if frame.location_equal(last_frame)
+        direct_recursion_count += 1
+      else
+        if direct_recursion_count > 0
+          msg("... above line repeated #{direct_recursion_count} times")
+          direct_recursion_count = 0
+        end
+        prefix = (frame == @frame) ? '-->' : '   '
+
+        ### FIXME: Move into a method.
+        msg "%s #%d %s" % [prefix, frame.number, 
+                           frame.describe(:show_ip => verbose, 
+                                          :basename => settings[:basename])]
+        if verbose
+          frame.local_variables.each do |local|
+            msg "       #{local} = #{frame.run(local.to_s).inspect}"
+          end
+        end
+        ### End FIXME
+
+      end
+      last_frame = frame
+    end
+  end
+
   def set_hide_level
     max_stack_size = @dbgr.vm_locations.size
     @hide_level = 

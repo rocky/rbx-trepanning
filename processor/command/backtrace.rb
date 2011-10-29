@@ -61,22 +61,8 @@ See also 'set hidelevel'.
       errmsg "Wrong number of parameters. Expecting at most 2."
       return
     end
-    
-    @proc.dbgr.each_frame(@proc.top_frame) do |frame|
-      if count and frame.number >= count
-        msg "(More stack frames follow...)" if count != proc.stack_size
-        return 
-      end
 
-      prefix = (frame == @proc.frame) ? '-->' : '   '
-      msg "%s #%d %s" % [prefix, frame.number, 
-                         frame.describe(:show_ip => verbose)]
-      
-      if verbose
-        frame.local_variables.each do |local|
-          msg "       #{local} = #{frame.run(local.to_s).inspect}"
-        end
-      end
-    end
+    @proc.print_stack_trace(@proc.top_frame, 
+                            {:verbose => verbose, :count => count})
   end
 end
