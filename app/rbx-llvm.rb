@@ -8,8 +8,6 @@ module CodeRay
     
     class LLVM < Scanner
       
-      include Streamable
-      
       register_for :llvm
       file_extension 'llvm'
 

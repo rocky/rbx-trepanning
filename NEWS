@@ -1,3 +1,27 @@
+Oct 27,  2011  (0.1.0)
+- Add debugger commands: 
+  * info variables  (is in ruby-debug)
+  * info locals as alternative to "info variables locals" (is in gdb)
+
+- POSIX shell -x (long form: --trace) fixed
+
+- Add disabling and enabling on display expressions
+
+- Confirm before deleting all displays.
+
+- Give breakpoints for files via linecache if they are syntactically
+  correct Ruby files
+
+- Change whence-file to match gdb's resolution: don't apply PATH to
+  relative files.
+
+- Command Completion and help text improvements
+
+- Syntax highlighting updated to support coderay 1.0 and greater
+
+- Bugs fixed, code reorganized.
+
+
 June 12, 2011  (0.0.9) Fleetwood release
 - Add debugger commands:
   * tbreak          (is in gdb)

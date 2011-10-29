@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('diff-lcs') # For testing only
   s.add_dependency('rbx-require-relative', '>=0.0.4')
   s.add_dependency('rbx-linecache', '~>1.3')
+  s.add_dependency('coderay', '>=1.0')
   s.authors      = ['R. Bernstein']
   s.date         = Time.now
   s.description = <<-EOF
