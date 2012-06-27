@@ -1,4 +1,4 @@
-# Terminal color settings I use. I doubt terminal colors are
+g# Terminal color settings I use. I doubt terminal colors are
 # standardized let alone what colors you want for the various
 # syntax elements. So you should adjust as desired.
 
@@ -38,7 +38,7 @@ TERM_TOKEN_COLORS = {
   :symbol   => '35',         # purple4 #551A8B RGB: 85, 26, 139
 }
 module CodeRay::Encoders
-  class Term < Encoder
+  class Terminal < Encoder
     TERM_TOKEN_COLORS.each_pair do |key, value|
       TOKEN_COLORS[key] = value
     end

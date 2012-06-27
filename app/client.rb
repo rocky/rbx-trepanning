@@ -1,18 +1,25 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2012 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative 'default'                # default debugger settings
+require_relative '../lib/trepanning'      # main Trepan object & initialization
 require_relative '../interface/comcodes'  # communication codes
 
 module Trepanning
   include Trepanning::RemoteCommunication
   def start_client(options)
+    puts "Client option given"
+    user_opts = {}
+    %w(readline).each do |opt|
+      user_opts[opt.to_sym] = options[opt.to_sym]
+    end
     dbgr = Trepan.new(:client      => true,
                       :cmdfiles    => [],
                       :initial_dir => options[:chdir],
                       :nx          => true,
                       :host        => options[:host],
-                      :port        => options[:port]
+                      :port        => options[:port],
+                      :user_opts   => user_opts
                       )
     intf = dbgr.intf[-1]
     while true
@@ -25,6 +32,11 @@ module Trepanning
       # p [control_code, line]
       case control_code
       when PRINT
+
+        # FIXME: don't know why server sometimes adds a gratuituous space.
+        # the space is added somewhere inside TCPSocket.print
+        line = line[0..-2] if line.end_with?("\n ")
+
         print line
       when CONFIRM_TRUE
         response = intf.confirm(line, true)
@@ -33,8 +45,7 @@ module Trepanning
         response = intf.confirm(line, true)
         intf.write_remote(CONFIRM_REPLY, response ? 'Y' : 'N')
       when PROMPT
-        # require 'trepanning'
-        # debugger
+        # Printing of prompt has been handled already by PRINT.
         begin
           command = intf.read_command(line)
         rescue EOFError

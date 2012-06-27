@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2012 Rocky Bernstein <rockyb@rubyforge.net>
 
 # Debugger user/command-oriented input possibly attached to IO-style
 # input or GNU Readline.
@@ -13,6 +13,8 @@ class Trepan
   # Debugger user/command-oriented input possibly attached to IO-style
   # input or GNU Readline.
   class UserInput < Trepan::InputBase
+
+    attr_reader   :use_readline
 
     @@readline_finalized = false
 
@@ -37,8 +39,16 @@ class Trepan
         if @line_edit && @use_readline
           line = Readline.readline(prompt, true)
         else
-          line = @input.gets
+          # Prompt should be empty and should have been 
+          # handled by caller.
+          unless prompt.empty?
+            raise RuntimeError, 
+            "Internal error: prompt '#{prompt}' should have been handled by caller" unless prompt.empty?
           end
+          line = @input.gets
+        end
+      rescue Interrupt
+        return ''
       rescue EOFError
       rescue => e
         puts $!.backtrace
@@ -65,7 +75,7 @@ class Trepan
       end
 
       def finalize
-       if defined?(RbReadline) && !@@readline_finalized
+        if defined?(RbReadline) && !@@readline_finalized
           begin 
             RbReadline.rl_cleanup_after_signal()
           rescue
