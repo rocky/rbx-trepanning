@@ -1,4 +1,4 @@
-g# Terminal color settings I use. I doubt terminal colors are
+# Terminal color settings I use. I doubt terminal colors are
 # standardized let alone what colors you want for the various
 # syntax elements. So you should adjust as desired.
 
