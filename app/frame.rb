@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 class Trepan
 
   # Call-Stack frame methods
@@ -18,7 +18,7 @@ class Trepan
     def binding
       @binding ||= Binding.setup(@vm_location.variables,
                                  @vm_location.method,
-                                 @vm_location.static_scope)
+                                 @vm_location.constant_scope)
     end
 
     def describe(opts = {})
@@ -106,13 +106,13 @@ class Trepan
     end
 
     def eval?
-      static = @vm_location.static_scope
+      static = @vm_location.constant_scope
       static && static.script && static.script.eval_source
     end
 
     def eval_string
       return nil unless eval?
-      static = @vm_location.static_scope
+      static = @vm_location.constant_scope
       static.script.eval_source
     end
 

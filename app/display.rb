@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 # Classes to support gdb-like display/undisplay.
 
 require 'rubygems'; require 'require_relative'
@@ -8,7 +8,7 @@ require_relative 'frame'
 # return suitable frame signature to key display expressions off of.
 def display_signature(frame)
   return nil unless frame
-  frame.vm_location.static_scope
+  frame.vm_location.constant_scope
 end
 
 # Manage a list of display expressions.

@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; 
 require 'pathname'  # For cleanpath
 require 'linecache'
@@ -124,7 +124,7 @@ class Trepan::CmdProcessor < Trepan::VirtualCmdProcessor
     vm_location = @frame.vm_location
     filename = vm_location.method.active_path
     line_no  = @frame.line
-    static   = vm_location.static_scope
+    static   = vm_location.constant_scope
     opts[:compiled_method] = top_scope(@frame.method)
     
     if @frame.eval?

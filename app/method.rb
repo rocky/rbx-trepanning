@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 module Trepanning
   module Method
 
@@ -84,19 +84,19 @@ module Trepanning
       return cm if lines.member?(line) 
       scope = cm.scope
       return nil unless scope.current_script
-      cm  = scope.current_script.compiled_method
+      cm  = scope.current_script.compiled_code
       lines = lines_of_method(cm)
       until lines.member?(line) do
         child = scope
         scope = scope.parent
         unless scope
           # child is the top-most scope. Search down from here.
-          cm = child.current_script.compiled_method
+          cm = child.current_script.compiled_code
           pair = locate_line(line, cm)
           ## pair = cm.locate_line(line)
           return pair ? pair[0] : nil
         end
-        cm = scope.current_script.compiled_method
+        cm = scope.current_script.compiled_code
         lines = lines_of_method(cm)
       end
       return cm
@@ -107,7 +107,7 @@ module Trepanning
       while true do
         scope = scope.parent
         break unless scope && scope.current_script
-        cm = scope.current_script.compiled_method
+        cm = scope.current_script.compiled_code
       end
       cm
     end
