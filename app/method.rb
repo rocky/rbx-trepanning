@@ -3,7 +3,7 @@ module Trepanning
   module Method
 
     module_function
-    ## FIXME: until the next two routines find their way back into 
+    ## FIXME: until the next two routines find their way back into
     ## Rubinius::CompiledMethod...
     ##
     # Locates the instruction address (IP) of the first instruction on
@@ -79,11 +79,11 @@ module Trepanning
       unless cm.kind_of?(Rubinius::CompiledMethod)
         return nil
       end
-      
+
       lines = lines_of_method(cm)
-      return cm if lines.member?(line) 
+      return cm if lines.member?(line)
       scope = cm.scope
-      return nil unless scope.current_script
+      return nil unless scope and scope.current_script
       cm  = scope.current_script.compiled_code
       lines = lines_of_method(cm)
       until lines.member?(line) do
@@ -104,6 +104,7 @@ module Trepanning
 
     def top_scope(cm)
       scope = cm.scope
+      return unless scope
       while true do
         scope = scope.parent
         break unless scope && scope.current_script
@@ -170,7 +171,7 @@ if __FILE__ == $0
   p find_method_with_line(cm, line+2)
   puts "top scope: #{top_scope(cm)}"
   ip = locate_line( __LINE__, cm)[1]
-  puts "Line #{__LINE__} has ip #{ip}" 
+  puts "Line #{__LINE__} has ip #{ip}"
   [-1, 0, 10, ip, 10000].each do |i|
     puts "IP #{i} is %svalid" % (valid_ip?(cm, i) ? '' : 'not ')
   end

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'readline'
 require 'compiler/iseq'
 
@@ -17,7 +17,7 @@ require_relative '../interface/script'   # --command interface (includes I/O)
 require_relative '../interface/client'   # client interface (remote debugging)
 require_relative '../interface/server'   # server interface (remote debugging)
 require_relative '../io/null_output'
-  
+
 #
 # The Rubinius Trepan debugger.
 #
@@ -57,8 +57,8 @@ class Trepan
     @completion_proc = method(:completion_method)
 
     @in_deferred_checking = false
-        
-    @intf = 
+
+    @intf =
       if @settings[:server]
         @completion_proc = nil
         opts = Trepan::ServerInterface::DEFAULT_INIT_CONNECTION_OPTS.dup
@@ -110,17 +110,17 @@ class Trepan
       @loaded_hook = proc { |file|
         check_deferred_breakpoints
       }
-      
+
       @added_hook = proc { |mod, name, exec|
         check_deferred_breakpoints
       }
 
       # Use a few Rubinius-specific hooks to trigger checking
       # for deferred breakpoints.
-      
+
       Rubinius::CodeLoader.loaded_hook.add @loaded_hook
       Rubinius.add_method_hook.add @added_hook
-      
+
     end
 
     # Run user debugger command startup files.
@@ -131,10 +131,10 @@ class Trepan
   # such as called from GNU Readline with <TAB>.
   def completion_method(last_token, leading=Readline.line_buffer)
     completion = @processor.complete(leading, last_token)
-    if 1 == completion.size 
+    if 1 == completion.size
       completion_token = completion[0]
       if last_token.end_with?(' ')
-        if last_token.rstrip == completion_token 
+        if last_token.rstrip == completion_token
           # There is nothing more to complete
           []
         else
@@ -152,12 +152,12 @@ class Trepan
 
   ## HACK to skip over loader code. Until I find something better...
   def skip_loader
-    cmds = 
+    cmds =
       if @settings[:skip_loader] == :Xdebug
         ['continue Rubinius::CodeLoader.load_script',
-         'continue 67',
+         'next 6',
          # 'set kernelstep off',   # eventually would like 'on'
-         'step', 'set hidelevel -1'
+         'step',
         ]
       else
         ['next', 'next', 'next',
@@ -167,7 +167,7 @@ class Trepan
       end
 
     input = Trepan::StringArrayInput.open(cmds)
-    startup = Trepan::ScriptInterface.new('startup', 
+    startup = Trepan::ScriptInterface.new('startup',
                                           Trepan::OutputNull.new(nil),
                                           :input => input)
     @intf << startup
@@ -207,7 +207,7 @@ class Trepan
 
     process_cmdfile_setting(settings)
 
-    # Feed info (breakpoint, debugged program thread, channel and backtrace 
+    # Feed info (breakpoint, debugged program thread, channel and backtrace
     # info) to the debugger thread
     locs = Rubinius::VM.backtrace(@settings[:offset] + 1, true)
 
@@ -222,7 +222,7 @@ class Trepan
     # wait for the debugger to release us
     channel.receive
 
-    # Now that there is a debugger on the other end, set the debugged 
+    # Now that there is a debugger on the other end, set the debugged
     # program thread to call us when it hits a breakpoint.
     Thread.current.set_debugger_thread @thread
     self
@@ -260,7 +260,7 @@ class Trepan
 
   def process_cmdfile_setting(settings)
     settings[:cmdfiles].each do |item|
-      cmdfile, opts = 
+      cmdfile, opts =
         if item.kind_of?(Array)
           item
         else
@@ -285,7 +285,7 @@ class Trepan
       end
 
       # Wait for someone to stop
-      @breakpoint, @debugee_thread, @channel, @vm_locations = 
+      @breakpoint, @debugee_thread, @channel, @vm_locations =
         @local_channel.receive
 
       # Uncache all frames since we stopped at a new place
@@ -299,7 +299,7 @@ class Trepan
         status = @breakpoint.hit!(@vm_locations.first.variables)
         if status
           break
-        elsif @breakpoint.enabled? && status.nil? 
+        elsif @breakpoint.enabled? && status.nil?
           # A permanent breakpoint. Check the condition.
           break if @breakpoint.condition?(@current_frame.binding)
         end
@@ -309,7 +309,7 @@ class Trepan
       end
     end
 
-    event = 
+    event =
       if @breakpoint
         @breakpoint.event || 'brkpt'
       else
@@ -342,15 +342,15 @@ class Trepan
   end
 
   def add_deferred_breakpoint(klass_name, which, name, line)
-    dbp = Trepan::DeferredBreakpoint.new(self, @current_frame, klass_name, 
-                                         which, name, line, 
+    dbp = Trepan::DeferredBreakpoint.new(self, @current_frame, klass_name,
+                                         which, name, line,
                                          @deferred_breakpoints)
     @deferred_breakpoints << dbp
     # @processor.brkpts << dbp
   end
 
   def check_deferred_breakpoints
-    unless @in_deferred_checking 
+    unless @in_deferred_checking
       @in_deferred_checking = true
       @deferred_breakpoints.delete_if do |bp|
         bp.resolve!
