@@ -1,3 +1,56 @@
+2013-07-14  rocky <rockyb@rubyforge.org>
+
+	* app/options.rb: Get ready for release 0.2.0
+
+2013-07-14  rocky <rockyb@rubyforge.org>
+
+	* app/method.rb, lib/trepanning.rb, processor/load_cmds.rb,
+	test/functional/test-break.rb, test/integration/helper.rb,
+	test/unit/test-completion.rb: Changes to get this to work on
+	rubinius 2.0.0.rc1 (1.8.7 93c75658...) app/method.rb:
+	top_scope.parent can be nil lib/trepanning.rb: Locations have
+	changed to get -Xcode start correct processor/load_cmds.rb: $0 can
+	be nil when -Xtrace is used
+
+2013-03-10  rocky <rockyb@rubyforge.org>
+
+	* processor/default.rb: A more clever displaywidth default setting
+
+2013-02-08  rocky <rockyb@rubyforge.org>
+
+	* .gitignore: Administrivia
+
+2013-02-08  rocky <rockyb@rubyforge.org>
+
+	* app/display.rb, app/frame.rb, app/method.rb,
+	processor/location.rb: static_scope -> constant_scope.
+	compiled_method->compiled_code. Thanks brixen!
+
+2012-11-26  R. Bernstein <rockyb@rubyforge.org>
+
+	* sample/rocky-trepanx-colors.rb: Update
+	sample/rocky-trepanx-colors.rb
+
+2012-06-27  rvm <rocky@gnu.org>
+
+	* app/client.rb, interface/user.rb, io/input.rb,
+	sample/rocky-trepanx-colors.rb: Remote execution corrections found
+	in rb-trepanning' .
+
+2011-10-29  rocky <rockyb@rubyforge.org>
+
+	* : commit a7fb8932e29a9afa95a355c0eef1f1d06783d8b1 Author: rocky
+	<rockyb@rubyforge.org> Date:   Sat Oct 29 12:33:05 2011 -0400
+
+2011-10-27  rvm <rocky@gnu.org>
+
+	* NEWS, app/rbx-llvm.rb, rbx-trepanning.gemspec,
+	sample/rocky-trepanx-colors.rb: Get ready for 0.1.0 release.
+
+2011-10-27  rvm <rocky@gnu.org>
+
+	* ChangeLog, NEWS, app/options.rb: Preparation for 0.1.0 release
+
 2011-10-15  rocky <rockyb@rubyforge.org>
 
 	* app/display.rb, processor/command/delete.rb,

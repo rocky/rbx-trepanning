@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 #=== Summary
-# Parses command-line options. 
+# Parses command-line options.
 
 require 'optparse'
 class Trepan
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
 
-  VERSION = '0.1.0'
+  VERSION = '0.2.0'
   PROGRAM = 'trepanx' unless defined? Trepan::PROGRAM
 
   def self.show_version
@@ -19,7 +19,7 @@ class Trepan
   def self.copy_default_options
     options = {}
     DEFAULT_CMDLINE_SETTINGS.each do |key, value|
-      begin 
+      begin
         options[key] = value.clone
       rescue TypeError
         options[key] = value
@@ -44,8 +44,8 @@ EOB
           options[:client] = true
         end
       end
-      opts.on('-c', '--command FILE', String, 
-              'Execute debugger commands from FILE') do |cmdfile| 
+      opts.on('-c', '--command FILE', String,
+              'Execute debugger commands from FILE') do |cmdfile|
         if File.readable?(cmdfile)
           options[:cmdfiles] << cmdfile
         elsif File.exists?(cmdfile)
@@ -54,7 +54,7 @@ EOB
           stderr.puts "Command file '#{cmdfile}' does not exist."
         end
       end
-      opts.on('--cd DIR', String, 'Change current directory to DIR') do |dir| 
+      opts.on('--cd DIR', String, 'Change current directory to DIR') do |dir|
         if File.directory?(dir)
           if File.executable?(dir)
             options[:chdir] = dir
@@ -65,24 +65,24 @@ EOB
           stderr.puts "\"#{dir}\" is not a directory. Option --cd ignored."
         end
       end
-      opts.on('--basename', 
-              'Show only file basename in file locations') do 
+      opts.on('--basename',
+              'Show only file basename in file locations') do
         options[:basename] = true
       end
-      opts.on('-d', '--debug', 'Set $DEBUG=true') do 
+      opts.on('-d', '--debug', 'Set $DEBUG=true') do
         $DEBUG = true
       end
      opts.on('--[no-]highlight',
               'Use [no] syntax highlight output') do |v|
         options[:highlight] = ((v) ? :term : nil)
       end
-      opts.on('-h', '--host NAME', String, 
-              'Host or IP used in TCP connections for --server or --client. ' + 
-              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do 
-        |name_or_ip| 
+      opts.on('-h', '--host NAME', String,
+              'Host or IP used in TCP connections for --server or --client. ' +
+              "Default is #{DEFAULT_SETTINGS[:host].inspect}.") do
+        |name_or_ip|
         options[:host] = name_or_ip
       end
-      opts.on('-I', '--include PATH', String, 'Add PATH to $LOAD_PATH') do 
+      opts.on('-I', '--include PATH', String, 'Add PATH to $LOAD_PATH') do
         |path|
         $LOAD_PATH.unshift(path)
       end
@@ -90,10 +90,10 @@ EOB
               "Do not run debugger initialization file #{CMD_INITFILE}") do
         options[:nx] = true
       end
-      opts.on('-p', '--port NUMBER', Integer, 
-              'Port number used in TCP connections for --server or --client. ' + 
-              "Default is #{DEFAULT_SETTINGS[:port]}.") do 
-        |num| 
+      opts.on('-p', '--port NUMBER', Integer,
+              'Port number used in TCP connections for --server or --client. ' +
+              "Default is #{DEFAULT_SETTINGS[:port]}.") do
+        |num|
         options[:port] = num
       end
       opts.on('--[no-]readline',
@@ -124,9 +124,9 @@ EOB
       opts.on_tail('-?', '--help', 'Show this message') do
         options[:help] = true
         stdout.puts opts
-        exit 
+        exit
       end
-      opts.on_tail('-v', '--version', 
+      opts.on_tail('-v', '--version',
                    'print the version') do
         options[:version] = true
         stdout.puts show_version
