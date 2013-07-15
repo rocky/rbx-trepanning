@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
 require_relative '../command'
 require_relative '../../app/method'
@@ -19,7 +19,7 @@ class Trepan::Command::DisassembleCommand < Trepan::Command
 Disassembles Rubinius VM instructions. By default, the bytecode for the
 current line is disassembled only.
 
-If a method name is given, disassemble just that method. 
+If a method name is given, disassemble just that method.
 
 If a line number given, then disassemble just that line number if it
 has bytecode assocated with that line. Note that if a line has
@@ -54,7 +54,7 @@ Examples:
     prefixes = []
     disasm = ''
     cm.decode.each do |insn|
-      show_line = 
+      show_line =
         if insn.ip >= next_line_ip
           next_line_ip = lines.at(next_i+1)
           line_no = lines.at(next_i)
@@ -63,11 +63,11 @@ Examples:
         else
           false
         end
-          
+
       prefixes << Trepan::ISeq::disasm_prefix(insn.ip, frame_ip, cm)
       str = insn.to_s
       if show_line
-        str += 
+        str +=
           if insn.instance_variable_get('@comment')
             ' '
           elsif str[-1..-1] !~/\s/
@@ -75,7 +75,7 @@ Examples:
           else
             ''
           end
-        str += "# line: #{line_no}"  
+        str += "# line: #{line_no}"
       end
       disasm += "#{str}\n"
     end
@@ -92,15 +92,15 @@ Examples:
         errmsg 'Highlighting requested but CodeRay is not installed.'
       end
     end
-      
+
     disasm.split("\n").each_with_index do |inst, i|
-      msg ("#{prefixes[i]} #{inst}", :unlimited => true)
+      msg("#{prefixes[i]} #{inst}", :unlimited => true)
     end
   end
 
   def parse_options(options, args) # :nodoc
     parser = OptionParser.new do |opts|
-      opts.on('-a', '--all', 
+      opts.on('-a', '--all',
               'show entire method') do
         options[:all] = true
       end
@@ -114,7 +114,7 @@ Examples:
 
   end
 
-  # Run command. 
+  # Run command.
   def run(args)
     my_args = args[1..-1]
     options = parse_options(DEFAULT_OPTIONS.dup, my_args)
@@ -133,7 +133,7 @@ Examples:
           disassemble_method(cm.executable)
         else
           opts = {:msg_on_error => false }
-          line_num = @proc.get_an_int(arg, opts) 
+          line_num = @proc.get_an_int(arg, opts)
           if line_num
             cm = find_method_with_line(current_method, line_num)
             if cm
