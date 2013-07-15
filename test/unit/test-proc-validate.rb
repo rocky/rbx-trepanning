@@ -15,7 +15,7 @@ class TestValidate < Test::Unit::TestCase
   def setup
     $errors  = []
     $msgs    = []
-    @dbg   ||= MockDebugger::MockDebugger.new(:nx => true)
+    @dbg   ||= MockDebugger::MockDebugger.new(:nx => true, :start_frame=>1)
     @cmdproc = Trepan::CmdProcessor.new(@dbg)
 
     class << @cmdproc
@@ -31,14 +31,14 @@ class TestValidate < Test::Unit::TestCase
   end
 
   def test_get_int
-    [['1', 1],  ['1E', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do 
+    [['1', 1],  ['1E', nil], ['bad', nil], ['1+1', 2], ['-5', -5]].each do
       |arg, expected|
       assert_equal(expected, @cmdproc.get_int_noerr(arg))
     end
   end
 
   def test_get_on_off
-    onoff = 
+    onoff =
     [['1', true],  ['on', true],
      ['0', false], ['off', false]].each do |arg, expected|
       assert_equal(expected, @cmdproc.get_onoff(arg))
@@ -117,7 +117,7 @@ class TestValidate < Test::Unit::TestCase
 
   def test_method?
     def foo; 5 end
-    
+
     # require_relative '../../lib/rbdbgr'
     # dbgr = Trepan.new(:set_restart => true)
     # FIXME: 'foo',
