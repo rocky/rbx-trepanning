@@ -1,7 +1,8 @@
+.rbx
 /*.rbc
 /*~
+/Gemfile.lock
 /irc-discuss
 /pkg
 /tmp
 rbx-trepanning*.gemspec
-.rbx

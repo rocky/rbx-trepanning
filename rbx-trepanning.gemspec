@@ -1,13 +1,13 @@
 # -*- Ruby -*-
 # -*- encoding: utf-8 -*-
 require 'rake'
-require 'rubygems' unless 
+require 'rubygems' unless
   Object.const_defined?(:Gem)
 require File.dirname(__FILE__) + "/app/options"
 Gem::Specification.new do |s|
   s.add_dependency('columnize')
   s.add_development_dependency('diff-lcs') # For testing only
-  s.add_dependency('rbx-require-relative', '>=0.0.4')
+  s.add_dependency('rbx-require-relative', '>=0.0.9')
   s.add_dependency('rbx-linecache', '~>1.3')
   s.add_dependency('coderay', '>=1.0')
   s.authors      = ['R. Bernstein']
@@ -24,7 +24,7 @@ EOF
   ## s.add_dependency('diff-lcs') # For testing only
   s.authors       = ['R. Bernstein']
   s.email         = 'rockyb@rubyforge.net'
-  s.executables = `git ls-files -- bin/*`.split("\n").map{ 
+  s.executables = `git ls-files -- bin/*`.split("\n").map{
     |f| File.basename(f) }
   s.files         = `git ls-files`.split("\n")
   s.homepage      = 'http://wiki.github.com/rocky/rbx-trepanning'
