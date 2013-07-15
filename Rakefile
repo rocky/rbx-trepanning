@@ -1,10 +1,10 @@
 #!/usr/bin/env rake
 # -*- Ruby -*-
-# Are we Rubinius? The right versions of it? 
-raise RuntimeError, 
+# Are we Rubinius? The right versions of it?
+raise RuntimeError,
 'This package is for Rubinius 1.2.[34] or 2.0.x only!' unless
-  Object.constants.include?('Rubinius') && 
-  Rubinius.constants.include?('VM') && 
+  Object.constants.include?('Rubinius') &&
+  Rubinius.constants.include?('VM') &&
   Rubinius::VERSION =~ /1\.2\.[34]/ || Rubinius::VERSION =~ /2\.0/
 
 require 'rubygems'
@@ -36,8 +36,9 @@ task :gem=>:gemspec do
     two_filename = gemspec.dup.file_name.gsub(/1\.2/, '2.0')
     FileUtils.cp("rbx-trepanning.gemspec", "rbx-trepanning-2.0.gemspec")
     gemspec_filename2 = "rbx-trepanning-2.0.gemspec"
-    f = File.open(gemspec_filename2, "w")
-    f.write(lines); f.close
+    File.open(gemspec_filename2, 'w') do |f|
+      lines.each {|line| f.write(line)}
+    end
     sh "gem build #{gemspec_filename2}"
     FileUtils.mv("#{two_filename}", "pkg/")
   end
@@ -64,8 +65,8 @@ task :check => :test
 
 require 'rbconfig'
 def RbConfig.ruby
-  File.join(RbConfig::CONFIG['bindir'],  
-            RbConfig::CONFIG['RUBY_INSTALL_NAME'] + 
+  File.join(RbConfig::CONFIG['bindir'],
+            RbConfig::CONFIG['RUBY_INSTALL_NAME'] +
             RbConfig::CONFIG['EXEEXT'])
 end unless defined? RbConfig.ruby
 
@@ -123,7 +124,7 @@ task :test do
       e
     end
   end.compact
-  
+
   exceptions.each {|e| puts e;puts e.backtrace }
   raise 'Test failures' unless exceptions.empty?
 end
@@ -181,8 +182,8 @@ desc 'Generate command parser.'
 task :'cmd_parse' do
   require 'tmpdir'
   temp_file = File.join(Dir.tmpdir, "cmd_parser_#{$$}.rb")
-  sh("kpeg --name CmdParse --verbose --stand-alone  " + 
-     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " + 
+  sh("kpeg --name CmdParse --verbose --stand-alone  " +
+     "#{File.join(ROOT_DIR, %w(app cmd_parse.kpeg))} " +
      "--output #{temp_file}")
 end
 
@@ -214,7 +215,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
 
   rdoc.rdoc_files.include(%w(lib/trepanning.rb processor/*.rb
                              processor/command/*.rb
-                             app/*.rb intf/*.rb io/*.rb 
+                             app/*.rb intf/*.rb io/*.rb
                             ))
 end
 
@@ -240,5 +241,5 @@ task :rm_tilde_backups do
 end
 
 desc 'Remove built files'
-task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue, 
+task :clean => [:clobber_package, :clobber_rdoc, :rm_patch_residue,
                 :rm_tilde_backups]

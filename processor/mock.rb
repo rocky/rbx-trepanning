@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 # Mock setup for commands.
 require 'rubygems'; require 'require_relative'
 
@@ -18,14 +18,14 @@ module MockDebugger
     attr_accessor :intf         # The way the outside world interfaces with us.
     attr_reader   :initial_dir  # String. Current directory when program
                                 # started. Used in restart program.
-    attr_accessor :restart_argv # How to restart us, empty or nil. 
+    attr_accessor :restart_argv # How to restart us, empty or nil.
                                 # Note restart[0] is typically $0.
     attr_reader   :settings     # Hash[:symbol] of things you can configure
     attr_accessor :processor
 
     # FIXME: move more stuff of here and into Trepan::CmdProcessor
     # These below should go into Trepan::CmdProcessor.
-    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame, 
+    attr_reader :cmd_argstr, :cmd_name, :vm_locations, :current_frame,
                 :debugee_thread, :completion_proc
 
     def initialize(settings={:start_frame=>1})
@@ -45,7 +45,7 @@ module MockDebugger
       @completion_proc = Proc.new{|str| str}
 
       # Don't allow user commands in mocks.
-      ## @core.processor.settings[:user_cmd_dir] = nil 
+      ## @core.processor.settings[:user_cmd_dir] = nil
 
     end
 
@@ -54,7 +54,7 @@ module MockDebugger
     end
   end
 
-  # Common Mock debugger setup 
+  # Common Mock debugger setup
   def setup(name=nil, show_constants=true)
     unless name
       loc = Rubinius::VM.backtrace(1, true)[0]
@@ -72,7 +72,7 @@ module MockDebugger
     cmdproc = Trepan::CmdProcessor.new(dbgr)
     cmdproc.frame = dbgr.frame(0)
     dbgr.processor = cmdproc
-    
+
     cmdproc.load_cmds_initialize
     cmds = cmdproc.commands
     cmd  = cmds[name]
@@ -118,7 +118,7 @@ module MockDebugger
   def show_special_class_constants(cmd)
     puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
       cmd.class.constants.member?(:ALIASES)
-    %w(CATEGORY MIN_ARGS MAX_ARGS 
+    %w(CATEGORY MIN_ARGS MAX_ARGS
        NAME NEED_STACK SHORT_HELP).each do |name|
       puts '%s: %s' % [name, cmd.class.const_get(name).inspect]
     end
