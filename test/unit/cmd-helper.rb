@@ -34,7 +34,7 @@ module UnitHelper
   def common_teardown
     @cmdproc.finalize
   end
-  
+
   def reset_cmdproc_vars
     @cmdproc.instance_variable_set('@msgs', [])
     @cmdproc.instance_variable_set('@errmsgs', [])
