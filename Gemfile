@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gem 'rake'
 gem 'rbx-require-relative', :require => 'require_relative'
 gem 'rbx-linecache', :require => 'linecache'
 gem 'coderay', '>=1.0'
