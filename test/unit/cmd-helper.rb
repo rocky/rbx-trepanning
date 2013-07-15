@@ -7,7 +7,7 @@ module UnitHelper
 
   module_function
   def common_setup
-    @dbg      ||= MockDebugger::MockDebugger.new(:nx => true)
+    @dbg      ||= MockDebugger::MockDebugger.new(:nx => true, :start_frame =>1)
     @cmdproc  ||= Trepan::CmdProcessor.new(@dbg)
     @cmdproc.frame_initialize
     @cmdproc.dbgr  ||= @dbg
