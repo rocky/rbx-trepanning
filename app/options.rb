@@ -9,7 +9,7 @@ class Trepan
   require 'rubygems'; require 'require_relative'
   require_relative 'default'
 
-  VERSION = '0.2.0'
+  VERSION = '0.2.1dev'
   PROGRAM = 'trepanx' unless defined? Trepan::PROGRAM
 
   def self.show_version
