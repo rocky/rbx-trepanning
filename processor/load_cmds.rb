@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'tmpdir'
+require 'redcard/rubinius'
 
 # Part of Trepan::CmdProcess that loads up debugger commands from
 # builtin and user directories.
@@ -63,12 +64,21 @@ class Trepan
         klass = Trepan::Command.const_get(name)
         cmd = klass.send(:new, self)
 
+      cmd_name = klass.const_get(:NAME)
+
         # Add to list of commands and aliases.
         cmd_name = klass.const_get(:NAME)
-        if klass.constants.member?(:ALIASES)
-          aliases= klass.const_get(:ALIASES)
+        aliases=
+          if RedCard.check '1.9' and
+              klass.constants.member?(:ALIASES)
+            klass.const_get(:ALIASES)
+          elsif RedCard.check '1.8' and
+              klass.constants.member?('ALIASES')
+            klass.const_get('ALIASES')
+          else
+            []
+          end
           aliases.each {|a| @aliases[a] = cmd_name}
-        end
         @commands[cmd_name] = cmd
       end
     end
@@ -83,10 +93,18 @@ class Trepan
 
       # Add to list of commands and aliases.
       cmd_name = klass.const_get(:NAME)
-      if klass.constants.member?(:ALIASES)
-        aliases= klass.const_get(:ALIASES)
-        aliases.each {|a| @aliases[a] = cmd_name}
-      end
+
+      aliases =
+        if RedCard.check '1.9' and
+            klass.constants.member?(:ALIASES)
+          klass.const_get(:ALIASES)
+        elsif RedCard.check '1.8' and
+            klass.constants.member?('ALIASES')
+          klass.const_get('ALIASES')
+        else
+          []
+        end
+      aliases.each {|a| @aliases[a] = cmd_name}
       @commands[cmd_name] = cmd
     end
 

@@ -7,6 +7,7 @@ require File.dirname(__FILE__) + "/app/options"
 Gem::Specification.new do |s|
   s.add_dependency('columnize')
   s.add_development_dependency('diff-lcs') # For testing only
+  s.add_dependency('redcard')
   s.add_dependency('rbx-require-relative', '>=0.0.9')
   s.add_dependency('rbx-linecache', '~>1.3')
   s.add_dependency('coderay', '>=1.0')
