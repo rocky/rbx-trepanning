@@ -65,8 +65,8 @@ class Trepan
 
         # Add to list of commands and aliases.
         cmd_name = klass.const_get(:NAME)
-        if klass.constants.member?('ALIASES')
-          aliases= klass.const_get('ALIASES')
+        if klass.constants.member?(:ALIASES)
+          aliases= klass.const_get(:ALIASES)
           aliases.each {|a| @aliases[a] = cmd_name}
         end
         @commands[cmd_name] = cmd
@@ -227,14 +227,6 @@ if __FILE__ == $0
   end
 
   cmdproc = Trepan::CmdProcessor.new(nil)
-  cmddir = File.join(File.dirname(__FILE__), 'command')
-  cmdproc.instance_variable_set('@settings', {})
-  cmdproc.load_cmds_initialize
-  require 'columnize'
-  puts Columnize.columnize(cmdproc.commands.keys.sort)
-  puts '=' * 20
-  puts Columnize.columnize(cmdproc.aliases.keys.sort)
-  puts '=' * 20
 
   def cmdproc.errmsg(mess)
     puts "** #{mess}"
@@ -243,6 +235,15 @@ if __FILE__ == $0
   def cmdproc.msg(mess)
     puts mess
   end
+
+  cmddir = File.join(File.dirname(__FILE__), 'command')
+  cmdproc.instance_variable_set('@settings', {})
+  cmdproc.load_cmds_initialize
+  require 'columnize'
+  puts Columnize.columnize(cmdproc.commands.keys.sort)
+  puts '=' * 20
+  puts Columnize.columnize(cmdproc.aliases.keys.sort)
+  puts '=' * 20
 
   cmdproc.run_cmd('foo')  # Invalid - not an Array
   cmdproc.run_cmd([])     # Invalid - empty Array

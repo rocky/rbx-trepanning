@@ -35,16 +35,16 @@ class Trepan
             bind = nil
           end
           resolve_method(m, bind, klass)
-        rescue NameError 
+        rescue NameError
           errmsg ||= "Can't resolve constant #{name}"
           raise NameError, errmsg
         end
       else
-        is_class = 
+        is_class =
           begin
-            m.chain && m.chain[0] && 
-              Class == eval("#{m.chain[0].name}.class", bind) 
-          rescue 
+            m.chain && m.chain[0] &&
+              Class == eval("#{m.chain[0].name}.class", bind)
+          rescue
             false
           end
         if is_class
@@ -62,11 +62,11 @@ class Trepan
               parent_obj = eval("#{m.chain[0].name}", bind) if !parent_class && bind
             end
             parent = parent_class || parent_obj
-            meth = 
+            meth =
               if parent
                 errmsg << "in #{parent}"
                 lookup_name = m.chain && m.chain[1] ? m.chain[1].name : name
-                if parent.respond_to?('instance_methods') && 
+                if parent.respond_to?('instance_methods') &&
                     parent.instance_methods.member?(lookup_name)
                   parent.instance_method(lookup_name)
                 elsif parent.respond_to?('methods')
@@ -95,7 +95,7 @@ class Trepan
     # nil is returned if we can't parse str
     def meth_for_string(str, start_binding)
       @cp ? @cp.setup_parser(str) : @cp = CmdParse.new(str)
-      begin 
+      begin
         if @cp._class_module_chain
           # Did we match all of it?
           if @cp.result.name == str.strip
@@ -104,7 +104,7 @@ class Trepan
             nil
           end
         else
-          # FIXME: change to raise ParseError? 
+          # FIXME: change to raise ParseError?
           nil
         end
       rescue NameError
@@ -149,7 +149,7 @@ if __FILE__ == $0
       puts "#{name} failed"
     end
   end
-  
+
   %w(Object  A::B  A::B::C  A::B::C::D  A::B.c  A.b.c.d  A(5)
      Rubinius::VariableScope::method_visibility
      ).each do |name|
@@ -177,14 +177,14 @@ if __FILE__ == $0
     def testing; 5 end
     module_function :testing
   end
-  p meth_for_string('Testing.testing', binding)  
-  p meth_for_string('File.basename', binding)  
+  p meth_for_string('Testing.testing', binding)
+  p meth_for_string('File.basename', binding)
   x = File
   # require_relative '../lib/trepanning'
   # debugger
-  p meth_for_string('x.basename', binding)  
+  p meth_for_string('x.basename', binding)
   def x.five; 5; end
-  p  meth_for_string('x.five', binding)  
+  p  meth_for_string('x.five', binding)
   p x.five
 
   p parse_terminal(:_line_number, '5').result
@@ -206,4 +206,3 @@ if __FILE__ == $0
 
 
 end
-

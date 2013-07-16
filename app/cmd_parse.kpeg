@@ -1,7 +1,5 @@
-# -*- Ruby -*-
-
 %% {
-##################################################### 
+#####################################################
   # Structure to hold composite method names
   SymbolEntry = Struct.new(:type, :name, :chain)
 
@@ -17,7 +15,7 @@
   List = Struct.new(:position, :num)
 
   DEFAULT_OPTS = {
-    :debug=>false, 
+    :debug=>false,
     :file_exists_proc => Proc.new{|filename|
         File.readable?(filename) && !File.directory?(filename)
     }
@@ -34,37 +32,37 @@
 
       upcase_letter = /[A-Z]/
     downcase_letter = /[a-z]/
-      suffix_letter = /[=!?]/ 
+      suffix_letter = /[=!?]/
              letter = upcase_letter
                     | downcase_letter
           id_symbol = letter | "_" | [0-9]
 
 
 # An variable or a method identifier
-# Examples: 
+# Examples:
 #   var1
-#   my_var? 
+#   my_var?
 # But not: Variable or @var
 vm_identifier = < (downcase_letter | "_") id_symbol* suffix_letter? >
-    { 
+    {
       SymbolEntry.new(:variable, text)
     }
 
-# Examples: 
+# Examples:
 #   var1
-# But not: my_var?, my_var! 
+# But not: my_var?, my_var!
 variable_identifier = < (downcase_letter | "_") id_symbol* >
-    { 
+    {
       SymbolEntry.new(:variable, text)
     }
 
-# Examples: 
+# Examples:
 #   MY_CONSTANT
 #   MyConstant_01
 # But not:
 #   MyConstant_01?
 constant_identifier = < upcase_letter id_symbol* >
-    { 
+    {
       SymbolEntry.new(:constant, text)
     }
 
@@ -76,14 +74,14 @@ global_identifier = < "$" (constant_identifier | variable_identifier) >
       SymbolEntry.new(:global, text)
     }
 
-# Examples: 
+# Examples:
 #   Foo
 #   foo
 # But not:
 #   foo!, @foo, Class.foo
 local_internal_identifier = constant_identifier | variable_identifier
 
-# Examples: 
+# Examples:
 #   Foo, foo, foo!
 #   foo
 # But not:
@@ -94,29 +92,29 @@ local_identifier = constant_identifier | vm_identifier
 instance_identifier = < '@' local_identifier >
     {
       SymbolEntry.new(:instance, text)
-    }     
+    }
 
 
 # Example: @@foo
 classvar_identifier = ('@@' local_identifier:id )
     {
      SymbolEntry.new(:classvar, id)
-    }     
+    }
 
-identifier = global_identifier 
-       | instance_identifier 
-       | classvar_identifier 
-       | local_identifier 
+identifier = global_identifier
+       | instance_identifier
+       | classvar_identifier
+       | local_identifier
 
 id_separator = < '::'|'.' > { text }
 
 # Like of class_module_chain *after* the first name. So we don't
 # allow sigils in the initial id. That is we don't allow:
-#   Class.@name1.@@name2.$name3  
+#   Class.@name1.@@name2.$name3
 # But we do allow final sigils:
 #   class.name!, class.name=
-internal_class_module_chain = 
-    < local_internal_identifier:parent id_separator:sep  
+internal_class_module_chain =
+    < local_internal_identifier:parent id_separator:sep
       internal_class_module_chain:child >
       {
          SymbolEntry.new(parent.type, text, [parent, child, sep])
@@ -125,14 +123,14 @@ internal_class_module_chain =
 
 
 # I think strict Ruby rules are that once one goes from :: to .
-# There is no going back. That is, A.B::C is invalid. 
-# 
-# Also I think method names can't be constants. But such 
+# There is no going back. That is, A.B::C is invalid.
+#
+# Also I think method names can't be constants. But such
 # subtleties we'll handle when we process the final structure.
 # Examples:
-#  Object, A::B, A.b @@foo.bar, $foo.bar.baz? 
+#  Object, A::B, A.b @@foo.bar, $foo.bar.baz?
 
-class_module_chain = 
+class_module_chain =
     < identifier:parent id_separator:sep  internal_class_module_chain:child >
        {
          SymbolEntry.new(parent.type, text, [parent, child, sep])
@@ -157,7 +155,7 @@ class_module_chain =
    dbl_seq       = < /[^\\"]+/ > { text }
    dbl_not_quote = (dbl_escapes | dbl_seq)+:ary { ary }
       dbl_string = "\"" dbl_not_quote:ary "\"" { ary.join }
-not_space_colon  = escapes 
+not_space_colon  = escapes
                  | < /[^ \t\n:]/ > { text }
 not_space_colons = ( not_space_colon )+:ary { ary.join }
     filename    = dbl_string | not_space_colons
@@ -174,14 +172,14 @@ vm_offset = '@' integer:int
 # Examples:
 #  @43
 #  5
-position = 
-  vm_offset 
-  | line_number:l { 
-  Position.new(nil, nil, :line, l) 
+position =
+  vm_offset
+  | line_number:l {
+  Position.new(nil, nil, :line, l)
 }
 
-file_colon_line = file_no_colon:file &{ File.exist?(file) } ':' position:pos { 
-  Position.new(:file, file, pos.position_type, pos.position) 
+file_colon_line = file_no_colon:file &{ File.exist?(file) } ':' position:pos {
+  Position.new(:file, file, pos.position_type, pos.position)
 }
 
 # Examples:
@@ -190,8 +188,8 @@ file_colon_line = file_no_colon:file &{ File.exist?(file) } ':' position:pos {
 #   Myclass.fn 5   # line number 5 of fn
 # Note: Myclass.fn could be either a filename or a method name
 
-# The below ordering is important. 
-# 1. Numbers can't be method names they are first. If there's a 
+# The below ordering is important.
+# 1. Numbers can't be method names they are first. If there's a
 #    file with that name, later we'll allow quoting to indicate filename.
 # 2. filename:position can't also be a method so that's next
 # 3. It is possible a filename can be a method name, but we
@@ -201,8 +199,8 @@ file_colon_line = file_no_colon:file &{ File.exist?(file) } ':' position:pos {
 #    without a position, else we would stop early before handling
 #    the position.
 
-location = 
-   position 
+location =
+   position
  | <filename>:file &{ @file_exists_proc.call(file) } file_pos_sep position:pos {
       Position.new(:file, file, pos.position_type, pos.position)
     }
