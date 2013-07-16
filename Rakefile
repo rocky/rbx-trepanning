@@ -73,6 +73,7 @@ end unless defined? RbConfig.ruby
 def run_standalone_ruby_files(list, opts={})
   puts '*' * 40
   list.each do |ruby_file|
+    puts ruby_file
     system(RbConfig.ruby, ruby_file)
     p $?.exitstatus
     break if $?.exitstatus != 0 && !opts[:continue]
@@ -165,6 +166,7 @@ end
 
 desc 'Run each processor Ruby file in standalone mode.'
 task :'check:unit' do
+  # run_standalone_ruby_files(FileList['test/unit/**/test-*.rb'], :continue=>true)
   run_standalone_ruby_files(FileList['test/unit/**/test-*.rb'])
 end
 

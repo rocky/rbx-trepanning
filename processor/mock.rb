@@ -116,8 +116,7 @@ module MockDebugger
   module_function :subsub_setup
 
   def show_special_class_constants(cmd)
-    puts 'ALIASES: %s' % [cmd.class.const_get('ALIASES').inspect] if
-      cmd.class.constants.member?(:ALIASES)
+    puts 'ALIASES: %s' % [cmd.proc.get_class_aliases(cmd.class).inspect]
     %w(CATEGORY MIN_ARGS MAX_ARGS
        NAME NEED_STACK SHORT_HELP).each do |name|
       puts '%s: %s' % [name, cmd.class.const_get(name).inspect]

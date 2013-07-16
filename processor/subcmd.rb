@@ -12,13 +12,13 @@ class Trepan
       @subcmds = {}
       @cmdlist = []
     end
-    
+
     # Find subcmd in self.subcmds
     def lookup(subcmd_prefix, use_regexp=true)
-      compare = 
+      compare =
         if !@cmd.settings[:abbrev]
           lambda{|name| name.to_s == subcmd_prefix}
-        elsif use_regexp 
+        elsif use_regexp
           lambda{|name| name.to_s =~ /^#{subcmd_prefix}/}
         else
           lambda{|name| 0 == name.to_s.index(subcmd_prefix)}
@@ -46,7 +46,7 @@ class Trepan
           prefix = ''
         end
         if entry.respond_to?(:short_help)
-          prefix += ' -- ' if prefix 
+          prefix += ' -- ' if prefix
           @proc.msg(prefix + entry.short_help)
         end
       else
@@ -89,23 +89,23 @@ if __FILE__ == $0
   require_relative 'command'
 
   class Trepan::TestCommand < Trepan::Command
-    
+
     HELP = 'Help string string for testing'
     CATEGORY = 'data'
     MIN_ARGS = 0
     MAX_ARGS = 5
     NAME_ALIASES = %w(test)
-    
+
     def initialize(proc); @proc  = proc end
-    
+
     def run(args); puts 'test command run' end
   end
-  
+
   class TestTestingSubcommand
     HELP = 'Help string for test testing subcommand'
-    
+
     def initialize; @name  = 'testing' end
-    
+
     SHORT_HELP = 'This is short help for test testing'
     MIN_ABREV = 4
     IN_LIST   = true
@@ -119,12 +119,12 @@ if __FILE__ == $0
   # testcmdMgr = Subcmd.new('test', testcmd)
   # testsub = TestTestingSubcommand.new
   # testcmdMgr.add(testsub)
-  
+
   # %w(tes test testing testing1).each do |prefix|
   #   x = testcmdMgr.lookup(prefix)
   #   puts x ? x.name : 'Non'
   # end
-  
+
   # testcmdMgr.short_help(testcmd, 'testing')
   # testcmdMgr.short_help(testcmd, 'test', true)
   # testcmdMgr.short_help(testcmd, 'tes')

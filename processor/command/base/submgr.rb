@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
+require 'redcard/rubinius'
 require_relative '../../command'
 require_relative '../../subcmd'
 require_relative '../../help'
@@ -14,7 +15,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     CATEGORY      = 'status'
     MIN_ARGS      = 0
     MAX_ARGS      = nil
-    NAME          = '?' # FIXME: Need to define this, but should 
+    NAME          = '?' # FIXME: Need to define this, but should
                         # pick this up from class/file name.
     NEED_STACK    = false
   end
@@ -33,6 +34,15 @@ class Trepan::SubcommandMgr < Trepan::Command
     load_debugger_subcommands(self)
   end
 
+  def get_const(klass, name)
+    name = name.to_sym if RedCard.check '1.9'
+    if klass.constants.member?(name)
+      klass.const_get(name)
+    else
+      nil
+    end
+  end
+
   # Create an instance of each of the debugger subcommands. Commands
   # are found by importing files in the directory 'name' + '_sub'. Some
   # files are excluded via an array set in initialize.  For each of
@@ -48,7 +58,7 @@ class Trepan::SubcommandMgr < Trepan::Command
     cmd_dir = File.dirname(__FILE__)
     subcmd_dir = File.join(cmd_dir, '..', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
-    files.each do |rb| 
+    files.each do |rb|
       basename = File.basename(rb, '.rb')
       if File.directory?(File.join(File.dirname(rb), basename + '_subcmd'))
         subcmd_names << name.capitalize + basename.capitalize
@@ -60,14 +70,12 @@ class Trepan::SubcommandMgr < Trepan::Command
 
     subcommands = {}
     cmd_names.each do |name|
-      next unless Trepan::Subcommand.constants.member?(name)
-      klass = Trepan::Subcommand.const_get(name)
+      next unless klass = get_const(Trepan::Subcommand, name)
       cmd = klass.send(:new, self)
       @subcmds.add(cmd)
     end
     subcmd_names.each do |name|
-      next unless Trepan::SubSubcommand.constants.member?(name)
-      subcmd_class = Trepan::SubSubcommand.const_get(name)
+      next unless subcmd_class = get_const(Trepan::SubSubcommand, name)
       begin
         cmd = subcmd_class.send(:new, self, parent)
       rescue Exception => exc
@@ -83,7 +91,7 @@ class Trepan::SubcommandMgr < Trepan::Command
   #        help cmd subcmd
   #        help cmd commands
   #
-  #  Our shtick is to give help for the overall command only if 
+  #  Our shtick is to give help for the overall command only if
   #  subcommand or 'commands' is not given. If a subcommand is given and
   #  found, then specific help for that is given. If 'commands' is given
   #  we will list the all the subcommands.
@@ -94,8 +102,8 @@ class Trepan::SubcommandMgr < Trepan::Command
       if doc
        return doc
       else
-        errmsg('Sorry - author mess up. ' + 
-               'No help registered for command' + 
+        errmsg('Sorry - author mess up. ' +
+               'No help registered for command' +
                @name)
         return nil
       end
@@ -119,9 +127,9 @@ class Trepan::SubcommandMgr < Trepan::Command
         if doc
           return doc
         else
-          errmsg('Sorry - author mess up. ' + 
-                 'No help registered for subcommand: ' + 
-                 subcmd_name + ', of command: ' + 
+          errmsg('Sorry - author mess up. ' +
+                 'No help registered for subcommand: ' +
+                 subcmd_name + ', of command: ' +
                  @name)
           return nil
         end
@@ -144,7 +152,7 @@ class Trepan::SubcommandMgr < Trepan::Command
 
   # Return an Array of subcommands that can start with +arg+. If none
   # found we just return +arg+.
-  # FIXME: Not used any more? 
+  # FIXME: Not used any more?
   def complete(prefix)
     Trepan::Complete.complete_token(@subcmds.subcmds.keys, prefix)
   end

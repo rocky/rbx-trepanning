@@ -34,6 +34,18 @@ class Trepan
       end
     end
 
+    def get_class_aliases(klass)
+        if RedCard.check '1.9' and
+            klass.constants.member?(:ALIASES)
+          klass.const_get(:ALIASES)
+        elsif RedCard.check '1.8' and
+            klass.constants.member?('ALIASES')
+          klass.const_get('ALIASES')
+        else
+          []
+        end
+    end
+
     # Loads in debugger commands by require'ing each ruby file in the
     # 'command' directory. Then a new instance of each class of the
     # form Trepan::xxCommand is added to @commands and that array
@@ -68,17 +80,7 @@ class Trepan
 
         # Add to list of commands and aliases.
         cmd_name = klass.const_get(:NAME)
-        aliases=
-          if RedCard.check '1.9' and
-              klass.constants.member?(:ALIASES)
-            klass.const_get(:ALIASES)
-          elsif RedCard.check '1.8' and
-              klass.constants.member?('ALIASES')
-            klass.const_get('ALIASES')
-          else
-            []
-          end
-          aliases.each {|a| @aliases[a] = cmd_name}
+        get_class_aliases(klass).each {|a| @aliases[a] = cmd_name}
         @commands[cmd_name] = cmd
       end
     end
@@ -93,18 +95,7 @@ class Trepan
 
       # Add to list of commands and aliases.
       cmd_name = klass.const_get(:NAME)
-
-      aliases =
-        if RedCard.check '1.9' and
-            klass.constants.member?(:ALIASES)
-          klass.const_get(:ALIASES)
-        elsif RedCard.check '1.8' and
-            klass.constants.member?('ALIASES')
-          klass.const_get('ALIASES')
-        else
-          []
-        end
-      aliases.each {|a| @aliases[a] = cmd_name}
+      get_class_aliases.each {|a| @aliases[a] = cmd_name}
       @commands[cmd_name] = cmd
     end
 
