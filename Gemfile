@@ -11,6 +11,6 @@ group :test do
   gem 'diff-lcs'
 end
 
-group :development
+group :development do
   gem 'kpeg'
 end
