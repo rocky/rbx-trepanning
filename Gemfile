@@ -10,3 +10,7 @@ gem 'coderay', '>=1.0'
 group :test do
   gem 'diff-lcs'
 end
+
+group :development
+  gem 'kpeg'
+end
