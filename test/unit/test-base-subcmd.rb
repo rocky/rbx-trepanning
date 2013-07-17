@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'test/unit'
 require 'rubygems'; require 'require_relative'
+require 'redcard/rubinius'
 # require_relative '../../app/core'
 require_relative '../../processor'
 require_relative '../../processor/command/exit'
@@ -27,9 +28,18 @@ class TestBaseSubCommand < Test::Unit::TestCase
     end
   end
 
+  def get_const(klass, name)
+    name = name.to_sym if RedCard.check '1.9'
+    if klass.constants.member?(name)
+      klass.const_get(name)
+    else
+      nil
+    end
+  end
+
   def test_base_subcommand
     assert @exit_subcmd
-    assert_raises RuntimeError do 
+    assert_raises RuntimeError do
       @exit_subcmd.run
     end
     assert_equal([], $errors)
@@ -40,11 +50,12 @@ class TestBaseSubCommand < Test::Unit::TestCase
       next unless cmd_obj.is_a?(Trepan::SubcommandMgr)
       cmd_obj.subcmds.subcmds.each do |subcmd_name, subcmd_obj|
         %w(HELP NAME PREFIX).each do |attr|
-          assert_equal(true, subcmd_obj.class.constants.member?(attr),
+          val = get_const(subcmd_obj.class, attr)
+          assert_equal(true, !!val,
                        "Constant #{attr} should be defined in \"#{cmd_obj.name} #{subcmd_obj.class::NAME}\"")
         end
       end
-      
+
     end
   end
 

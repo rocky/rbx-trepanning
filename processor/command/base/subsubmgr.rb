@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rubygems'; require 'require_relative'
+require 'redcard/rubinius'
 require_relative 'subcmd'
 require_relative '../../subcmd'
 require_relative '../../help'
@@ -13,7 +14,7 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
     CATEGORY      = 'status'
     MIN_ARGS      = 0
     MAX_ARGS      = nil
-    NAME          = '?' # FIXME: Need to define this, but should 
+    NAME          = '?' # FIXME: Need to define this, but should
                         # pick this up from class/file name.
     NEED_STACK    = false
   end
@@ -21,10 +22,29 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
   attr_accessor :pname
   attr_accessor :subcmds  # Array of instantiated Trepan::Subcommand objects
 
+  # Work around Ruby 1.8/1.9 incompatibility
+  def get_const(klass, name)
+    name = name.to_sym if RedCard.check '1.9'
+    if klass.constants.member?(name)
+      klass.const_get(name)
+    else
+      nil
+    end
+  end
+
+  def set_const(klass, name, val)
+    name = name.to_sym if RedCard.check '1.9'
+    if klass.constants.member?(name)
+      klass.const_set(name, val)
+    else
+      nil
+    end
+  end
+
   # Initialize show subcommands. Note: instance variable name
   # has to be setcmds ('set' + 'cmds') for subcommand completion
   # to work.
-  # FIXME: do we need proc still? 
+  # FIXME: do we need proc still?
   def initialize(proc, parent)
     name     = obj_const(self, :NAME)
     @name    = name.to_sym
@@ -38,11 +58,11 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
     # The below was the simplest way I could find to do this since
     # we are the super class but want to set the subclass's constant.
     # defined? didn't seem to work here.
-    c = self.class.constants
-    self.class.const_set('SHORT_HELP', 
-                         self.class.const_get('HELP')) if
-      c.member?('HELP') and !c.member?('SHORT_HELP')
-    
+    if !get_const(self.class, 'SHORT_HELP') and (help = get_const(self.class, 'HELP'))
+        help = help.split
+        set_const(self.class, 'SHORT_HELP', help)
+    end
+
     load_debugger_subsubcommands(name, self)
   end
 
@@ -60,7 +80,7 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
     cmd_dir = File.dirname(__FILE__)
     subcmd_dir = File.join(cmd_dir, '..', @pname + '_subcmd', name + '_subcmd')
     files = Dir.glob(File.join(subcmd_dir, '*.rb'))
-    files.each do |rb| 
+    files.each do |rb|
       cmd_names << name.capitalize + File.basename(rb, '.rb').capitalize
       require rb
     end if File.directory?(subcmd_dir)
@@ -69,9 +89,8 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
     cmd_names.each do |subname|
       cmd_name = "#{pname}#{subname.downcase}"
       subclass_name = "#{@pname.capitalize}#{subname}"
-      next unless 
-        Trepan::SubSubcommand.constants.member?(subclass_name)
-      cmd = self.instance_eval("Trepan::SubSubcommand::" + subclass_name + 
+      next unless subcmd_class = get_const(Trepan::SubSubcommand, subclass_name)
+      cmd = self.instance_eval("Trepan::SubSubcommand::" + subclass_name +
                                ".new(self, @parent, '#{cmd_name}')")
       @subcmds.add(cmd, cmd_name)
     end
@@ -83,7 +102,7 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
   #        help cmd subcmd
   #        help cmd commands
   #
-  #  Our shtick is to give help for the overall command only if 
+  #  Our shtick is to give help for the overall command only if
   #  subcommand or 'commands' is not given. If a subcommand is given and
   #  found, then specific help for that is given. If 'commands' is given
   #  we will list the all the subcommands.
@@ -94,8 +113,8 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
       if doc
        return doc
       else
-        errmsg('Sorry - author mess up. ' + 
-               'No help registered for command' + 
+        errmsg('Sorry - author mess up. ' +
+               'No help registered for command' +
                @name)
         return nil
       end
@@ -113,7 +132,7 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
     end
 
     # "help cmd subcmd". Give help specific for that subcommand if
-    # the command matches uniquely, or show a list of matching 
+    # the command matches uniquely, or show a list of matching
     # subcommands
     keyprefix_str  = prefix.join('')
     key_str        = keyprefix_str + subcmd_name
@@ -123,9 +142,9 @@ class Trepan::SubSubcommandMgr < Trepan::Subcommand
       if doc
         return doc
       else
-        errmsg('Sorry - author mess up. ' + 
-               'No help registered for subcommand: ' + 
-               subcmd_name + ', of command: ' + 
+        errmsg('Sorry - author mess up. ' +
+               'No help registered for subcommand: ' +
+               subcmd_name + ', of command: ' +
                @name)
         return nil
       end

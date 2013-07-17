@@ -1,9 +1,10 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
+require 'redcard/rubinius'
 
 class Trepan
   module Util
 
-    module_function 
+    module_function
     def safe_repr(str, max, elipsis='... ')
       if str.is_a?(String) && max > 0 && str.size > max && !str.index("\n")
         "%s%s%s" % [ str[0...max/2], elipsis,  str[str.size-max/2..str.size]]
@@ -16,20 +17,20 @@ class Trepan
     # If name is a unique leading prefix of one of the entries of list,
     # then return that. Otherwise return name.
     def uniq_abbrev(list, name)
-      candidates = list.select do |try_name| 
+      candidates = list.select do |try_name|
         try_name.start_with?(name)
       end
       candidates.size == 1 ? candidates.first : name
     end
 
     # extract the "expression" part of a line of source code.
-    # 
+    #
     def extract_expression(text)
       if text =~ /^\s*(?:if|elsif|unless)\s+/
-        text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'') 
+        text.gsub!(/^\s*(?:if|elsif|unless)\s+/,'')
         text.gsub!(/\s+then\s*$/, '')
       elsif text =~ /^\s*(?:until|while)\s+/
-        text.gsub!(/^\s*(?:until|while)\s+/,'') 
+        text.gsub!(/^\s*(?:until|while)\s+/,'')
         text.gsub!(/\s+do\s*$/, '')
       elsif text =~ /^\s*return\s+/
         # EXPRESION in: return EXPRESSION
@@ -46,14 +47,20 @@ class Trepan
       return text
     end
 
+
+    def rubinius_internal?(loc)
+      ('Object#' == loc.describe_receiver &&
+       :__script__ == loc.name && RedCard.check('1.8')) or
+        ('Rubinius::Loader#' == loc.describe_receiver && RedCard.check('1.9'))
+    end
+
     # Find user portion of script skipping over Rubinius code loading.
     # Unless hidestack is off, we don't show parts of the frame below this.
     def find_main_script(locs)
       candidate = nil
       (locs.size-1).downto(0) do |i|
         loc = locs[i]
-        if 'Object#' == loc.describe_receiver &&
-            :__script__ == loc.name
+        if rubinius_internal?(loc)
           if loc.method.active_path =~ /\/trepanx$/ ||
             loc.method.active_path == 'kernel/loader.rb'
             # Might have been run from standalone trepanx.
@@ -74,7 +81,7 @@ class Trepan
       result = yield
       $VERBOSE = original_verbosity
       return result
-    end  
+    end
   end
 end
 
@@ -86,7 +93,7 @@ if __FILE__ == $0
   puts safe_repr(string.inspect, 17)
   puts safe_repr(string.inspect, 17, '')
   locs = Rubinius::VM.backtrace(0)
-  locs.each_with_index do |l, i| 
+  locs.each_with_index do |l, i|
     puts "#{i}: #{l.describe}"
   end
   ## puts "main script in above is #{locs.size() - 1 - find_main_script(locs)}"
