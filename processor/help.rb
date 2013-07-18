@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 
 class Trepan
   # class SubHelp
@@ -9,7 +9,7 @@ class Trepan
   #   end
 
   #   def load_sub_help_files(dir)
-  #     Dir.glob(dir, '*.txt').each do |txt| 
+  #     Dir.glob(dir, '*.txt').each do |txt|
   #       basename = File.basename(txt, '.txt')
   #       @list << basename
   #     end
@@ -33,16 +33,14 @@ class Trepan
       # The below was the simplest way I could find to do this since
       # we are the super class but want to set the subclass's constant.
       # defined? didn't seem to work here.
-      c = subcmd.class.constants
-      if c.member?('HELP') and !c.member?('SHORT_HELP')
-        short_help = subcmd.class.const_get('HELP').split("\n")[0].chomp('.')
-        subcmd.class.const_set(:SHORT_HELP, short_help)
-      end
-      
+      short_help = get_const(self.class, 'SHORT_HELP')
+      short_help = get_const(self.class, 'HELP') unless short_help
+      short_help = short_help.split("\n")[0].chomp('.')
+
       '  %-12s -- %s' %
-          [abbrev_stringify(obj_const(subcmd, :NAME), 
+          [abbrev_stringify(obj_const(subcmd, :NAME),
                             obj_const(subcmd, :MIN_ABBREV)),
-           obj_const(subcmd, :SHORT_HELP)]
+           short_help]
     end
 
     # We were given cmd without a subcommand; cmd is something
@@ -77,7 +75,7 @@ Long description goes here.'
     MIN_ABBREV = 1
     NAME       = File.basename(__FILE__)
     def obj_const(obj, name)
-      obj.class.const_get(name) 
+      obj.class.const_get(name)
     end
     def msg(mess)
       puts mess

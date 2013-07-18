@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 # A base class for debugger subcommands of subcommands.
 #
 # Note: don't end classname with Command (capital C as in SubCommand),
-# since main will think this a command name like QuitCommand 
-#                                                    ^   
+# since main will think this a command name like QuitCommand
+#                                                    ^
 
 # Base Class for Trepan subcommands. We pull in some helper
 # functions for command from module cmdfns.
@@ -28,21 +28,19 @@ class Trepan
     end
 
     def string_in_show
-      help_constant_sym = if self.class.constants.member?('SHORT_HELP') 
-                            :SHORT_HELP 
-                          else :HELP
-                          end
-      str = my_const(help_constant_sym)
+      help = get_const(self.class, 'SHORT_HELP')
+      help = get_const(self.class, 'HELP') unless help
+      help = help.split[0] if !help
       %w(Show Set).each do |word|
-        if 0 == str.index(word)
-          str = str[word.size+1 ..-1].capitalize
+        if 0 == help.index(word)
+          help = help[word.size+1 ..-1].capitalize
           break
         end
       end
-      str
+      help
     end
 
-    # Set a Boolean-valued debugger setting. 
+    # Set a Boolean-valued debugger setting.
     def run_set_bool(args, default=true)
       set_val = args.size < 2 ? 'on' : args[1]
       setting = @name.gsub(/^(set|show)/,'')
@@ -100,7 +98,7 @@ module Trepanning
 
       short_dirname = dirname[0...-'_subcmd'.size]
       short_parent_dirname = parent_dirname[0...-'_subcmd'.size]
-      prefix = klass.const_set('PREFIX', %W(#{short_parent_dirname} 
+      prefix = klass.const_set('PREFIX', %W(#{short_parent_dirname}
                                             #{short_dirname} #{name}))
       klass.const_set('CMD', prefix.join(' '))
     end
