@@ -12,10 +12,15 @@ class TestTCPDbgServer < Test::Unit::TestCase
 
   def test_basic
     server = Trepan::TCPDbgServer.new
-    server.open({ :open => false,
-                  :port => 1027,
-                  :host => '127.0.0.1'
-                })
+    begin
+      server.open({ :open => false,
+                    :port => 1027,
+                    :host => '127.0.0.1'
+                  })
+    rescue Errno::EADDRINUSE
+      puts "Address already in use. Skipping test."
+      return
+    end
     threads = []
     msgs = %w(one two three)
     Thread.new do
@@ -29,7 +34,7 @@ class TestTCPDbgServer < Test::Unit::TestCase
         end
       end
     end
-    threads << Thread.new do 
+    threads << Thread.new do
       t = TCPSocket.new('127.0.0.1', 1027)
       msgs.each do |msg|
         begin

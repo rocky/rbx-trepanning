@@ -27,6 +27,12 @@ class TestQuit < Test::Unit::TestCase
 
   def test_xcode_call
     startup_file = File.join(ENV['HOME'], '.rbxrc')
+    unless File.readable?(startup_file)
+      puts "#{startup_file} not readable. Skipping test."
+      assert true
+      return
+    end
+
     lines = File.open(startup_file).readlines.grep(/Trepan\.start/)
     if lines && lines.any?{|line| line =~ /:Xdebug/}
       no_error = run_debugger('quit-Xdebug', 'null.rb',
@@ -40,7 +46,7 @@ class TestQuit < Test::Unit::TestCase
         FileUtils.rm(outfile)
       end
     else
-      puts "Trepan.start(:skip_loader=>:Xdebug) is not in ~.rbxrc. Skipping."
+      puts "Trepan.start(:skip_loader=>:Xdebug) is not in #{startup_file}. Skipping test."
       assert true
     end
   end
