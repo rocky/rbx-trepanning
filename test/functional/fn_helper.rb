@@ -32,10 +32,11 @@ module FnTestHelper
     Rubinius::VM.backtrace(0)[1].line
   end
 
-  def compare_output(right, d, debugger_cmds)
+  def compare_output(right, d, debugger_cmds, filter_fn = nil)
     # require_relative '../../lib/trepanning'
     # Trepan.debug(:set_restart => true)
     got = filter_line_cmd(d.intf[-1].output.output)
+    got = send(:filter_fn, got) if filter_fn
     if got != right
       got.each_with_index do |got_line, i|
         if i < right.size and got_line != right[i]
@@ -65,22 +66,22 @@ module FnTestHelper
      s =~ TREPAN_PROMPT ? nil : s
     end.compact unless show_prompt
 
-    # Remove debugger location lines. 
-    # For example: 
+    # Remove debugger location lines.
+    # For example:
     #   -- (/src/external-vcs/trepan/tmp/gcd.rb:4 @21)
     # becomes:
-    #   -- 
+    #   --
     a2 = a.map do |s|
       s =~ TREPAN_LOC ? s.gsub(/\(.+:\d+( @\d+)?\)\n/, '').chomp : s.chomp
     end
 
-    # Canonicalize breakpoint messages. 
-    # For example: 
+    # Canonicalize breakpoint messages.
+    # For example:
     #   Set breakpoint 1: test/functional/test-tbreak.rb:10 (@0)
     # becomes :
     #   Set breakpoint 1: foo.rb:55 (@3)
     a3 = a2.map do |s|
-      s.gsub(/^Set (temporary )?breakpoint (\d+): .+:(\d+) \(@\d+\)/, 
+      s.gsub(/^Set (temporary )?breakpoint (\d+): .+:(\d+) \(@\d+\)/,
              'Set \1breakpoint \2: foo.rb:55 (@3)')
     end
     return a3

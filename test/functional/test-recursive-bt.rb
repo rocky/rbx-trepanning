@@ -7,6 +7,16 @@ class TestRecursiveBt < Test::Unit::TestCase
 
   include FnTestHelper
 
+  def filter_fn(a)
+    a.map { |line|
+      if line =~ /#6 MiniTest::Unit::TestCase/
+        "    #6 Test::Unit::TestCase(TestRecursiveBt)#run(result) at testcase.rb:78"
+      else
+        line
+      end
+    }
+  end
+
   def test_recursive_backtrace
 
     cmds = [
@@ -42,28 +52,28 @@ class TestRecursiveBt < Test::Unit::TestCase
     z = factorial(5)
     ##############################
     d.stop
-    out = 
+    out =
       ["-- ",
        "def factorial(n)",
        "basename is on.",
        "-- ",
        "z = factorial(5)",
-       "--> #0 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:42",
+       "--> #0 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:52",
        "(More stack frames follow...)",
        "-> ",
        "if n > 0",
        "-- ",
        "return n * factorial(n-1)",
-       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
-       "    #1 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:42",
+       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
+       "    #1 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:52",
        "(More stack frames follow...)",
        "-> ",
        "if n > 0",
        "-- ",
        "return n * factorial(n-1)",
-       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
-       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
-       "    #2 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:42",
+       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
+       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
+       "    #2 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:52",
        "(More stack frames follow...)",
        "-> ",
        "if n > 0",
@@ -71,10 +81,10 @@ class TestRecursiveBt < Test::Unit::TestCase
        "return n * factorial(n-1)",
        "-> ",
        "if n > 0",
-       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:36",
-       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
+       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:46",
+       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
        "... above line repeated 2 times",
-       "    #4 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:42",
+       "    #4 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:52",
        "(More stack frames follow...)",
        "-- ",
        "return n * factorial(n-1)",
@@ -82,13 +92,14 @@ class TestRecursiveBt < Test::Unit::TestCase
        "if n > 0",
        "-- ",
        "return n * factorial(n-1)",
-       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
-       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:37",
+       "--> #0 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
+       "    #1 TestRecursiveBt#factorial(n) at test-recursive-bt.rb:47",
        "... above line repeated 3 times",
-       "    #5 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:42",
+       "    #5 TestRecursiveBt#test_recursive_backtrace at test-recursive-bt.rb:52",
        "    #6 Test::Unit::TestCase(TestRecursiveBt)#run(result) at testcase.rb:78",
-       "(More stack frames follow...)"]
-    compare_output(out, d, cmds)
+       "(More stack frames follow...)"
+      ]
+    compare_output(out, d, cmds, :filter_fn)
 
   end
 end

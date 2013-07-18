@@ -28,7 +28,7 @@ class TestQuit < Test::Unit::TestCase
   def test_xcode_call
     startup_file = File.join(ENV['HOME'], '.rbxrc')
     lines = File.open(startup_file).readlines.grep(/Trepan\.start/)
-    if lines && lines.any?{|line| line.grep(/:Xdebug/)}
+    if lines && lines.any?{|line| line =~ /:Xdebug/}
       no_error = run_debugger('quit-Xdebug', 'null.rb',
                               {:xdebug => true,
                                 :short_cmd => @@NAME,
