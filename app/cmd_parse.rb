@@ -1,10 +1,15 @@
 # use_grammar.rb
 require 'rubygems'
+require 'redcard/rubinius'
 require 'require_relative'
 require_relative 'cmd_parser'
 
 class Trepan
   module CmdParser
+
+    def name_fix(name)
+      RedCard.check('1.9') ? name.to_sym : name
+    end
 
     # Given a KPeg parse object, return the method of that parse or raise a
     # Name error if we can't find a method. parent_class is the parent class of
@@ -27,9 +32,9 @@ class Trepan
           raise NameError, errmsg unless
             klass.kind_of?(Class) or klass.kind_of?(Module)
           m = m.chain[1]
-          if klass.instance_methods.member?('binding')
+          if klass.instance_methods.member?(name_fix('binding'))
             bind = klass.bind
-          elsif klass.private_instance_methods.member?('binding')
+          elsif klass.private_instance_methods.member?(name_fix('binding'))
             bind = klass.send(:binding)
           else
             bind = nil
@@ -67,10 +72,10 @@ class Trepan
                 errmsg << "in #{parent}"
                 lookup_name = m.chain && m.chain[1] ? m.chain[1].name : name
                 if parent.respond_to?('instance_methods') &&
-                    parent.instance_methods.member?(lookup_name)
-                  parent.instance_method(lookup_name)
+                    parent.instance_methods.member?(name_fix(lookup_name))
+                  parent.instance_method(name_fix(lookup_name))
                 elsif parent.respond_to?('methods')
-                  parent.method(lookup_name)
+                  parent.method(name_fix(lookup_name))
                 end
               elsif m.chain && m.chain[1]
                 eval("#{m.chain[0].name}.method(#{lookup_name.name.inspect})", bind)
@@ -99,6 +104,7 @@ class Trepan
         if @cp._class_module_chain
           # Did we match all of it?
           if @cp.result.name == str.strip
+            # require 'trepanning'; debugger
             meth_for_parse_struct(@cp.result, start_binding)
           else
             nil
