@@ -1,5 +1,12 @@
+July 18,  2013  (0.2.1)
+- Changes to make it work on 1.9 language dialect for 2.0rc1
+
+July 14, 2013
+- Changes to make it work on 1.8 language dialect for 2.0rc1
+
+
 Oct 27,  2011  (0.1.0)
-- Add debugger commands: 
+- Add debugger commands:
   * info variables  (is in ruby-debug)
   * info locals as alternative to "info variables locals" (is in gdb)
 
@@ -38,7 +45,7 @@ June 12, 2011  (0.0.9) Fleetwood release
 - Add options from ruby-debug:
   * --cd
   * --include
-  * --require 
+  * --require
   * --debug
 - fix bugs, and improve help
 
@@ -50,10 +57,10 @@ March 15, 2011  (0.0.8)
   * VM offsets are now specified via @ rather than o or O
   * Filenames can be quoted and blanks and characters inside escaped
 - Document command syntax by adding it as a new category with sub help
-- More controlled parsing of method names 
+- More controlled parsing of method names
 - improvements to "info files"
   show if we have a compiled method object for the file
-- eval? now strips more: 
+- eval? now strips more:
    * leading "return" or "case", or "unless"
    * trailing "then"
 - Save and restore some debugger state across a restart
@@ -74,17 +81,17 @@ Feb 15, 2011  (0.0.6)
 
 Feb 15, 2011  (0.0.5)
 - "disassemble" command: allow disassembly of specified line numbers
-- GNU Readline: 
-  * Start GNU readline tab (command) completion. 
+- GNU Readline:
+  * Start GNU readline tab (command) completion.
   * Save and restore command history
   * add --readline and --no-readline options to trepanx
 - Macros can return more than one command now
-- help 
+- help
   * "help macros" shows all macro names
   * "help aliases" shows all alias names
   * "help *" lists macros and aliases now
 - start "info line"
-- "info file" has/shows File::stat()'s mtime and ctime 
+- "info file" has/shows File::stat()'s mtime and ctime
 - be able to pass --verbose to ruby to rake
 
 
