@@ -11,7 +11,7 @@ class Trepan
 
   # A debugger interface handles the communication or interaction with between
   # the program and the outside portion which could be
-  #  - a user, 
+  #  - a user,
   #  - a front-end that talks to a user, or
   #  - another interface in another process or computer
   class Interface
@@ -30,7 +30,7 @@ class Trepan
       @history_save = false
       @histsize     = nil
       @input        = inp || STDIN
-      @interactive  = false 
+      @interactive  = false
       @opts         = opts
       @output       = out || STDOUT
     end
@@ -60,7 +60,7 @@ class Trepan
 
     def finalize(last_wishes=nil)
       if @output && !@output.closed?
-        msg "%sThat's all, folks..." % 
+        msg "%sThat's all, folks..." %
           (defined?(Trepan::PROGRAM) ? "#{Trepan::PROGRAM}: " : '')
       end
       close
@@ -74,7 +74,7 @@ class Trepan
     def interactive?
       # Default false and making subclasses figure out how to determine
       # interactiveness.
-      false 
+      false
     end
 
     # used to write to a debugger that is connected to this

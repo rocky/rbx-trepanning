@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010, 2011 Rocky Bernstein <rockyb@rubyforge.net>
+# Copyright (C) 2010-2011, 2013 Rocky Bernstein <rockyb@rubyforge.net>
 require 'rbconfig'
 require 'rubygems'; require 'require_relative'
 module Trepanning
@@ -13,12 +13,14 @@ module Trepanning
   def debug_program(dbgr, ruby_path, program_to_debug, start_opts={})
 
     # Make sure Ruby script syntax checks okay.
-    # Otherwise we get a load message that looks like trepanning has 
-    # a problem. 
+    # Otherwise we get a load message that looks like trepanning has
+    # a problem.
     output = `#{ruby_path} -c #{program_to_debug.inspect} 2>&1`
     if $?.exitstatus != 0 and RUBY_PLATFORM !~ /mswin/
-      puts output
-      exit $?.exitstatus 
+      dbgr.intf[0].msg("#{program_to_debug.inspect} is not a valid Ruby program:")
+      dbgr.intf[0].msg(output)
+      dbgr.intf[0].close
+      exit $?.exitstatus
     end
     # print "\032\032starting\n" if Trepan.annotate and Trepan.annotate > 2
 
@@ -39,7 +41,7 @@ module Trepanning
     # http://www.ruby-forum.com/topic/187083
     $progname = program_to_debug
     alias $0 $progname
-    ## dollar_0_tracker = lambda {|val| $program_name = val} 
+    ## dollar_0_tracker = lambda {|val| $program_name = val}
     ## trace_var(:$0, dollar_0_tracker)
 
     ## FIXME: we gets lots of crap before we get to the real stuff.
@@ -75,11 +77,11 @@ module Trepanning
   end
 end
 
-# Path name of Ruby interpreter we were invoked with. Is part of 
+# Path name of Ruby interpreter we were invoked with. Is part of
 # 1.9 but not necessarily 1.8.
 def RbConfig.ruby
-  File.join(RbConfig::CONFIG['bindir'],  
-            RbConfig::CONFIG['RUBY_INSTALL_NAME'] + 
+  File.join(RbConfig::CONFIG['bindir'],
+            RbConfig::CONFIG['RUBY_INSTALL_NAME'] +
             RbConfig::CONFIG['EXEEXT'])
 end unless defined? RbConfig.ruby
 

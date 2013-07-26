@@ -5,6 +5,7 @@ require_relative '../../app/run' # for RbConfig.ruby
 
 DEFAULT_DEBUGGER_OPTS = {
   :args        => '',
+  :absolute    => false,
   :dbgr        => '',
   :outfile     => nil,
   :short_cmd   => nil,
@@ -29,7 +30,12 @@ def run_debugger(testname, ruby_file, opts={})
   cmdfile     = opts[:cmdfile] || File.join(datadir, short_cmd)
   outfile     = opts[:outfile] ||
     File.join(srcdir,  "#{testname}.out")
-  programfile = ruby_file ? File.join(progdir, ruby_file) : ''
+  programfile =
+    if opts[:absolute]
+      ruby_file
+    else
+      ruby_file ? File.join(progdir, ruby_file) : ''
+    end
 
   FileUtils.rm(outfile) if File.exist?(outfile)
 
@@ -46,7 +52,7 @@ def run_debugger(testname, ruby_file, opts={})
         [RbConfig.ruby, dbgr_path, cmdfile, opts[:dbgr],
          programfile, opts[:args], outfile]
     end
-  puts cmd # if opts[:verbose]
+  puts cmd if opts[:verbose]
   system(cmd)
   return false unless 0 == $?.exitstatus
   if opts[:do_diff]

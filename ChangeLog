@@ -1,6 +1,124 @@
+2013-07-18  rocky <rockyb@rubyforge.org>
+
+	* NEWS, app/options.rb: Get ready for release 0.2.1
+
+2013-07-18  rocky <rockyb@rubyforge.org>
+
+	* README.md, README.textile: Update REAME
+
+2013-07-18  rocky <rockyb@rubyforge.org>
+
+	* test/integration/test-quit.rb, test/unit/test-io-tcpserver.rb: 
+	Make tests work in the presense of different environmental
+	conditions.
+
+2013-07-18  rocky <rockyb@rubyforge.org>
+
+	* test/functional/fn_helper.rb,
+	test/functional/test-recursive-bt.rb, test/integration/test-quit.rb: 
+	... And the last of the failing 1.9 tests are working! (This batch
+	was just about tests, not the debugger code)
+
+2013-07-18  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.rb: Ruby 1.8/1.9 compatability. This one is
+	important and buried deep in there: resolving method/class objects.
+
+2013-07-17  rocky <rockyb@rubyforge.org>
+
+	* processor/command/base/subsubcmd.rb, processor/help.rb: More
+	1.8/1.9 compatibility
+
+2013-07-17  rocky <rockyb@rubyforge.org>
+
+	* : commit 7ae1a2e45c687ab388064cc7af4ea497aefc7d06 Author: rocky
+	<rockyb@rubyforge.org> Date:   Wed Jul 17 16:44:18 2013 -0400
+
+2013-07-17  rocky <rockyb@rubyforge.org>
+
+	* Gemfile, app/cmd_parser.rb: Update parser with kpeg version 0.10.0
+
+2013-07-17  rocky <rockyb@rubyforge.org>
+
+	* app/util.rb, processor/command.rb,
+	processor/command/base/subsubmgr.rb, test/unit/test-base-subcmd.rb: 
+	More 1.9/1.8 compatability
+
+2013-07-16  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, app/complete.rb, processor/command/base/submgr.rb,
+	processor/command/help.rb, processor/load_cmds.rb,
+	processor/mock.rb, processor/subcmd.rb: Deal with one more ruby 1.8
+	vs 1.9 incompatiblity
+
+2013-07-16  rocky <rockyb@rubyforge.org>
+
+	* Gemfile, processor/load_cmds.rb, rbx-trepanning.gemspec: Start
+	using redcard to make this work on both rubinius 1.8 and 1.9
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* app/cmd_parse.kpeg, app/cmd_parse.rb, lib/trepanning.rb,
+	processor.rb, processor/load_cmds.rb: Towards getting this to work
+	on the 1.9.3 dialect
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* Rakefile, processor/mock.rb: Rakefile is now 1.9 compliant
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* test/unit/test-proc-validate.rb: More aggressive setting of
+	:start_frame in mock debugger
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* test/unit/cmd-helper.rb: More aggressive setting of :start_frame
+	in mock debugger
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* processor/command/shell.rb: Remove stray spaces between "msg" and
+	before "("
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* processor/command/disassemble.rb: Remove stray space betwein "msg"
+	and before "("
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* app/default.rb, test/unit/cmd-helper.rb: Add default value for
+	"start_frame" setting
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* Gemfile: Forgot columnize
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* Gemfile: Travis wants rdoc in Gemfile
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* Gemfile: Travis wants rake in Gemfile
+
+2013-07-15  rocky <rockyb@rubyforge.org>
+
+	* .gitignore, Gemfile, rbx-trepanning.gemspec: Add a Bundler
+	Gemfile.
+
 2013-07-14  rocky <rockyb@rubyforge.org>
 
-	* app/options.rb: Get ready for release 0.2.0
+	* app/options.rb: Bump required gem versions
+
+2013-07-14  rocky <rockyb@rubyforge.org>
+
+	* .travis.yml: Try travis
+
+2013-07-14  rocky <rockyb@rubyforge.org>
+
+	* ChangeLog, app/options.rb: Get ready for release 0.2.0
 
 2013-07-14  rocky <rockyb@rubyforge.org>
 

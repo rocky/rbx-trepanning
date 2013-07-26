@@ -1,0 +1,7 @@
+"/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx" is not a valid Ruby program:
+/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx:1: Invalid char `\x7F' in expression
+/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx:1: Invalid char `\x01' in expression
+/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx:1: Invalid char `\x01' in expression
+/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx:1: Invalid char `\x01' in expression
+/home/rocky-rvm/.rvm/rubies/rbx-head/bin/rbx:1: Invalid char `\x03' in expression
+
